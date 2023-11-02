@@ -16,69 +16,54 @@
 
 class DataCoercer {
     private final Schema schema;
+    private final string? targetRecordName;
+    private final error[] errors = [];
 
-    isolated function init(Schema schema) {
+    isolated function init(Schema schema, string? targetRecordName) {
         self.schema = schema;
+        self.targetRecordName = targetRecordName;
     }
 
-    isolated function coerceData(GroupValue data) returns map<json>|error {
-        return self.coerce(data, self.schema).cloneWithType();
+    isolated function coerce(GroupValue data) returns map<json>|error {
+        if self.errors.length() > 0 {
+            string[] errorMsgs = self.errors.'map(err => err.message());
+            map<string[]> errorDetail = {errors: errorMsgs};
+            return error Error("Data coercion failed.", detail = errorDetail);
+        }
+        return self.coerceData(data, self.schema).cloneWithType();
     }
 
-    // TODO: fix this sample implementation
-    private isolated function coerce(GroupValue data, Node parentNode) returns GroupValue {
+    private isolated function coerceData(GroupValue data, Node parentNode) returns GroupValue {
         GroupValue coercedValue = {};
 
         foreach [string, anydata] [name, 'field] in data.entries() {
-            Node? node = self.findNodeByName(parentNode, name);
+            Node? node = findNodeByName(parentNode, name);
             if node is () {
                 continue;
             }
-            if 'field is string|string[] {
-                // TODO: handle these errors and return array of errors
-                anydata|error val = coerceDataItemValue('field, <DataItem>node);
-                if val !is error {
-                    coercedValue[name] = val;
+            if 'field is string|string[] && node is DataItem {
+                anydata|error coercedItemValue = coerceDataItemValue('field, node);
+                if coercedItemValue is error {
+                    self.errors.push(coercedItemValue);
+                    continue;
                 }
-
+                coercedValue[name] = coercedItemValue;
             } else if 'field is GroupValue {
-                coercedValue[name] = self.coerce('field, node);
+                coercedValue[name] = self.coerceData('field, node);
             } else if 'field is GroupValue[] {
                 GroupValue[] corecedArray = [];
                 foreach GroupValue groupValue in 'field {
-                    corecedArray.push(self.coerce(groupValue, node));
+                    corecedArray.push(self.coerceData(groupValue, node));
                 }
                 coercedValue[name] = corecedArray;
             }
         }
         return coercedValue;
     }
-
-    private isolated function findNodeByName(Node node, string name) returns Node? {
-        if node is Schema && name == node.getTypeDefinitions()[0].getName() {
-            foreach var child in node.getTypeDefinitions() {
-                if child.getName() == name {
-                    return child;
-                }
-            }
-        }
-        if node is GroupItem {
-            foreach var child in node.getChildren() {
-                if child.getName() == name {
-                    return child;
-                }
-            }
-        }
-        if node is DataItem && name == node.getName() {
-            return node;
-        }
-        return;
-    }
 }
 
 isolated function coerceDataItemValue(string|string[] data, DataItem dataItem) returns anydata|error {
     // Trim to remove spaces allocated for sing or Z prefix in decimal
-    // TODO: validate with picture clause
     if data is string {
         if dataItem.isDecimal() {
             string decimalString = data.trim();

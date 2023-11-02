@@ -1,3 +1,21 @@
+/*
+ * Copyright (c) 2023, WSO2 LLC. (http://www.wso2.com) All Rights Reserved.
+ *
+ * WSO2 LLC. licenses this file to you under the Apache License,
+ * Version 2.0 (the "License"); you may not use this file except
+ * in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
+ */
+
 package io.ballerina.lib.copybook.runtime.convertor;
 
 import io.ballerina.lib.copybook.commons.schema.CopyBook;
@@ -66,7 +84,7 @@ public final class Utils {
 
     private static BError createError(String message, BMap<BString, Object> errorDetail) {
         return ErrorCreator.createError(getModule(), ERROR_TYPE_NAME, StringUtils.fromString(message), null,
-                errorDetail);
+                                        errorDetail);
     }
 
     private static BError createError(String message) {
@@ -86,8 +104,8 @@ public final class Utils {
 
     public static Object getRedefinedItemName(BObject bObject) {
         CopybookNode copybookNode = (CopybookNode) bObject.getNativeData(NATIVE_VALUE);
-        return copybookNode.getRedefinedItemName() == null ?
-                null : StringUtils.fromString(copybookNode.getRedefinedItemName());
+        return copybookNode.getRedefinedItemName() == null ? null :
+                StringUtils.fromString(copybookNode.getRedefinedItemName());
     }
 
     public static boolean isNumeric(BObject bObject) {
@@ -129,12 +147,13 @@ public final class Utils {
         GroupItem groupItem = (GroupItem) bObject.getNativeData(NATIVE_VALUE);
         List<BObject> children = new ArrayList<>();
         for (CopybookNode child : groupItem.getChildren()) {
-            BObject element = child instanceof GroupItem ? ValueCreator.createObjectValue(getModule(), "GroupItem") :
-                    ValueCreator.createObjectValue(getModule(), "DataItem");
+            BObject element = child instanceof GroupItem ?
+                    ValueCreator.createObjectValue(getModule(), GROUP_ITEM_TYPE_NAME) :
+                    ValueCreator.createObjectValue(getModule(), DATA_ITEM_TYPE_NAME);
             element.addNativeData(NATIVE_VALUE, child);
             children.add(element);
         }
-        ObjectType elementType = TypeCreator.createObjectType("Node", getModule(), 0);
+        ObjectType elementType = TypeCreator.createObjectType(NODE_TYPE_NAME, getModule(), 0);
         ArrayType arrayType = TypeCreator.createArrayType(elementType);
         return ValueCreator.createArrayValue(children.toArray(), arrayType);
     }
@@ -143,24 +162,26 @@ public final class Utils {
         Schema schema = (Schema) bObject.getNativeData(NATIVE_VALUE);
         List<BObject> children = new ArrayList<>();
         for (CopybookNode child : schema.getTypeDefinitions()) {
-            BObject element = child instanceof GroupItem ? ValueCreator.createObjectValue(getModule(), "GroupItem") :
-                    ValueCreator.createObjectValue(getModule(), "DataItem");
+            BObject element = child instanceof GroupItem ?
+                    ValueCreator.createObjectValue(getModule(), GROUP_ITEM_TYPE_NAME) :
+                    ValueCreator.createObjectValue(getModule(), DATA_ITEM_TYPE_NAME);
             element.addNativeData(NATIVE_VALUE, child);
             children.add(element);
         }
-        ObjectType elementType = TypeCreator.createObjectType("Node", getModule(), 0);
+        ObjectType elementType = TypeCreator.createObjectType(NODE_TYPE_NAME, getModule(), 0);
         ArrayType arrayType = TypeCreator.createArrayType(elementType);
         return ValueCreator.createArrayValue(children.toArray(), arrayType);
     }
 
     public static BMap<BString, Object> getRedefinedItems(BObject bObject) {
         Schema schema = (Schema) bObject.getNativeData(NATIVE_VALUE);
-        ObjectType constraintType = TypeCreator.createObjectType("Node", getModule(), 0);
+        ObjectType constraintType = TypeCreator.createObjectType(NODE_TYPE_NAME, getModule(), 0);
         MapType mapType = TypeCreator.createMapType(constraintType);
         BMap<BString, Object> bMap = ValueCreator.createMapValue(mapType);
         for (CopybookNode child : schema.getRedefinedItems().values()) {
-            BObject element = child instanceof GroupItem ? ValueCreator.createObjectValue(getModule(), "GroupItem") :
-                    ValueCreator.createObjectValue(getModule(), "DataItem");
+            BObject element = child instanceof GroupItem ?
+                    ValueCreator.createObjectValue(getModule(), GROUP_ITEM_TYPE_NAME) :
+                    ValueCreator.createObjectValue(getModule(), DATA_ITEM_TYPE_NAME);
             element.addNativeData(NATIVE_VALUE, child);
             bMap.put(StringUtils.fromString(child.getName()), element);
         }
@@ -187,12 +208,13 @@ public final class Utils {
         return schema.getRedefinedItems().containsKey(name.getValue());
     }
 
-    public static Object fromCopybook(Environment env, BObject convertor, BString copybookData, BTypedesc typedesc) {
+    public static Object fromCopybook(Environment env, BObject convertor, BString copybookData, Object targetRecordName,
+                                      BTypedesc typedesc) {
         Future balFuture = env.markAsync();
         ExecutionCallback callback = new ExecutionCallback(balFuture);
-        Object[] paramFeed = {copybookData, true, typedesc, true};
+        Object[] paramFeed = {copybookData, true, typedesc, true, targetRecordName, true};
         env.getRuntime().invokeMethodAsyncConcurrently(convertor, TO_RECORD_METHOD_NAME, null, null, callback, null,
-                PredefinedTypes.TYPE_NULL, paramFeed);
+                                                       PredefinedTypes.TYPE_NULL, paramFeed);
         return null;
     }
 }

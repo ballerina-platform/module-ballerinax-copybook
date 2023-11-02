@@ -1,4 +1,4 @@
-grammar CopyBook;
+grammar Copybook;
 @header {package io.ballerina.lib.copybook.commons.generated;}
 
 @members {

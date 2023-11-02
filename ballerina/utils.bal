@@ -122,3 +122,66 @@ isolated function decimalToString(decimal value) returns string {
 isolated function externToString(Node node) returns string = @java:Method {
     'class: "io.ballerina.lib.copybook.runtime.convertor.Utils"
 } external;
+
+isolated function getTypeDefinition(Schema schema, string? targetRecordName) returns Node {
+    if targetRecordName is () {
+        return schema.getTypeDefinitions()[0];
+    }
+    foreach Node node in schema.getTypeDefinitions() {
+        if targetRecordName == node.getName() {
+            return node;
+        }
+    }
+    panic error(string `Unable to find targert record ${targetRecordName}`);
+}
+
+isolated function isRedifiningItem(Node node) returns boolean {
+    if node is DataItem {
+        return node.getRedefinedItemName() != ();
+    } else if node is GroupItem {
+        return node.getRedefinedItemName() != ();
+    }
+    return false;
+}
+
+isolated function getRedefiningItemNames(GroupItem parent, string redefinedItemName) returns string[] {
+    string[] redefiningItems = [];
+    foreach Node child in parent.getChildren() {
+        boolean isRedefiningItem = false;
+        if child is DataItem {
+            isRedefiningItem = child.getRedefinedItemName() == redefinedItemName;
+        } else if child is GroupItem {
+            isRedefiningItem = child.getRedefinedItemName() == redefinedItemName;
+        }
+        if isRedefiningItem {
+            redefiningItems.push(child.getName());
+        }
+    }
+    return redefiningItems;
+}
+
+isolated function findChildByName(GroupItem parent, string childName) returns Node? {
+    foreach Node child in parent.getChildren() {
+        if child.getName() == childName {
+            return child;
+        }
+    }
+    return;
+}
+
+isolated function findNodeByName(Node parent, string name) returns Node? {
+    if parent is Schema {
+        foreach var typedef in parent.getTypeDefinitions() {
+            if typedef.getName() == name {
+                return typedef;
+            }
+        }
+    }
+    if parent is GroupItem {
+        return findChildByName(parent, name);
+    }
+    if parent is DataItem && name == parent.getName() {
+        return parent;
+    }
+    return;
+}

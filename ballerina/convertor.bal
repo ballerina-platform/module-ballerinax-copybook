@@ -26,30 +26,50 @@ public isolated class Converter {
         self.schema = check parseSchemaFile(absolutePath);
     }
 
-    public isolated function toJson(string copybookData) returns map<json>|error {
+    public isolated function toJson(string copybookData, string? targetRecordName = ()) returns map<json>|error {
         lock {
-            CopybookReader copybookReader = new (copybookData.iterator(), self.schema);
+            check self.validateTargetRecordName(targetRecordName);
+            CopybookReader copybookReader = new (copybookData.iterator(), self.schema, targetRecordName);
             self.schema.accept(copybookReader);
-            DataCoercer dataCoercer = new (self.schema);
-            return dataCoercer.coerceData(copybookReader.getValue()).clone();
+            DataCoercer dataCoercer = new (self.schema, targetRecordName);
+            return dataCoercer.coerce(copybookReader.getValue()).clone();
         }
     }
 
-    public isolated function toCopybook(record {} input) returns string|error {
+    public isolated function toCopybook(record {} input, string? targetRecordName = ()) returns string|error {
         readonly & map<json> readonlyJson = check input.cloneWithType();
         lock {
-            JsonReader jsonReader = new (self.schema);
+            check self.validateTargetRecordName(targetRecordName);
+            JsonReader jsonReader = new (self.schema, targetRecordName);
             jsonReader.visitSchema(self.schema, readonlyJson);
             return jsonReader.getValue();
         }
     }
 
-    public isolated function fromCopybook(string copybookData, typedesc<record {}> t = <>) returns t|error = @java:Method {
+    private isolated function validateTargetRecordName(string? targetRecordName) returns error? {
+        lock {
+            if targetRecordName is () {
+                if self.schema.getTypeDefinitions().length() == 1 {
+                    return;
+                }
+                return error Error("The copybook schema has multiple record definitions. "
+                    + "The targetRecordName must not be nil");
+            }
+            foreach Node node in self.schema.getTypeDefinitions() {
+                if node.getName() == targetRecordName {
+                    return;
+                }
+            }
+            return error Error(string `Invalid target record name ${targetRecordName}`);
+        }
+    }
+
+    public isolated function fromCopybook(string copybookData, string? targetRecordName = (), typedesc<record {}> t = <>) returns t|error = @java:Method {
         'class: "io.ballerina.lib.copybook.runtime.convertor.Utils"
     } external;
 
-    private isolated function toRecord(string copybookData, typedesc<record {}> t) returns record {}|error {
-        map<json> copybookJson = check self.toJson(copybookData);
+    private isolated function toRecord(string copybookData, typedesc<record {}> t, string? targetRecordName = ()) returns record {}|error {
+        map<json> copybookJson = check self.toJson(copybookData, targetRecordName);
         return constraint:validate(copybookJson, t);
     }
 }

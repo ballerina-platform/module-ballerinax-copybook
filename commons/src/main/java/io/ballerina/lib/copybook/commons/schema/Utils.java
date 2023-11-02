@@ -1,8 +1,28 @@
+/*
+ * Copyright (c) 2023, WSO2 LLC. (http://www.wso2.com) All Rights Reserved.
+ *
+ * WSO2 LLC. licenses this file to you under the Apache License,
+ * Version 2.0 (the "License"); you may not use this file except
+ * in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
+ */
+
 package io.ballerina.lib.copybook.commons.schema;
 
-import io.ballerina.lib.copybook.commons.generated.CopyBookParser;
-
 import java.util.List;
+
+import static io.ballerina.lib.copybook.commons.generated.CopybookParser.DataOccursClauseContext;
+import static io.ballerina.lib.copybook.commons.generated.CopybookParser.PictureCardinalityContext;
+import static io.ballerina.lib.copybook.commons.generated.CopybookParser.PictureStringContext;
 
 public class Utils {
     private static final String ALPHA = "A";
@@ -13,22 +33,22 @@ public class Utils {
     private static final String DECIMAL_SEPARATOR = ".";
     private static final String DECIMAL_SEPARATOR_V = "V";
 
-    public static boolean isNumeric(CopyBookParser.PictureStringContext pictureType) {
+    static boolean isNumeric(PictureStringContext pictureType) {
         String firstPicChar = pictureType.pictureChars(0).getText().toUpperCase();
         return !ALPHA.equals(firstPicChar) && !ALPHA_NUMERIC.equals(firstPicChar);
     }
 
-    public static boolean isSigned(String picture) {
+    static boolean isSigned(String picture) {
         String firstPicChar = picture.substring(0, 1).toUpperCase();
         return SING_INTEGER.equals(firstPicChar);
     }
 
-    public static boolean hasPlusOrMinusPrefix(String picture) {
+    static boolean hasPlusOrMinusPrefix(String picture) {
         String firstPicChar = picture.substring(0, 1).toUpperCase();
         return PLUS_SING.equals(firstPicChar) || MINUS_SIGN.equals(firstPicChar);
     }
 
-    public static int getReadLength(CopyBookParser.PictureStringContext pictureType) {
+    static int getReadLength(PictureStringContext pictureType) {
         // TODO: this implementation doesn't check complex cases with more than one cardinality ex: z(9)9(9).3(9)
         String picture = pictureType.getText();
         if (pictureType.pictureCardinality(0) == null) {
@@ -60,7 +80,7 @@ public class Utils {
         return wholeNumberCardinality + decimalCardinality + signCount + (hasDotSeparator ? 1 : 0) + moreWholePart;
     }
 
-    public static int getOccurringCount(CopyBookParser.DataOccursClauseContext occursClause) {
+    static int getOccurringCount(DataOccursClauseContext occursClause) {
         if (!isArray(occursClause)) {
             return -1;
         }
@@ -72,11 +92,11 @@ public class Utils {
         return Integer.max(fromCount, toCount);
     }
 
-    private static boolean isArray(CopyBookParser.DataOccursClauseContext occursClause) {
+    static boolean isArray(DataOccursClauseContext occursClause) {
         return occursClause != null;
     }
 
-    public static int getFloatingPointLength(CopyBookParser.PictureStringContext pictureType) {
+    static int getFloatingPointLength(PictureStringContext pictureType) {
         String picture = pictureType.getText();
         int decimalPointIndex = picture.indexOf(DECIMAL_SEPARATOR);
         if (decimalPointIndex >= 0 && !picture.substring(decimalPointIndex).contains("(")) {
@@ -87,7 +107,7 @@ public class Utils {
             return picture.length() - vIndex - 1;
         }
 
-        List<CopyBookParser.PictureCardinalityContext> cardinalities = pictureType.pictureCardinality();
+        List<PictureCardinalityContext> cardinalities = pictureType.pictureCardinality();
         if ((decimalPointIndex >= 0 || vIndex >= 0) && cardinalities.size() > 1) {
             return Integer.parseInt(cardinalities.get(cardinalities.size() - 1).integerLiteral().getText());
         }
