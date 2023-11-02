@@ -52,7 +52,7 @@ import static io.ballerina.lib.copybook.commons.generated.CopyBookParser.Picture
 import static io.ballerina.lib.copybook.commons.generated.CopyBookParser.QualifiedDataNameContext;
 import static io.ballerina.lib.copybook.commons.generated.CopyBookParser.StartRuleContext;
 
-public class SchemaBuilder implements CopyBookVisitor<Node> {
+public class SchemaBuilder implements CopyBookVisitor<CopybookNode> {
     private final Schema schema = new Schema();
     private GroupItem possibleParent;
     private final Set<String> redefinedItemNames = new HashSet<>();
@@ -64,16 +64,16 @@ public class SchemaBuilder implements CopyBookVisitor<Node> {
     }
 
     @Override
-    public Node visitStartRule(StartRuleContext ctx) {
+    public CopybookNode visitStartRule(StartRuleContext ctx) {
         this.possibleParent = null;
         visitDataDescription(ctx.dataDescription());
-        for (Node typedef : schema.getTypeDefinitions()) {
+        for (CopybookNode typedef : schema.getTypeDefinitions()) {
             addRedefinedItems(typedef);
         }
         return null;
     }
 
-    private void addRedefinedItems(Node item) {
+    private void addRedefinedItems(CopybookNode item) {
         if (this.redefinedItemNames.contains(item.getName())) {
             this.schema.addRedefinedItem(item);
             return;
@@ -84,25 +84,25 @@ public class SchemaBuilder implements CopyBookVisitor<Node> {
     }
 
     @Override
-    public Node visitDataDescription(DataDescriptionContext ctx) {
+    public CopybookNode visitDataDescription(DataDescriptionContext ctx) {
         for (int i = 0; i < ctx.getChildCount(); i++) {
-            Node node = visitDataDescriptionEntry(ctx.dataDescriptionEntry(i));
-            if (node instanceof GroupItem) {
-                this.possibleParent = (GroupItem) node;
+            CopybookNode copybookNode = visitDataDescriptionEntry(ctx.dataDescriptionEntry(i));
+            if (copybookNode instanceof GroupItem) {
+                this.possibleParent = (GroupItem) copybookNode;
             }
-            if (isRootLevelNode(node)) {
-                this.schema.addTypeDefinition(node);
+            if (isRootLevelNode(copybookNode)) {
+                this.schema.addTypeDefinition(copybookNode);
             }
         }
         return null;
     }
 
-    private boolean isRootLevelNode(Node node) {
-        return node != null && node.getLevel() == 1;
+    private boolean isRootLevelNode(CopybookNode copybookNode) {
+        return copybookNode != null && copybookNode.getLevel() == 1;
     }
 
     @Override
-    public Node visitDataDescriptionEntry(DataDescriptionEntryContext ctx) {
+    public CopybookNode visitDataDescriptionEntry(DataDescriptionEntryContext ctx) {
         if (ctx.dataDescriptionEntryFormat1() != null) {
             return visitDataDescriptionEntryFormat1(ctx.dataDescriptionEntryFormat1());
         }
@@ -111,7 +111,7 @@ public class SchemaBuilder implements CopyBookVisitor<Node> {
     }
 
     @Override
-    public Node visitDataDescriptionEntryFormat1(DataDescriptionEntryFormat1Context ctx) {
+    public CopybookNode visitDataDescriptionEntryFormat1(DataDescriptionEntryFormat1Context ctx) {
         if (ctx.LEVEL_NUMBER_77() != null) {
             // skipping level 77
             return null;
@@ -141,7 +141,7 @@ public class SchemaBuilder implements CopyBookVisitor<Node> {
     }
 
     @Override
-    public Node visitDataDescriptionEntryClauses(DataDescriptionEntryClausesContext ctx) {
+    public CopybookNode visitDataDescriptionEntryClauses(DataDescriptionEntryClausesContext ctx) {
         return null;
     }
 
@@ -154,197 +154,197 @@ public class SchemaBuilder implements CopyBookVisitor<Node> {
     }
 
     @Override
-    public Node visitDataDescriptionEntryFormat2(DataDescriptionEntryFormat2Context ctx) {
+    public CopybookNode visitDataDescriptionEntryFormat2(DataDescriptionEntryFormat2Context ctx) {
         return null;
     }
 
     @Override
-    public Node visitDataDescriptionEntryFormat3(DataDescriptionEntryFormat3Context ctx) {
+    public CopybookNode visitDataDescriptionEntryFormat3(DataDescriptionEntryFormat3Context ctx) {
         return null;
     }
 
     @Override
-    public Node visitDataBlankWhenZeroClause(DataBlankWhenZeroClauseContext ctx) {
+    public CopybookNode visitDataBlankWhenZeroClause(DataBlankWhenZeroClauseContext ctx) {
         return null;
     }
 
     @Override
-    public Node visitDataExternalClause(DataExternalClauseContext ctx) {
+    public CopybookNode visitDataExternalClause(DataExternalClauseContext ctx) {
         return null;
     }
 
     @Override
-    public Node visitDataGlobalClause(DataGlobalClauseContext ctx) {
+    public CopybookNode visitDataGlobalClause(DataGlobalClauseContext ctx) {
         return null;
     }
 
     @Override
-    public Node visitDataJustifiedClause(DataJustifiedClauseContext ctx) {
+    public CopybookNode visitDataJustifiedClause(DataJustifiedClauseContext ctx) {
         return null;
     }
 
     @Override
-    public Node visitDataOccursClause(DataOccursClauseContext ctx) {
+    public CopybookNode visitDataOccursClause(DataOccursClauseContext ctx) {
         return null;
     }
 
     @Override
-    public Node visitDataOccursTo(DataOccursToContext ctx) {
+    public CopybookNode visitDataOccursTo(DataOccursToContext ctx) {
         return null;
     }
 
     @Override
-    public Node visitDataOccursSort(DataOccursSortContext ctx) {
+    public CopybookNode visitDataOccursSort(DataOccursSortContext ctx) {
         return null;
     }
 
     @Override
-    public Node visitDataPictureClause(DataPictureClauseContext ctx) {
+    public CopybookNode visitDataPictureClause(DataPictureClauseContext ctx) {
         return null;
     }
 
     @Override
-    public Node visitPictureString(PictureStringContext ctx) {
+    public CopybookNode visitPictureString(PictureStringContext ctx) {
         return null;
     }
 
     @Override
-    public Node visitPictureChars(PictureCharsContext ctx) {
+    public CopybookNode visitPictureChars(PictureCharsContext ctx) {
         return null;
     }
 
     @Override
-    public Node visitPictureCardinality(PictureCardinalityContext ctx) {
+    public CopybookNode visitPictureCardinality(PictureCardinalityContext ctx) {
         return null;
     }
 
     @Override
-    public Node visitDataRedefinesClause(DataRedefinesClauseContext ctx) {
+    public CopybookNode visitDataRedefinesClause(DataRedefinesClauseContext ctx) {
         return null;
     }
 
     @Override
-    public Node visitDataRenamesClause(DataRenamesClauseContext ctx) {
+    public CopybookNode visitDataRenamesClause(DataRenamesClauseContext ctx) {
         return null;
     }
 
     @Override
-    public Node visitDataSignClause(DataSignClauseContext ctx) {
+    public CopybookNode visitDataSignClause(DataSignClauseContext ctx) {
         return null;
     }
 
     @Override
-    public Node visitDataSynchronizedClause(DataSynchronizedClauseContext ctx) {
+    public CopybookNode visitDataSynchronizedClause(DataSynchronizedClauseContext ctx) {
         return null;
     }
 
     @Override
-    public Node visitDataUsageClause(DataUsageClauseContext ctx) {
+    public CopybookNode visitDataUsageClause(DataUsageClauseContext ctx) {
         return null;
     }
 
     @Override
-    public Node visitDataValueClause(DataValueClauseContext ctx) {
+    public CopybookNode visitDataValueClause(DataValueClauseContext ctx) {
         return null;
     }
 
     @Override
-    public Node visitDataValueInterval(DataValueIntervalContext ctx) {
+    public CopybookNode visitDataValueInterval(DataValueIntervalContext ctx) {
         return null;
     }
 
     @Override
-    public Node visitDataValueIntervalFrom(DataValueIntervalFromContext ctx) {
+    public CopybookNode visitDataValueIntervalFrom(DataValueIntervalFromContext ctx) {
         return null;
     }
 
     @Override
-    public Node visitDataValueIntervalTo(DataValueIntervalToContext ctx) {
+    public CopybookNode visitDataValueIntervalTo(DataValueIntervalToContext ctx) {
         return null;
     }
 
     @Override
-    public Node visitIdentifier(IdentifierContext ctx) {
+    public CopybookNode visitIdentifier(IdentifierContext ctx) {
         return null;
     }
 
     @Override
-    public Node visitQualifiedDataName(QualifiedDataNameContext ctx) {
+    public CopybookNode visitQualifiedDataName(QualifiedDataNameContext ctx) {
         return null;
     }
 
     @Override
-    public Node visitConditionName(ConditionNameContext ctx) {
+    public CopybookNode visitConditionName(ConditionNameContext ctx) {
         return null;
     }
 
     @Override
-    public Node visitDataName(DataNameContext ctx) {
+    public CopybookNode visitDataName(DataNameContext ctx) {
         return null;
     }
 
     @Override
-    public Node visitIndexName(IndexNameContext ctx) {
+    public CopybookNode visitIndexName(IndexNameContext ctx) {
         return null;
     }
 
     @Override
-    public Node visitCobolWord(CobolWordContext ctx) {
+    public CopybookNode visitCobolWord(CobolWordContext ctx) {
         return null;
     }
 
     @Override
-    public Node visitLiteral(LiteralContext ctx) {
+    public CopybookNode visitLiteral(LiteralContext ctx) {
         return null;
     }
 
     @Override
-    public Node visitBooleanLiteral(BooleanLiteralContext ctx) {
+    public CopybookNode visitBooleanLiteral(BooleanLiteralContext ctx) {
         return null;
     }
 
     @Override
-    public Node visitNumericLiteral(NumericLiteralContext ctx) {
+    public CopybookNode visitNumericLiteral(NumericLiteralContext ctx) {
         return null;
     }
 
     @Override
-    public Node visitIntegerLiteral(IntegerLiteralContext ctx) {
+    public CopybookNode visitIntegerLiteral(IntegerLiteralContext ctx) {
         return null;
     }
 
     @Override
-    public Node visitCicsDfhRespLiteral(CicsDfhRespLiteralContext ctx) {
+    public CopybookNode visitCicsDfhRespLiteral(CicsDfhRespLiteralContext ctx) {
         return null;
     }
 
     @Override
-    public Node visitCicsDfhValueLiteral(CicsDfhValueLiteralContext ctx) {
+    public CopybookNode visitCicsDfhValueLiteral(CicsDfhValueLiteralContext ctx) {
         return null;
     }
 
     @Override
-    public Node visitFigurativeConstant(FigurativeConstantContext ctx) {
+    public CopybookNode visitFigurativeConstant(FigurativeConstantContext ctx) {
         return null;
     }
 
     @Override
-    public Node visit(ParseTree tree) {
+    public CopybookNode visit(ParseTree tree) {
         return null;
     }
 
     @Override
-    public Node visitChildren(RuleNode node) {
+    public CopybookNode visitChildren(RuleNode node) {
         return null;
     }
 
     @Override
-    public Node visitTerminal(TerminalNode node) {
+    public CopybookNode visitTerminal(TerminalNode node) {
         return null;
     }
 
     @Override
-    public Node visitErrorNode(ErrorNode node) {
+    public CopybookNode visitErrorNode(ErrorNode node) {
         return null;
     }
 }

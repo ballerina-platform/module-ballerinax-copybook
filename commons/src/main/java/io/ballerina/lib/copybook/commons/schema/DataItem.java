@@ -1,6 +1,6 @@
 package io.ballerina.lib.copybook.commons.schema;
 
-public class DataItem implements Node {
+public class DataItem implements CopybookNode {
     private final int level;
     private final String name;
     private final String picture;

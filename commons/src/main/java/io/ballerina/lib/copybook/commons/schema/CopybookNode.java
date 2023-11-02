@@ -1,6 +1,6 @@
 package io.ballerina.lib.copybook.commons.schema;
 
-public interface Node {
+public interface CopybookNode {
     int getLevel();
     String getName();
     int getOccurringCount();
