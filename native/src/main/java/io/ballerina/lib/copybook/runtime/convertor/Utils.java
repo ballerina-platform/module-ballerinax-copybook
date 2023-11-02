@@ -64,7 +64,7 @@ public final class Utils {
     }
 
 
-    private static BError createError(String message, BMap errorDetail) {
+    private static BError createError(String message, BMap<BString, Object> errorDetail) {
         return ErrorCreator.createError(getModule(), ERROR_TYPE_NAME, StringUtils.fromString(message), null,
                                         errorDetail);
     }
