@@ -1,4 +1,6 @@
-package io.ballerina.lib.schema;
+package io.ballerina.lib.copybook.commons.schema;
+
+import io.ballerina.lib.copybook.commons.generated.CopyBookParser;
 
 import java.util.List;
 

@@ -1,5 +1,5 @@
 // Generated from CopyBook.g4 by ANTLR 4.13.1
-package io.ballerina.lib.schema;
+package io.ballerina.lib.copybook.commons.generated;
 import org.antlr.v4.runtime.Lexer;
 import org.antlr.v4.runtime.CharStream;
 import org.antlr.v4.runtime.Token;

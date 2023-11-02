@@ -1,4 +1,4 @@
-package io.ballerina.lib.schema;
+package io.ballerina.lib.copybook.commons.schema;
 
 import org.antlr.v4.runtime.BaseErrorListener;
 import org.antlr.v4.runtime.RecognitionException;

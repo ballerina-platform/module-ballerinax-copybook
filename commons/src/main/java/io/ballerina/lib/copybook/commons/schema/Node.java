@@ -1,4 +1,4 @@
-package io.ballerina.lib.schema;
+package io.ballerina.lib.copybook.commons.schema;
 
 public interface Node {
     int getLevel();

@@ -1,5 +1,5 @@
 grammar CopyBook;
-@header {package io.ballerina.lib.schema;}
+@header {package io.ballerina.lib.copybook.commons.generated;}
 
 @members {
     int redefinesUsed = 0;

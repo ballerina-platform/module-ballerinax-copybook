@@ -1,4 +1,4 @@
-package io.ballerina.lib.convertor;
+package io.ballerina.lib.copybook.runtime.convertor;
 
 import io.ballerina.runtime.api.Environment;
 import io.ballerina.runtime.api.Module;

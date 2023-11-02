@@ -16,7 +16,7 @@
  * under the License.
  */
 
-package io.ballerina.lib.convertor;
+package io.ballerina.lib.copybook.runtime.convertor;
 
 import io.ballerina.runtime.api.Future;
 import io.ballerina.runtime.api.async.Callback;

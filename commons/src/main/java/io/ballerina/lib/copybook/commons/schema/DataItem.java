@@ -1,4 +1,4 @@
-package io.ballerina.lib.schema;
+package io.ballerina.lib.copybook.commons.schema;
 
 public class DataItem implements Node {
     private final int level;
@@ -22,8 +22,9 @@ public class DataItem implements Node {
         this.isSinged = Utils.isSigned(picture);
         this.floatingPointLength = floatingPointLength;
         this.redefinedItemName = redefinedItemName;
-        if (parent != null)
-         parent.addChild(this);
+        if (parent != null) {
+            parent.addChild(this);
+        }
     }
 
     @Override

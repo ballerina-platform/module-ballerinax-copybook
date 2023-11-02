@@ -1,10 +1,10 @@
-package io.ballerina.lib.convertor;
+package io.ballerina.lib.copybook.runtime.convertor;
 
-import io.ballerina.lib.schema.CopyBook;
-import io.ballerina.lib.schema.DataItem;
-import io.ballerina.lib.schema.GroupItem;
-import io.ballerina.lib.schema.Node;
-import io.ballerina.lib.schema.Schema;
+import io.ballerina.lib.copybook.commons.schema.CopyBook;
+import io.ballerina.lib.copybook.commons.schema.DataItem;
+import io.ballerina.lib.copybook.commons.schema.GroupItem;
+import io.ballerina.lib.copybook.commons.schema.Node;
+import io.ballerina.lib.copybook.commons.schema.Schema;
 import io.ballerina.runtime.api.Environment;
 import io.ballerina.runtime.api.Future;
 import io.ballerina.runtime.api.PredefinedTypes;
@@ -27,7 +27,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static io.ballerina.lib.convertor.ModuleUtils.getModule;
+import static io.ballerina.lib.copybook.runtime.convertor.ModuleUtils.getModule;
 
 public final class Utils {
 
@@ -46,7 +46,7 @@ public final class Utils {
         BObject schema = ValueCreator.createObjectValue(getModule(), SCHEMA_TYPE_NAME);
         try {
             Schema nativeSchema = CopyBook.parse(schemaPath.getValue());
-            if (nativeSchema.getErrors().size() > 0) {
+            if (!nativeSchema.getErrors().isEmpty()) {
                 return handleParsingError(nativeSchema);
             }
             schema.addNativeData(NATIVE_VALUE, nativeSchema);
@@ -57,8 +57,7 @@ public final class Utils {
     }
 
     private static BError handleParsingError(Schema nativeSchema) {
-        BString[] bStrings = nativeSchema.getErrors().stream().map(StringUtils::fromString).collect(Collectors.toList())
-                .toArray(new BString[0]);
+        BString[] bStrings = nativeSchema.getErrors().stream().map(StringUtils::fromString).toArray(BString[]::new);
         BArray errors = ValueCreator.createArrayValue(bStrings);
         BMap<BString, Object> errorDetail = ValueCreator.createMapValue();
         errorDetail.put(StringUtils.fromString("schema-errors"), errors);
