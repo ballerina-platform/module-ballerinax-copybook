@@ -2,13 +2,13 @@ package io.ballerina.lib.copybook.commons.schema;
 
 import java.util.List;
 
-public class GroupItem implements Node {
+public class GroupItem implements CopybookNode {
     private final int level;
     private final String name;
     private final int occurs;
     private final boolean redefines;
     private final GroupItem parent;
-    public List<Node> children;
+    public List<CopybookNode> children;
     private final String redefinedItemName;
 
     public GroupItem(int level, String name, int occurs, boolean redefines, String redefinedItemName,
@@ -18,15 +18,15 @@ public class GroupItem implements Node {
         this.occurs = occurs;
         this.parent = parent;
         this.redefines = redefines;
-        this.children = new NodeList();
+        this.children = new CopybookNodeList();
         this.redefinedItemName = redefinedItemName;
         if (parent != null) {
             this.parent.addChild(this);
         }
     }
 
-    public void addChild(Node node) {
-        this.children.add(node);
+    public void addChild(CopybookNode copybookNode) {
+        this.children.add(copybookNode);
     }
 
     @Override
@@ -46,7 +46,7 @@ public class GroupItem implements Node {
         return this.parent;
     }
 
-    public List<Node> getChildren() {
+    public List<CopybookNode> getChildren() {
         return this.children;
     }
 

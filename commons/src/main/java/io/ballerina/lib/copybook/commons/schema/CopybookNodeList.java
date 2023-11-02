@@ -8,43 +8,43 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
 
-public class NodeList implements List<Node> {
+public class CopybookNodeList implements List<CopybookNode> {
 
-    private final List<Node> nodeList = new ArrayList<>();
+    private final List<CopybookNode> copybookNodeList = new ArrayList<>();
 
     @Override
     public int size() {
-        return nodeList.size();
+        return copybookNodeList.size();
     }
 
     @Override
     public boolean isEmpty() {
-        return nodeList.isEmpty();
+        return copybookNodeList.isEmpty();
     }
 
     @Override
     public boolean contains(Object o) {
-        return nodeList.contains(o);
+        return copybookNodeList.contains(o);
     }
 
     @Override
-    public Iterator<Node> iterator() {
-        return nodeList.iterator();
+    public Iterator<CopybookNode> iterator() {
+        return copybookNodeList.iterator();
     }
 
     @Override
     public Object[] toArray() {
-        return nodeList.toArray();
+        return copybookNodeList.toArray();
     }
 
     @Override
     public <T> T[] toArray(T[] a) {
-        return nodeList.toArray(a);
+        return copybookNodeList.toArray(a);
     }
 
     @Override
-    public boolean add(Node node) {
-        return nodeList.add(node);
+    public boolean add(CopybookNode copybookNode) {
+        return copybookNodeList.add(copybookNode);
     }
 
     @Override
@@ -54,17 +54,17 @@ public class NodeList implements List<Node> {
 
     @Override
     public boolean containsAll(Collection<?> c) {
-        return new HashSet<>(nodeList).containsAll(c);
+        return new HashSet<>(copybookNodeList).containsAll(c);
     }
 
     @Override
-    public boolean addAll(Collection<? extends Node> c) {
-        return this.nodeList.addAll(c);
+    public boolean addAll(Collection<? extends CopybookNode> c) {
+        return this.copybookNodeList.addAll(c);
     }
 
     @Override
-    public boolean addAll(int index, Collection<? extends Node> c) {
-        return this.nodeList.addAll(index, c);
+    public boolean addAll(int index, Collection<? extends CopybookNode> c) {
+        return this.copybookNodeList.addAll(index, c);
     }
 
     @Override
@@ -83,22 +83,22 @@ public class NodeList implements List<Node> {
     }
 
     @Override
-    public Node get(int index) {
-        return this.nodeList.get(index);
+    public CopybookNode get(int index) {
+        return this.copybookNodeList.get(index);
     }
 
     @Override
-    public Node set(int index, Node element) {
+    public CopybookNode set(int index, CopybookNode element) {
         throw new UnsupportedOperationException("This operation is not permitted");
     }
 
     @Override
-    public void add(int index, Node element) {
-        this.nodeList.add(index, element);
+    public void add(int index, CopybookNode element) {
+        this.copybookNodeList.add(index, element);
     }
 
     @Override
-    public Node remove(int index) {
+    public CopybookNode remove(int index) {
         throw new UnsupportedOperationException("This operation is not permitted");
     }
 
@@ -113,22 +113,22 @@ public class NodeList implements List<Node> {
     }
 
     @Override
-    public ListIterator<Node> listIterator() {
-        return this.nodeList.listIterator();
+    public ListIterator<CopybookNode> listIterator() {
+        return this.copybookNodeList.listIterator();
     }
 
     @Override
-    public ListIterator<Node> listIterator(int index) {
-        return this.nodeList.listIterator(index);
+    public ListIterator<CopybookNode> listIterator(int index) {
+        return this.copybookNodeList.listIterator(index);
     }
 
     @Override
-    public List<Node> subList(int fromIndex, int toIndex) {
-        return this.nodeList.subList(fromIndex, toIndex);
+    public List<CopybookNode> subList(int fromIndex, int toIndex) {
+        return this.copybookNodeList.subList(fromIndex, toIndex);
     }
 
     @Override
     public String toString() {
-        return Arrays.toString(nodeList.toArray());
+        return Arrays.toString(copybookNodeList.toArray());
     }
 }

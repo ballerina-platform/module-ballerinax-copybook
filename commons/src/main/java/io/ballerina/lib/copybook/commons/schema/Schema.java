@@ -6,23 +6,23 @@ import java.util.List;
 import java.util.Map;
 
 public class Schema {
-    private final List<Node> typeDefinitions = new NodeList();
-    private final Map<String, Node> redefinedItems = new HashMap<>();
+    private final List<CopybookNode> typeDefinitions = new CopybookNodeList();
+    private final Map<String, CopybookNode> redefinedItems = new HashMap<>();
     private final List<String> errors = new ArrayList<>();
 
-    public void addTypeDefinition(Node node) {
-        this.typeDefinitions.add(node);
+    public void addTypeDefinition(CopybookNode copybookNode) {
+        this.typeDefinitions.add(copybookNode);
     }
 
-    public void addRedefinedItem(Node node) {
-        this.redefinedItems.put(node.getName(), node);
+    public void addRedefinedItem(CopybookNode copybookNode) {
+        this.redefinedItems.put(copybookNode.getName(), copybookNode);
     }
 
-    public List<Node> getTypeDefinitions() {
+    public List<CopybookNode> getTypeDefinitions() {
         return typeDefinitions;
     }
 
-    public Map<String, Node> getRedefinedItems() {
+    public Map<String, CopybookNode> getRedefinedItems() {
         return redefinedItems;
     }
 

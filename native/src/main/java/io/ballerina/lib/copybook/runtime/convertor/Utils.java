@@ -1,9 +1,9 @@
 package io.ballerina.lib.copybook.runtime.convertor;
 
 import io.ballerina.lib.copybook.commons.schema.CopyBook;
+import io.ballerina.lib.copybook.commons.schema.CopybookNode;
 import io.ballerina.lib.copybook.commons.schema.DataItem;
 import io.ballerina.lib.copybook.commons.schema.GroupItem;
-import io.ballerina.lib.copybook.commons.schema.Node;
 import io.ballerina.lib.copybook.commons.schema.Schema;
 import io.ballerina.runtime.api.Environment;
 import io.ballerina.runtime.api.Future;
@@ -66,7 +66,7 @@ public final class Utils {
 
     private static BError createError(String message, BMap<BString, Object> errorDetail) {
         return ErrorCreator.createError(getModule(), ERROR_TYPE_NAME, StringUtils.fromString(message), null,
-                                        errorDetail);
+                errorDetail);
     }
 
     private static BError createError(String message) {
@@ -75,18 +75,19 @@ public final class Utils {
 
 
     public static int getLevel(BObject bObject) {
-        Node node = (Node) bObject.getNativeData(NATIVE_VALUE);
-        return node.getLevel();
+        CopybookNode copybookNode = (CopybookNode) bObject.getNativeData(NATIVE_VALUE);
+        return copybookNode.getLevel();
     }
 
     public static BString getName(BObject bObject) {
-        Node node = (Node) bObject.getNativeData(NATIVE_VALUE);
-        return StringUtils.fromString(node.getName());
+        CopybookNode copybookNode = (CopybookNode) bObject.getNativeData(NATIVE_VALUE);
+        return StringUtils.fromString(copybookNode.getName());
     }
 
     public static Object getRedefinedItemName(BObject bObject) {
-        Node node = (Node) bObject.getNativeData(NATIVE_VALUE);
-        return node.getRedefinedItemName() == null ? null : StringUtils.fromString(node.getRedefinedItemName());
+        CopybookNode copybookNode = (CopybookNode) bObject.getNativeData(NATIVE_VALUE);
+        return copybookNode.getRedefinedItemName() == null ?
+                null : StringUtils.fromString(copybookNode.getRedefinedItemName());
     }
 
     public static boolean isNumeric(BObject bObject) {
@@ -110,7 +111,7 @@ public final class Utils {
     }
 
     public static int getElementCount(BObject bObject) {
-        Node nod = (Node) bObject.getNativeData(NATIVE_VALUE);
+        CopybookNode nod = (CopybookNode) bObject.getNativeData(NATIVE_VALUE);
         return nod.getOccurringCount();
     }
 
@@ -127,7 +128,7 @@ public final class Utils {
     public static BArray getChildren(BObject bObject) {
         GroupItem groupItem = (GroupItem) bObject.getNativeData(NATIVE_VALUE);
         List<BObject> children = new ArrayList<>();
-        for (Node child : groupItem.getChildren()) {
+        for (CopybookNode child : groupItem.getChildren()) {
             BObject element = child instanceof GroupItem ? ValueCreator.createObjectValue(getModule(), "GroupItem") :
                     ValueCreator.createObjectValue(getModule(), "DataItem");
             element.addNativeData(NATIVE_VALUE, child);
@@ -141,7 +142,7 @@ public final class Utils {
     public static BArray getTypeDefinitions(BObject bObject) {
         Schema schema = (Schema) bObject.getNativeData(NATIVE_VALUE);
         List<BObject> children = new ArrayList<>();
-        for (Node child : schema.getTypeDefinitions()) {
+        for (CopybookNode child : schema.getTypeDefinitions()) {
             BObject element = child instanceof GroupItem ? ValueCreator.createObjectValue(getModule(), "GroupItem") :
                     ValueCreator.createObjectValue(getModule(), "DataItem");
             element.addNativeData(NATIVE_VALUE, child);
@@ -157,7 +158,7 @@ public final class Utils {
         ObjectType constraintType = TypeCreator.createObjectType("Node", getModule(), 0);
         MapType mapType = TypeCreator.createMapType(constraintType);
         BMap<BString, Object> bMap = ValueCreator.createMapValue(mapType);
-        for (Node child : schema.getRedefinedItems().values()) {
+        for (CopybookNode child : schema.getRedefinedItems().values()) {
             BObject element = child instanceof GroupItem ? ValueCreator.createObjectValue(getModule(), "GroupItem") :
                     ValueCreator.createObjectValue(getModule(), "DataItem");
             element.addNativeData(NATIVE_VALUE, child);
@@ -169,7 +170,7 @@ public final class Utils {
     public static BArray getDataDescriptions(BObject bObject) {
         Schema schema = (Schema) bObject.getNativeData(NATIVE_VALUE);
         List<BObject> children = new ArrayList<>();
-        for (Node child : schema.getTypeDefinitions()) {
+        for (CopybookNode child : schema.getTypeDefinitions()) {
             BObject element = child instanceof GroupItem ?
                     ValueCreator.createObjectValue(getModule(), GROUP_ITEM_TYPE_NAME) :
                     ValueCreator.createObjectValue(getModule(), DATA_ITEM_TYPE_NAME);
@@ -191,7 +192,7 @@ public final class Utils {
         ExecutionCallback callback = new ExecutionCallback(balFuture);
         Object[] paramFeed = {copybookData, true, typedesc, true};
         env.getRuntime().invokeMethodAsyncConcurrently(convertor, TO_RECORD_METHOD_NAME, null, null, callback, null,
-                                                       PredefinedTypes.TYPE_NULL, paramFeed);
+                PredefinedTypes.TYPE_NULL, paramFeed);
         return null;
     }
 }
