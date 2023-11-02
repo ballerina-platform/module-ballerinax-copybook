@@ -22,15 +22,13 @@ plugins {
     id 'com.github.spotbugs'
 }
 
-description = 'Ballerina - Copybook Native'
+description = 'Ballerina - Copybook Commons'
 
 dependencies {
     checkstyle project(':checkstyle')
     checkstyle "com.puppycrawl.tools:checkstyle:${checkstylePluginVersion}"
 
-    implementation group: 'org.ballerinalang', name: 'ballerina-runtime', version: "${ballerinaLangVersion}"
-
-    implementation project(':copybook-commons')
+    implementation group: 'org.antlr', name: 'antlr4-runtime', version: "${antlrVersion}"
 }
 
 def excludePattern = '**/module-info.java'
@@ -41,21 +39,49 @@ tasks.withType(Checkstyle) {
 checkstyle {
     toolVersion "${project.checkstylePluginVersion}"
     configFile rootProject.file("build-config/checkstyle/build/checkstyle.xml")
-    configProperties = ["suppressionFile": file("${rootDir}/build-config/checkstyle/build/suppressions.xml")]
+    configProperties = ["suppressionFile" : file("${rootDir}/build-config/checkstyle/build/suppressions.xml")]
 }
 
-checkstyleMain.dependsOn(":checkstyle:downloadCheckstyleRuleFiles")
+checkstyleMain {
+    dependsOn(":checkstyle:downloadCheckstyleRuleFiles")
+
+    exclude '**/io/ballerina/lib/copybook/commons/generated/**'
+}
 
 spotbugsMain {
+    enabled = false
     effort "max"
     reportLevel "low"
     reportsDir = file("$project.buildDir/reports/spotbugs")
     reports {
         html.enabled true
+        text.enabled = true
     }
     def excludeFile = file("${rootDir}/spotbugs-exclude.xml")
-    if (excludeFile.exists()) {
+    if(excludeFile.exists()) {
         excludeFilter = excludeFile
+    }
+}
+
+publishing {
+    publications {
+        mavenJava(MavenPublication) {
+            groupId project.group
+            artifactId "graphql-commons"
+            version = project.version
+            artifact jar
+        }
+    }
+
+    repositories {
+        maven {
+            name = "GitHubPackages"
+            url = uri("https://maven.pkg.github.com/ballerina-platform/module-ballerina-graphql")
+            credentials {
+                username = System.getenv("publishUser")
+                password = System.getenv("publishPAT")
+            }
+        }
     }
 }
 

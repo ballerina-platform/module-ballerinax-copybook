@@ -45,7 +45,7 @@ public isolated class Converter {
     }
 
     public isolated function fromCopybook(string copybookData, typedesc<record {}> t = <>) returns t|error = @java:Method {
-        'class: "io.ballerina.lib.convertor.Utils"
+        'class: "io.ballerina.lib.copybook.runtime.convertor.Utils"
     } external;
 
     private isolated function toRecord(string copybookData, typedesc<record {}> t) returns record {}|error {
@@ -55,5 +55,5 @@ public isolated class Converter {
 }
 
 isolated function parseSchemaFile(string schemaFilePath) returns Schema|Error = @java:Method {
-    'class: "io.ballerina.lib.convertor.Utils"
+    'class: "io.ballerina.lib.copybook.runtime.convertor.Utils"
 } external;
