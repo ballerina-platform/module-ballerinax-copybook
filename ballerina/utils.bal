@@ -120,5 +120,5 @@ isolated function decimalToString(decimal value) returns string {
 }
 
 isolated function externToString(Node node) returns string = @java:Method {
-    'class: "io.ballerina.lib.convertor.Utils"
+    'class: "io.ballerina.lib.copybook.runtime.convertor.Utils"
 } external;
