@@ -26,8 +26,8 @@ import org.antlr.v4.runtime.CommonTokenStream;
 import java.io.FileInputStream;
 import java.io.IOException;
 
-public class CopyBook {
-    private CopyBook() {
+public class Copybook {
+    private Copybook() {
     }
 
     public static Schema parse(String schemaPath) throws IOException {
@@ -36,7 +36,7 @@ public class CopyBook {
         CopybookParser parser = new CopybookParser(tokens);
 
         parser.removeErrorListeners();
-        CopyBookErrorListener errorListener = new CopyBookErrorListener();
+        CopybookErrorListener errorListener = new CopybookErrorListener();
         parser.addErrorListener(errorListener);
 
         CopybookParser.StartRuleContext startRule = parser.startRule();

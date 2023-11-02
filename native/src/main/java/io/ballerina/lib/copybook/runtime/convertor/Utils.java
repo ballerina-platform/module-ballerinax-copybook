@@ -18,7 +18,7 @@
 
 package io.ballerina.lib.copybook.runtime.convertor;
 
-import io.ballerina.lib.copybook.commons.schema.CopyBook;
+import io.ballerina.lib.copybook.commons.schema.Copybook;
 import io.ballerina.lib.copybook.commons.schema.CopybookNode;
 import io.ballerina.lib.copybook.commons.schema.DataItem;
 import io.ballerina.lib.copybook.commons.schema.GroupItem;
@@ -62,7 +62,7 @@ public final class Utils {
     public static Object parseSchemaFile(BString schemaPath) {
         BObject schema = ValueCreator.createObjectValue(getModule(), SCHEMA_TYPE_NAME);
         try {
-            Schema nativeSchema = CopyBook.parse(schemaPath.getValue());
+            Schema nativeSchema = Copybook.parse(schemaPath.getValue());
             if (!nativeSchema.getErrors().isEmpty()) {
                 return handleParsingError(nativeSchema);
             }
