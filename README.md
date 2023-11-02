@@ -1,2 +1,3 @@
-# module-ballerinax-copybook
-This Ballerina module facilitates the conversion of copybook data to JSON and vice versa.
+# Ballerina Copybook Package
+
+This Ballerina package facilitates the conversion of copybook data to JSON or Ballerina records and vice versa.
