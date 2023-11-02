@@ -22,6 +22,7 @@
 *.zip
 *.tar.gz
 *.rar
+*.bin
 
 # System files
 .DS_Store
@@ -39,5 +40,4 @@ hs_err_pid*
 # Build Files
 .gradle
 target
-build
-bin
+**/build

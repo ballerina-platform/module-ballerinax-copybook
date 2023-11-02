@@ -25,7 +25,6 @@ import io.ballerina.runtime.api.values.BTypedesc;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import static io.ballerina.lib.copybook.runtime.convertor.ModuleUtils.getModule;
 
