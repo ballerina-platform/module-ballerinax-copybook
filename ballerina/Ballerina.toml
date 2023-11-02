@@ -1,10 +1,10 @@
 [package]
 org = "ballerinax"
 name = "copybook"
-version = "1.10.1"
+version = "0.1.0"
 authors = ["Ballerina"]
 keywords = ["copybook", "serdes", "cobol", "mainframe"]
-repository = "https://github.com/ballerina-platform/module-ballerina-graphql"
+repository = "https://github.com/ballerina-platform/module-ballerinax-copybook"
 icon = "icon.png"
 license = ["Apache-2.0"]
 distribution = "2201.8.0"
@@ -15,14 +15,14 @@ graalvmCompatible = true
 [[platform.java17.dependency]]
 groupId = "io.ballerina.lib"
 artifactId = "copybook-native"
-version = "1.10.1-SNAPSHOT"
-path="../native/build/libs/copybook-native-1.10.1-SNAPSHOT.jar"
+version = "0.1.0-SNAPSHOT"
+path="../native/build/libs/copybook-native-0.1.0-SNAPSHOT.jar"
 
 [[platform.java17.dependency]]
 groupId = "io.ballerina.lib"
 artifactId = "copybook-commons"
-version = "1.10.1"
-path = "../commons/build/libs/copybook-commons-1.10.1-SNAPSHOT.jar"
+version = "0.1.0"
+path = "../commons/build/libs/copybook-commons-0.1.0-SNAPSHOT.jar"
 
 [[platform.java17.dependency]]
 groupId = "org.antlr"

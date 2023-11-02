@@ -55,7 +55,6 @@ spotbugsMain {
     reportsDir = file("$project.buildDir/reports/spotbugs")
     reports {
         html.enabled true
-        text.enabled = true
     }
     def excludeFile = file("${rootDir}/spotbugs-exclude.xml")
     if(excludeFile.exists()) {
@@ -67,7 +66,7 @@ publishing {
     publications {
         mavenJava(MavenPublication) {
             groupId project.group
-            artifactId "graphql-commons"
+            artifactId "copybook-commons"
             version = project.version
             artifact jar
         }
@@ -76,7 +75,7 @@ publishing {
     repositories {
         maven {
             name = "GitHubPackages"
-            url = uri("https://maven.pkg.github.com/ballerina-platform/module-ballerina-graphql")
+            url = uri("https://maven.pkg.github.com/ballerina-platform/module-ballerinax-copybook")
             credentials {
                 username = System.getenv("publishUser")
                 password = System.getenv("publishPAT")
