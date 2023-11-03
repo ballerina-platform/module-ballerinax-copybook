@@ -21,14 +21,16 @@ class CopybookReader {
     private final map<string> redfinedValues = {};
     private final map<Node> redefinedItems;
     private Iterator copybookIterator;
+    private final string? targetRecordName;
 
-    isolated function init(Iterator copybookIterator, Schema schema) {
+    isolated function init(Iterator copybookIterator, Schema schema, string? targetRecordName = ()) {
         self.copybookIterator = copybookIterator;
         self.redefinedItems = schema.getRedefinedItems();
+        self.targetRecordName = targetRecordName;
     }
 
     isolated function visitSchema(Schema schema, anydata data = ()) {
-        Node typeDef = schema.getTypeDefinitions()[0];
+        Node typeDef = getTypeDefinition(schema, self.targetRecordName);
         if typeDef is GroupItem {
             self.visitGroupItem(typeDef);
         } else if typeDef is DataItem {

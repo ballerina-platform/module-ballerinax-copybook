@@ -1,29 +1,16 @@
-// Generated from CopyBook.g4 by ANTLR 4.13.1
+// Generated from Copybook.g4 by ANTLR 4.13.1
 package io.ballerina.lib.copybook.commons.generated;
-
-import org.antlr.v4.runtime.FailedPredicateException;
-import org.antlr.v4.runtime.NoViableAltException;
-import org.antlr.v4.runtime.Parser;
-import org.antlr.v4.runtime.ParserRuleContext;
-import org.antlr.v4.runtime.RecognitionException;
-import org.antlr.v4.runtime.RuleContext;
-import org.antlr.v4.runtime.RuntimeMetaData;
-import org.antlr.v4.runtime.Token;
-import org.antlr.v4.runtime.TokenStream;
-import org.antlr.v4.runtime.Vocabulary;
-import org.antlr.v4.runtime.VocabularyImpl;
-import org.antlr.v4.runtime.atn.ATN;
-import org.antlr.v4.runtime.atn.ATNDeserializer;
-import org.antlr.v4.runtime.atn.ParserATNSimulator;
-import org.antlr.v4.runtime.atn.PredictionContextCache;
+import org.antlr.v4.runtime.atn.*;
 import org.antlr.v4.runtime.dfa.DFA;
-import org.antlr.v4.runtime.tree.ParseTreeVisitor;
-import org.antlr.v4.runtime.tree.TerminalNode;
-
+import org.antlr.v4.runtime.*;
+import org.antlr.v4.runtime.misc.*;
+import org.antlr.v4.runtime.tree.*;
 import java.util.List;
+import java.util.Iterator;
+import java.util.ArrayList;
 
 @SuppressWarnings({"all", "warnings", "unchecked", "unused", "cast", "CheckReturnValue"})
-public class CopyBookParser extends Parser {
+public class CopybookParser extends Parser {
 	static { RuntimeMetaData.checkVersion("4.13.1", RuntimeMetaData.VERSION); }
 
 	protected static final DFA[] _decisionToDFA;
@@ -156,7 +143,7 @@ public class CopyBookParser extends Parser {
 	}
 
 	@Override
-	public String getGrammarFileName() { return "CopyBook.g4"; }
+	public String getGrammarFileName() { return "Copybook.g4"; }
 
 	@Override
 	public String[] getRuleNames() { return ruleNames; }
@@ -180,7 +167,7 @@ public class CopyBookParser extends Parser {
 	    int usageUsed = 0;
 	    int dataValueUsed = 0;
 
-	public CopyBookParser(TokenStream input) {
+	public CopybookParser(TokenStream input) {
 		super(input);
 		_interp = new ParserATNSimulator(this,_ATN,_decisionToDFA,_sharedContextCache);
 	}
@@ -190,14 +177,22 @@ public class CopyBookParser extends Parser {
 		public DataDescriptionContext dataDescription() {
 			return getRuleContext(DataDescriptionContext.class,0);
 		}
-		public TerminalNode EOF() { return getToken(CopyBookParser.EOF, 0); }
+		public TerminalNode EOF() { return getToken(CopybookParser.EOF, 0); }
 		public StartRuleContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
 		@Override public int getRuleIndex() { return RULE_startRule; }
 		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof CopybookListener ) ((CopybookListener)listener).enterStartRule(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof CopybookListener ) ((CopybookListener)listener).exitStartRule(this);
+		}
+		@Override
 		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof CopyBookVisitor ) return ((CopyBookVisitor<? extends T>)visitor).visitStartRule(this);
+			if ( visitor instanceof CopybookVisitor ) return ((CopybookVisitor<? extends T>)visitor).visitStartRule(this);
 			else return visitor.visitChildren(this);
 		}
 	}
@@ -238,8 +233,16 @@ public class CopyBookParser extends Parser {
 		}
 		@Override public int getRuleIndex() { return RULE_dataDescription; }
 		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof CopybookListener ) ((CopybookListener)listener).enterDataDescription(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof CopybookListener ) ((CopybookListener)listener).exitDataDescription(this);
+		}
+		@Override
 		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof CopyBookVisitor ) return ((CopyBookVisitor<? extends T>)visitor).visitDataDescription(this);
+			if ( visitor instanceof CopybookVisitor ) return ((CopybookVisitor<? extends T>)visitor).visitDataDescription(this);
 			else return visitor.visitChildren(this);
 		}
 	}
@@ -289,14 +292,22 @@ public class CopyBookParser extends Parser {
 		public DataDescriptionEntryFormat3Context dataDescriptionEntryFormat3() {
 			return getRuleContext(DataDescriptionEntryFormat3Context.class,0);
 		}
-		public TerminalNode COMMENT() { return getToken(CopyBookParser.COMMENT, 0); }
+		public TerminalNode COMMENT() { return getToken(CopybookParser.COMMENT, 0); }
 		public DataDescriptionEntryContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
 		@Override public int getRuleIndex() { return RULE_dataDescriptionEntry; }
 		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof CopybookListener ) ((CopybookListener)listener).enterDataDescriptionEntry(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof CopybookListener ) ((CopybookListener)listener).exitDataDescriptionEntry(this);
+		}
+		@Override
 		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof CopyBookVisitor ) return ((CopyBookVisitor<? extends T>)visitor).visitDataDescriptionEntry(this);
+			if ( visitor instanceof CopybookVisitor ) return ((CopybookVisitor<? extends T>)visitor).visitDataDescriptionEntry(this);
 			else return visitor.visitChildren(this);
 		}
 	}
@@ -357,10 +368,10 @@ public class CopyBookParser extends Parser {
 		public DataDescriptionEntryClausesContext dataDescriptionEntryClauses() {
 			return getRuleContext(DataDescriptionEntryClausesContext.class,0);
 		}
-		public TerminalNode DOT_FS() { return getToken(CopyBookParser.DOT_FS, 0); }
-		public TerminalNode INTEGERLITERAL() { return getToken(CopyBookParser.INTEGERLITERAL, 0); }
-		public TerminalNode LEVEL_NUMBER_77() { return getToken(CopyBookParser.LEVEL_NUMBER_77, 0); }
-		public TerminalNode FILLER() { return getToken(CopyBookParser.FILLER, 0); }
+		public TerminalNode DOT_FS() { return getToken(CopybookParser.DOT_FS, 0); }
+		public TerminalNode INTEGERLITERAL() { return getToken(CopybookParser.INTEGERLITERAL, 0); }
+		public TerminalNode LEVEL_NUMBER_77() { return getToken(CopybookParser.LEVEL_NUMBER_77, 0); }
+		public TerminalNode FILLER() { return getToken(CopybookParser.FILLER, 0); }
 		public DataNameContext dataName() {
 			return getRuleContext(DataNameContext.class,0);
 		}
@@ -369,8 +380,16 @@ public class CopyBookParser extends Parser {
 		}
 		@Override public int getRuleIndex() { return RULE_dataDescriptionEntryFormat1; }
 		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof CopybookListener ) ((CopybookListener)listener).enterDataDescriptionEntryFormat1(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof CopybookListener ) ((CopybookListener)listener).exitDataDescriptionEntryFormat1(this);
+		}
+		@Override
 		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof CopyBookVisitor ) return ((CopyBookVisitor<? extends T>)visitor).visitDataDescriptionEntryFormat1(this);
+			if ( visitor instanceof CopybookVisitor ) return ((CopybookVisitor<? extends T>)visitor).visitDataDescriptionEntryFormat1(this);
 			else return visitor.visitChildren(this);
 		}
 	}
@@ -498,8 +517,16 @@ public class CopyBookParser extends Parser {
 		}
 		@Override public int getRuleIndex() { return RULE_dataDescriptionEntryClauses; }
 		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof CopybookListener ) ((CopybookListener)listener).enterDataDescriptionEntryClauses(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof CopybookListener ) ((CopybookListener)listener).exitDataDescriptionEntryClauses(this);
+		}
+		@Override
 		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof CopyBookVisitor ) return ((CopyBookVisitor<? extends T>)visitor).visitDataDescriptionEntryClauses(this);
+			if ( visitor instanceof CopybookVisitor ) return ((CopybookVisitor<? extends T>)visitor).visitDataDescriptionEntryClauses(this);
 			else return visitor.visitChildren(this);
 		}
 	}
@@ -654,21 +681,29 @@ public class CopyBookParser extends Parser {
 
 	@SuppressWarnings("CheckReturnValue")
 	public static class DataDescriptionEntryFormat2Context extends ParserRuleContext {
-		public TerminalNode LEVEL_NUMBER_66() { return getToken(CopyBookParser.LEVEL_NUMBER_66, 0); }
+		public TerminalNode LEVEL_NUMBER_66() { return getToken(CopybookParser.LEVEL_NUMBER_66, 0); }
 		public DataNameContext dataName() {
 			return getRuleContext(DataNameContext.class,0);
 		}
 		public DataRenamesClauseContext dataRenamesClause() {
 			return getRuleContext(DataRenamesClauseContext.class,0);
 		}
-		public TerminalNode DOT_FS() { return getToken(CopyBookParser.DOT_FS, 0); }
+		public TerminalNode DOT_FS() { return getToken(CopybookParser.DOT_FS, 0); }
 		public DataDescriptionEntryFormat2Context(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
 		@Override public int getRuleIndex() { return RULE_dataDescriptionEntryFormat2; }
 		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof CopybookListener ) ((CopybookListener)listener).enterDataDescriptionEntryFormat2(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof CopybookListener ) ((CopybookListener)listener).exitDataDescriptionEntryFormat2(this);
+		}
+		@Override
 		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof CopyBookVisitor ) return ((CopyBookVisitor<? extends T>)visitor).visitDataDescriptionEntryFormat2(this);
+			if ( visitor instanceof CopybookVisitor ) return ((CopybookVisitor<? extends T>)visitor).visitDataDescriptionEntryFormat2(this);
 			else return visitor.visitChildren(this);
 		}
 	}
@@ -702,21 +737,29 @@ public class CopyBookParser extends Parser {
 
 	@SuppressWarnings("CheckReturnValue")
 	public static class DataDescriptionEntryFormat3Context extends ParserRuleContext {
-		public TerminalNode LEVEL_NUMBER_88() { return getToken(CopyBookParser.LEVEL_NUMBER_88, 0); }
+		public TerminalNode LEVEL_NUMBER_88() { return getToken(CopybookParser.LEVEL_NUMBER_88, 0); }
 		public ConditionNameContext conditionName() {
 			return getRuleContext(ConditionNameContext.class,0);
 		}
 		public DataValueClauseContext dataValueClause() {
 			return getRuleContext(DataValueClauseContext.class,0);
 		}
-		public TerminalNode DOT_FS() { return getToken(CopyBookParser.DOT_FS, 0); }
+		public TerminalNode DOT_FS() { return getToken(CopybookParser.DOT_FS, 0); }
 		public DataDescriptionEntryFormat3Context(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
 		@Override public int getRuleIndex() { return RULE_dataDescriptionEntryFormat3; }
 		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof CopybookListener ) ((CopybookListener)listener).enterDataDescriptionEntryFormat3(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof CopybookListener ) ((CopybookListener)listener).exitDataDescriptionEntryFormat3(this);
+		}
+		@Override
 		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof CopyBookVisitor ) return ((CopyBookVisitor<? extends T>)visitor).visitDataDescriptionEntryFormat3(this);
+			if ( visitor instanceof CopybookVisitor ) return ((CopybookVisitor<? extends T>)visitor).visitDataDescriptionEntryFormat3(this);
 			else return visitor.visitChildren(this);
 		}
 	}
@@ -750,18 +793,26 @@ public class CopyBookParser extends Parser {
 
 	@SuppressWarnings("CheckReturnValue")
 	public static class DataBlankWhenZeroClauseContext extends ParserRuleContext {
-		public TerminalNode BLANK() { return getToken(CopyBookParser.BLANK, 0); }
-		public TerminalNode ZERO() { return getToken(CopyBookParser.ZERO, 0); }
-		public TerminalNode ZEROS() { return getToken(CopyBookParser.ZEROS, 0); }
-		public TerminalNode ZEROES() { return getToken(CopyBookParser.ZEROES, 0); }
-		public TerminalNode WHEN() { return getToken(CopyBookParser.WHEN, 0); }
+		public TerminalNode BLANK() { return getToken(CopybookParser.BLANK, 0); }
+		public TerminalNode ZERO() { return getToken(CopybookParser.ZERO, 0); }
+		public TerminalNode ZEROS() { return getToken(CopybookParser.ZEROS, 0); }
+		public TerminalNode ZEROES() { return getToken(CopybookParser.ZEROES, 0); }
+		public TerminalNode WHEN() { return getToken(CopybookParser.WHEN, 0); }
 		public DataBlankWhenZeroClauseContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
 		@Override public int getRuleIndex() { return RULE_dataBlankWhenZeroClause; }
 		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof CopybookListener ) ((CopybookListener)listener).enterDataBlankWhenZeroClause(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof CopybookListener ) ((CopybookListener)listener).exitDataBlankWhenZeroClause(this);
+		}
+		@Override
 		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof CopyBookVisitor ) return ((CopyBookVisitor<? extends T>)visitor).visitDataBlankWhenZeroClause(this);
+			if ( visitor instanceof CopybookVisitor ) return ((CopybookVisitor<? extends T>)visitor).visitDataBlankWhenZeroClause(this);
 			else return visitor.visitChildren(this);
 		}
 	}
@@ -810,9 +861,9 @@ public class CopyBookParser extends Parser {
 
 	@SuppressWarnings("CheckReturnValue")
 	public static class DataExternalClauseContext extends ParserRuleContext {
-		public TerminalNode EXTERNAL() { return getToken(CopyBookParser.EXTERNAL, 0); }
-		public TerminalNode IS() { return getToken(CopyBookParser.IS, 0); }
-		public TerminalNode BY() { return getToken(CopyBookParser.BY, 0); }
+		public TerminalNode EXTERNAL() { return getToken(CopybookParser.EXTERNAL, 0); }
+		public TerminalNode IS() { return getToken(CopybookParser.IS, 0); }
+		public TerminalNode BY() { return getToken(CopybookParser.BY, 0); }
 		public LiteralContext literal() {
 			return getRuleContext(LiteralContext.class,0);
 		}
@@ -821,8 +872,16 @@ public class CopyBookParser extends Parser {
 		}
 		@Override public int getRuleIndex() { return RULE_dataExternalClause; }
 		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof CopybookListener ) ((CopybookListener)listener).enterDataExternalClause(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof CopybookListener ) ((CopybookListener)listener).exitDataExternalClause(this);
+		}
+		@Override
 		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof CopyBookVisitor ) return ((CopyBookVisitor<? extends T>)visitor).visitDataExternalClause(this);
+			if ( visitor instanceof CopybookVisitor ) return ((CopybookVisitor<? extends T>)visitor).visitDataExternalClause(this);
 			else return visitor.visitChildren(this);
 		}
 	}
@@ -873,15 +932,23 @@ public class CopyBookParser extends Parser {
 
 	@SuppressWarnings("CheckReturnValue")
 	public static class DataGlobalClauseContext extends ParserRuleContext {
-		public TerminalNode GLOBAL() { return getToken(CopyBookParser.GLOBAL, 0); }
-		public TerminalNode IS() { return getToken(CopyBookParser.IS, 0); }
+		public TerminalNode GLOBAL() { return getToken(CopybookParser.GLOBAL, 0); }
+		public TerminalNode IS() { return getToken(CopybookParser.IS, 0); }
 		public DataGlobalClauseContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
 		@Override public int getRuleIndex() { return RULE_dataGlobalClause; }
 		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof CopybookListener ) ((CopybookListener)listener).enterDataGlobalClause(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof CopybookListener ) ((CopybookListener)listener).exitDataGlobalClause(this);
+		}
+		@Override
 		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof CopyBookVisitor ) return ((CopyBookVisitor<? extends T>)visitor).visitDataGlobalClause(this);
+			if ( visitor instanceof CopybookVisitor ) return ((CopybookVisitor<? extends T>)visitor).visitDataGlobalClause(this);
 			else return visitor.visitChildren(this);
 		}
 	}
@@ -920,16 +987,24 @@ public class CopyBookParser extends Parser {
 
 	@SuppressWarnings("CheckReturnValue")
 	public static class DataJustifiedClauseContext extends ParserRuleContext {
-		public TerminalNode JUSTIFIED() { return getToken(CopyBookParser.JUSTIFIED, 0); }
-		public TerminalNode JUST() { return getToken(CopyBookParser.JUST, 0); }
-		public TerminalNode RIGHT() { return getToken(CopyBookParser.RIGHT, 0); }
+		public TerminalNode JUSTIFIED() { return getToken(CopybookParser.JUSTIFIED, 0); }
+		public TerminalNode JUST() { return getToken(CopybookParser.JUST, 0); }
+		public TerminalNode RIGHT() { return getToken(CopybookParser.RIGHT, 0); }
 		public DataJustifiedClauseContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
 		@Override public int getRuleIndex() { return RULE_dataJustifiedClause; }
 		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof CopybookListener ) ((CopybookListener)listener).enterDataJustifiedClause(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof CopybookListener ) ((CopybookListener)listener).exitDataJustifiedClause(this);
+		}
+		@Override
 		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof CopyBookVisitor ) return ((CopyBookVisitor<? extends T>)visitor).visitDataJustifiedClause(this);
+			if ( visitor instanceof CopybookVisitor ) return ((CopybookVisitor<? extends T>)visitor).visitDataJustifiedClause(this);
 			else return visitor.visitChildren(this);
 		}
 	}
@@ -976,15 +1051,15 @@ public class CopyBookParser extends Parser {
 
 	@SuppressWarnings("CheckReturnValue")
 	public static class DataOccursClauseContext extends ParserRuleContext {
-		public TerminalNode OCCURS() { return getToken(CopyBookParser.OCCURS, 0); }
+		public TerminalNode OCCURS() { return getToken(CopybookParser.OCCURS, 0); }
 		public IntegerLiteralContext integerLiteral() {
 			return getRuleContext(IntegerLiteralContext.class,0);
 		}
 		public DataOccursToContext dataOccursTo() {
 			return getRuleContext(DataOccursToContext.class,0);
 		}
-		public TerminalNode TIMES() { return getToken(CopyBookParser.TIMES, 0); }
-		public TerminalNode DEPENDING() { return getToken(CopyBookParser.DEPENDING, 0); }
+		public TerminalNode TIMES() { return getToken(CopybookParser.TIMES, 0); }
+		public TerminalNode DEPENDING() { return getToken(CopybookParser.DEPENDING, 0); }
 		public QualifiedDataNameContext qualifiedDataName() {
 			return getRuleContext(QualifiedDataNameContext.class,0);
 		}
@@ -994,10 +1069,10 @@ public class CopyBookParser extends Parser {
 		public DataOccursSortContext dataOccursSort(int i) {
 			return getRuleContext(DataOccursSortContext.class,i);
 		}
-		public TerminalNode INDEXED() { return getToken(CopyBookParser.INDEXED, 0); }
-		public TerminalNode ON() { return getToken(CopyBookParser.ON, 0); }
-		public TerminalNode BY() { return getToken(CopyBookParser.BY, 0); }
-		public TerminalNode LOCAL() { return getToken(CopyBookParser.LOCAL, 0); }
+		public TerminalNode INDEXED() { return getToken(CopybookParser.INDEXED, 0); }
+		public TerminalNode ON() { return getToken(CopybookParser.ON, 0); }
+		public TerminalNode BY() { return getToken(CopybookParser.BY, 0); }
+		public TerminalNode LOCAL() { return getToken(CopybookParser.LOCAL, 0); }
 		public List<IndexNameContext> indexName() {
 			return getRuleContexts(IndexNameContext.class);
 		}
@@ -1009,8 +1084,16 @@ public class CopyBookParser extends Parser {
 		}
 		@Override public int getRuleIndex() { return RULE_dataOccursClause; }
 		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof CopybookListener ) ((CopybookListener)listener).enterDataOccursClause(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof CopybookListener ) ((CopybookListener)listener).exitDataOccursClause(this);
+		}
+		@Override
 		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof CopyBookVisitor ) return ((CopyBookVisitor<? extends T>)visitor).visitDataOccursClause(this);
+			if ( visitor instanceof CopybookVisitor ) return ((CopybookVisitor<? extends T>)visitor).visitDataOccursClause(this);
 			else return visitor.visitChildren(this);
 		}
 	}
@@ -1150,7 +1233,7 @@ public class CopyBookParser extends Parser {
 
 	@SuppressWarnings("CheckReturnValue")
 	public static class DataOccursToContext extends ParserRuleContext {
-		public TerminalNode TO() { return getToken(CopyBookParser.TO, 0); }
+		public TerminalNode TO() { return getToken(CopybookParser.TO, 0); }
 		public IntegerLiteralContext integerLiteral() {
 			return getRuleContext(IntegerLiteralContext.class,0);
 		}
@@ -1159,8 +1242,16 @@ public class CopyBookParser extends Parser {
 		}
 		@Override public int getRuleIndex() { return RULE_dataOccursTo; }
 		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof CopybookListener ) ((CopybookListener)listener).enterDataOccursTo(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof CopybookListener ) ((CopybookListener)listener).exitDataOccursTo(this);
+		}
+		@Override
 		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof CopyBookVisitor ) return ((CopyBookVisitor<? extends T>)visitor).visitDataOccursTo(this);
+			if ( visitor instanceof CopybookVisitor ) return ((CopybookVisitor<? extends T>)visitor).visitDataOccursTo(this);
 			else return visitor.visitChildren(this);
 		}
 	}
@@ -1190,10 +1281,10 @@ public class CopyBookParser extends Parser {
 
 	@SuppressWarnings("CheckReturnValue")
 	public static class DataOccursSortContext extends ParserRuleContext {
-		public TerminalNode ASCENDING() { return getToken(CopyBookParser.ASCENDING, 0); }
-		public TerminalNode DESCENDING() { return getToken(CopyBookParser.DESCENDING, 0); }
-		public TerminalNode KEY() { return getToken(CopyBookParser.KEY, 0); }
-		public TerminalNode IS() { return getToken(CopyBookParser.IS, 0); }
+		public TerminalNode ASCENDING() { return getToken(CopybookParser.ASCENDING, 0); }
+		public TerminalNode DESCENDING() { return getToken(CopybookParser.DESCENDING, 0); }
+		public TerminalNode KEY() { return getToken(CopybookParser.KEY, 0); }
+		public TerminalNode IS() { return getToken(CopybookParser.IS, 0); }
 		public List<QualifiedDataNameContext> qualifiedDataName() {
 			return getRuleContexts(QualifiedDataNameContext.class);
 		}
@@ -1205,8 +1296,16 @@ public class CopyBookParser extends Parser {
 		}
 		@Override public int getRuleIndex() { return RULE_dataOccursSort; }
 		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof CopybookListener ) ((CopybookListener)listener).enterDataOccursSort(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof CopybookListener ) ((CopybookListener)listener).exitDataOccursSort(this);
+		}
+		@Override
 		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof CopyBookVisitor ) return ((CopyBookVisitor<? extends T>)visitor).visitDataOccursSort(this);
+			if ( visitor instanceof CopybookVisitor ) return ((CopybookVisitor<? extends T>)visitor).visitDataOccursSort(this);
 			else return visitor.visitChildren(this);
 		}
 	}
@@ -1287,16 +1386,24 @@ public class CopyBookParser extends Parser {
 		public PictureStringContext pictureString() {
 			return getRuleContext(PictureStringContext.class,0);
 		}
-		public TerminalNode PICTURE() { return getToken(CopyBookParser.PICTURE, 0); }
-		public TerminalNode PIC() { return getToken(CopyBookParser.PIC, 0); }
-		public TerminalNode IS() { return getToken(CopyBookParser.IS, 0); }
+		public TerminalNode PICTURE() { return getToken(CopybookParser.PICTURE, 0); }
+		public TerminalNode PIC() { return getToken(CopybookParser.PIC, 0); }
+		public TerminalNode IS() { return getToken(CopybookParser.IS, 0); }
 		public DataPictureClauseContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
 		@Override public int getRuleIndex() { return RULE_dataPictureClause; }
 		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof CopybookListener ) ((CopybookListener)listener).enterDataPictureClause(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof CopybookListener ) ((CopybookListener)listener).exitDataPictureClause(this);
+		}
+		@Override
 		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof CopyBookVisitor ) return ((CopyBookVisitor<? extends T>)visitor).visitDataPictureClause(this);
+			if ( visitor instanceof CopybookVisitor ) return ((CopybookVisitor<? extends T>)visitor).visitDataPictureClause(this);
 			else return visitor.visitChildren(this);
 		}
 	}
@@ -1362,8 +1469,16 @@ public class CopyBookParser extends Parser {
 		}
 		@Override public int getRuleIndex() { return RULE_pictureString; }
 		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof CopybookListener ) ((CopybookListener)listener).enterPictureString(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof CopybookListener ) ((CopybookListener)listener).exitPictureString(this);
+		}
+		@Override
 		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof CopyBookVisitor ) return ((CopyBookVisitor<? extends T>)visitor).visitPictureString(this);
+			if ( visitor instanceof CopybookVisitor ) return ((CopybookVisitor<? extends T>)visitor).visitPictureString(this);
 			else return visitor.visitChildren(this);
 		}
 	}
@@ -1438,19 +1553,19 @@ public class CopyBookParser extends Parser {
 
 	@SuppressWarnings("CheckReturnValue")
 	public static class PictureCharsContext extends ParserRuleContext {
-		public TerminalNode DOLLARCHAR() { return getToken(CopyBookParser.DOLLARCHAR, 0); }
-		public TerminalNode IDENTIFIER() { return getToken(CopyBookParser.IDENTIFIER, 0); }
-		public TerminalNode NUMERICLITERAL() { return getToken(CopyBookParser.NUMERICLITERAL, 0); }
-		public TerminalNode SLASHCHAR() { return getToken(CopyBookParser.SLASHCHAR, 0); }
-		public TerminalNode COMMACHAR() { return getToken(CopyBookParser.COMMACHAR, 0); }
-		public TerminalNode DOT() { return getToken(CopyBookParser.DOT, 0); }
-		public TerminalNode COLONCHAR() { return getToken(CopyBookParser.COLONCHAR, 0); }
-		public TerminalNode ASTERISKCHAR() { return getToken(CopyBookParser.ASTERISKCHAR, 0); }
-		public TerminalNode DOUBLEASTERISKCHAR() { return getToken(CopyBookParser.DOUBLEASTERISKCHAR, 0); }
-		public TerminalNode PLUSCHAR() { return getToken(CopyBookParser.PLUSCHAR, 0); }
-		public TerminalNode MINUSCHAR() { return getToken(CopyBookParser.MINUSCHAR, 0); }
-		public TerminalNode LESSTHANCHAR() { return getToken(CopyBookParser.LESSTHANCHAR, 0); }
-		public TerminalNode MORETHANCHAR() { return getToken(CopyBookParser.MORETHANCHAR, 0); }
+		public TerminalNode DOLLARCHAR() { return getToken(CopybookParser.DOLLARCHAR, 0); }
+		public TerminalNode IDENTIFIER() { return getToken(CopybookParser.IDENTIFIER, 0); }
+		public TerminalNode NUMERICLITERAL() { return getToken(CopybookParser.NUMERICLITERAL, 0); }
+		public TerminalNode SLASHCHAR() { return getToken(CopybookParser.SLASHCHAR, 0); }
+		public TerminalNode COMMACHAR() { return getToken(CopybookParser.COMMACHAR, 0); }
+		public TerminalNode DOT() { return getToken(CopybookParser.DOT, 0); }
+		public TerminalNode COLONCHAR() { return getToken(CopybookParser.COLONCHAR, 0); }
+		public TerminalNode ASTERISKCHAR() { return getToken(CopybookParser.ASTERISKCHAR, 0); }
+		public TerminalNode DOUBLEASTERISKCHAR() { return getToken(CopybookParser.DOUBLEASTERISKCHAR, 0); }
+		public TerminalNode PLUSCHAR() { return getToken(CopybookParser.PLUSCHAR, 0); }
+		public TerminalNode MINUSCHAR() { return getToken(CopybookParser.MINUSCHAR, 0); }
+		public TerminalNode LESSTHANCHAR() { return getToken(CopybookParser.LESSTHANCHAR, 0); }
+		public TerminalNode MORETHANCHAR() { return getToken(CopybookParser.MORETHANCHAR, 0); }
 		public IntegerLiteralContext integerLiteral() {
 			return getRuleContext(IntegerLiteralContext.class,0);
 		}
@@ -1459,8 +1574,16 @@ public class CopyBookParser extends Parser {
 		}
 		@Override public int getRuleIndex() { return RULE_pictureChars; }
 		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof CopybookListener ) ((CopybookListener)listener).enterPictureChars(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof CopybookListener ) ((CopybookListener)listener).exitPictureChars(this);
+		}
+		@Override
 		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof CopyBookVisitor ) return ((CopyBookVisitor<? extends T>)visitor).visitPictureChars(this);
+			if ( visitor instanceof CopybookVisitor ) return ((CopybookVisitor<? extends T>)visitor).visitPictureChars(this);
 			else return visitor.visitChildren(this);
 		}
 	}
@@ -1590,18 +1713,26 @@ public class CopyBookParser extends Parser {
 
 	@SuppressWarnings("CheckReturnValue")
 	public static class PictureCardinalityContext extends ParserRuleContext {
-		public TerminalNode LPARENCHAR() { return getToken(CopyBookParser.LPARENCHAR, 0); }
+		public TerminalNode LPARENCHAR() { return getToken(CopybookParser.LPARENCHAR, 0); }
 		public IntegerLiteralContext integerLiteral() {
 			return getRuleContext(IntegerLiteralContext.class,0);
 		}
-		public TerminalNode RPARENCHAR() { return getToken(CopyBookParser.RPARENCHAR, 0); }
+		public TerminalNode RPARENCHAR() { return getToken(CopybookParser.RPARENCHAR, 0); }
 		public PictureCardinalityContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
 		@Override public int getRuleIndex() { return RULE_pictureCardinality; }
 		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof CopybookListener ) ((CopybookListener)listener).enterPictureCardinality(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof CopybookListener ) ((CopybookListener)listener).exitPictureCardinality(this);
+		}
+		@Override
 		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof CopyBookVisitor ) return ((CopyBookVisitor<? extends T>)visitor).visitPictureCardinality(this);
+			if ( visitor instanceof CopybookVisitor ) return ((CopybookVisitor<? extends T>)visitor).visitPictureCardinality(this);
 			else return visitor.visitChildren(this);
 		}
 	}
@@ -1633,7 +1764,7 @@ public class CopyBookParser extends Parser {
 
 	@SuppressWarnings("CheckReturnValue")
 	public static class DataRedefinesClauseContext extends ParserRuleContext {
-		public TerminalNode REDEFINES() { return getToken(CopyBookParser.REDEFINES, 0); }
+		public TerminalNode REDEFINES() { return getToken(CopybookParser.REDEFINES, 0); }
 		public DataNameContext dataName() {
 			return getRuleContext(DataNameContext.class,0);
 		}
@@ -1642,8 +1773,16 @@ public class CopyBookParser extends Parser {
 		}
 		@Override public int getRuleIndex() { return RULE_dataRedefinesClause; }
 		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof CopybookListener ) ((CopybookListener)listener).enterDataRedefinesClause(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof CopybookListener ) ((CopybookListener)listener).exitDataRedefinesClause(this);
+		}
+		@Override
 		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof CopyBookVisitor ) return ((CopyBookVisitor<? extends T>)visitor).visitDataRedefinesClause(this);
+			if ( visitor instanceof CopybookVisitor ) return ((CopybookVisitor<? extends T>)visitor).visitDataRedefinesClause(this);
 			else return visitor.visitChildren(this);
 		}
 	}
@@ -1673,22 +1812,30 @@ public class CopyBookParser extends Parser {
 
 	@SuppressWarnings("CheckReturnValue")
 	public static class DataRenamesClauseContext extends ParserRuleContext {
-		public TerminalNode RENAMES() { return getToken(CopyBookParser.RENAMES, 0); }
+		public TerminalNode RENAMES() { return getToken(CopybookParser.RENAMES, 0); }
 		public List<QualifiedDataNameContext> qualifiedDataName() {
 			return getRuleContexts(QualifiedDataNameContext.class);
 		}
 		public QualifiedDataNameContext qualifiedDataName(int i) {
 			return getRuleContext(QualifiedDataNameContext.class,i);
 		}
-		public TerminalNode THROUGH() { return getToken(CopyBookParser.THROUGH, 0); }
-		public TerminalNode THRU() { return getToken(CopyBookParser.THRU, 0); }
+		public TerminalNode THROUGH() { return getToken(CopybookParser.THROUGH, 0); }
+		public TerminalNode THRU() { return getToken(CopybookParser.THRU, 0); }
 		public DataRenamesClauseContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
 		@Override public int getRuleIndex() { return RULE_dataRenamesClause; }
 		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof CopybookListener ) ((CopybookListener)listener).enterDataRenamesClause(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof CopybookListener ) ((CopybookListener)listener).exitDataRenamesClause(this);
+		}
+		@Override
 		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof CopyBookVisitor ) return ((CopyBookVisitor<? extends T>)visitor).visitDataRenamesClause(this);
+			if ( visitor instanceof CopybookVisitor ) return ((CopybookVisitor<? extends T>)visitor).visitDataRenamesClause(this);
 			else return visitor.visitChildren(this);
 		}
 	}
@@ -1739,19 +1886,27 @@ public class CopyBookParser extends Parser {
 
 	@SuppressWarnings("CheckReturnValue")
 	public static class DataSignClauseContext extends ParserRuleContext {
-		public TerminalNode LEADING() { return getToken(CopyBookParser.LEADING, 0); }
-		public TerminalNode TRAILING() { return getToken(CopyBookParser.TRAILING, 0); }
-		public TerminalNode SIGN() { return getToken(CopyBookParser.SIGN, 0); }
-		public TerminalNode SEPARATE() { return getToken(CopyBookParser.SEPARATE, 0); }
-		public TerminalNode IS() { return getToken(CopyBookParser.IS, 0); }
-		public TerminalNode CHARACTER() { return getToken(CopyBookParser.CHARACTER, 0); }
+		public TerminalNode LEADING() { return getToken(CopybookParser.LEADING, 0); }
+		public TerminalNode TRAILING() { return getToken(CopybookParser.TRAILING, 0); }
+		public TerminalNode SIGN() { return getToken(CopybookParser.SIGN, 0); }
+		public TerminalNode SEPARATE() { return getToken(CopybookParser.SEPARATE, 0); }
+		public TerminalNode IS() { return getToken(CopybookParser.IS, 0); }
+		public TerminalNode CHARACTER() { return getToken(CopybookParser.CHARACTER, 0); }
 		public DataSignClauseContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
 		@Override public int getRuleIndex() { return RULE_dataSignClause; }
 		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof CopybookListener ) ((CopybookListener)listener).enterDataSignClause(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof CopybookListener ) ((CopybookListener)listener).exitDataSignClause(this);
+		}
+		@Override
 		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof CopyBookVisitor ) return ((CopyBookVisitor<? extends T>)visitor).visitDataSignClause(this);
+			if ( visitor instanceof CopybookVisitor ) return ((CopybookVisitor<? extends T>)visitor).visitDataSignClause(this);
 			else return visitor.visitChildren(this);
 		}
 	}
@@ -1828,17 +1983,25 @@ public class CopyBookParser extends Parser {
 
 	@SuppressWarnings("CheckReturnValue")
 	public static class DataSynchronizedClauseContext extends ParserRuleContext {
-		public TerminalNode SYNCHRONIZED() { return getToken(CopyBookParser.SYNCHRONIZED, 0); }
-		public TerminalNode SYNC() { return getToken(CopyBookParser.SYNC, 0); }
-		public TerminalNode LEFT() { return getToken(CopyBookParser.LEFT, 0); }
-		public TerminalNode RIGHT() { return getToken(CopyBookParser.RIGHT, 0); }
+		public TerminalNode SYNCHRONIZED() { return getToken(CopybookParser.SYNCHRONIZED, 0); }
+		public TerminalNode SYNC() { return getToken(CopybookParser.SYNC, 0); }
+		public TerminalNode LEFT() { return getToken(CopybookParser.LEFT, 0); }
+		public TerminalNode RIGHT() { return getToken(CopybookParser.RIGHT, 0); }
 		public DataSynchronizedClauseContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
 		@Override public int getRuleIndex() { return RULE_dataSynchronizedClause; }
 		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof CopybookListener ) ((CopybookListener)listener).enterDataSynchronizedClause(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof CopybookListener ) ((CopybookListener)listener).exitDataSynchronizedClause(this);
+		}
+		@Override
 		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof CopyBookVisitor ) return ((CopyBookVisitor<? extends T>)visitor).visitDataSynchronizedClause(this);
+			if ( visitor instanceof CopybookVisitor ) return ((CopybookVisitor<? extends T>)visitor).visitDataSynchronizedClause(this);
 			else return visitor.visitChildren(this);
 		}
 	}
@@ -1893,47 +2056,55 @@ public class CopyBookParser extends Parser {
 
 	@SuppressWarnings("CheckReturnValue")
 	public static class DataUsageClauseContext extends ParserRuleContext {
-		public TerminalNode BINARY() { return getToken(CopyBookParser.BINARY, 0); }
-		public TerminalNode BIT() { return getToken(CopyBookParser.BIT, 0); }
-		public TerminalNode COMP() { return getToken(CopyBookParser.COMP, 0); }
-		public TerminalNode COMP_1() { return getToken(CopyBookParser.COMP_1, 0); }
-		public TerminalNode COMP_2() { return getToken(CopyBookParser.COMP_2, 0); }
-		public TerminalNode COMP_3() { return getToken(CopyBookParser.COMP_3, 0); }
-		public TerminalNode COMP_4() { return getToken(CopyBookParser.COMP_4, 0); }
-		public TerminalNode COMP_5() { return getToken(CopyBookParser.COMP_5, 0); }
-		public TerminalNode COMPUTATIONAL() { return getToken(CopyBookParser.COMPUTATIONAL, 0); }
-		public TerminalNode COMPUTATIONAL_1() { return getToken(CopyBookParser.COMPUTATIONAL_1, 0); }
-		public TerminalNode COMPUTATIONAL_2() { return getToken(CopyBookParser.COMPUTATIONAL_2, 0); }
-		public TerminalNode COMPUTATIONAL_3() { return getToken(CopyBookParser.COMPUTATIONAL_3, 0); }
-		public TerminalNode COMPUTATIONAL_4() { return getToken(CopyBookParser.COMPUTATIONAL_4, 0); }
-		public TerminalNode COMPUTATIONAL_5() { return getToken(CopyBookParser.COMPUTATIONAL_5, 0); }
-		public TerminalNode CONTROL_POINT() { return getToken(CopyBookParser.CONTROL_POINT, 0); }
-		public TerminalNode DATE() { return getToken(CopyBookParser.DATE, 0); }
-		public TerminalNode DISPLAY() { return getToken(CopyBookParser.DISPLAY, 0); }
-		public TerminalNode DISPLAY_1() { return getToken(CopyBookParser.DISPLAY_1, 0); }
-		public TerminalNode DOUBLE() { return getToken(CopyBookParser.DOUBLE, 0); }
-		public TerminalNode EVENT() { return getToken(CopyBookParser.EVENT, 0); }
-		public TerminalNode FUNCTION_POINTER() { return getToken(CopyBookParser.FUNCTION_POINTER, 0); }
-		public TerminalNode INDEX() { return getToken(CopyBookParser.INDEX, 0); }
-		public TerminalNode KANJI() { return getToken(CopyBookParser.KANJI, 0); }
-		public TerminalNode LOCK() { return getToken(CopyBookParser.LOCK, 0); }
-		public TerminalNode NATIONAL() { return getToken(CopyBookParser.NATIONAL, 0); }
-		public TerminalNode PACKED_DECIMAL() { return getToken(CopyBookParser.PACKED_DECIMAL, 0); }
-		public TerminalNode POINTER() { return getToken(CopyBookParser.POINTER, 0); }
-		public TerminalNode PROCEDURE_POINTER() { return getToken(CopyBookParser.PROCEDURE_POINTER, 0); }
-		public TerminalNode REAL() { return getToken(CopyBookParser.REAL, 0); }
-		public TerminalNode TASK() { return getToken(CopyBookParser.TASK, 0); }
-		public TerminalNode USAGE() { return getToken(CopyBookParser.USAGE, 0); }
-		public TerminalNode IS() { return getToken(CopyBookParser.IS, 0); }
-		public TerminalNode TRUNCATED() { return getToken(CopyBookParser.TRUNCATED, 0); }
-		public TerminalNode EXTENDED() { return getToken(CopyBookParser.EXTENDED, 0); }
+		public TerminalNode BINARY() { return getToken(CopybookParser.BINARY, 0); }
+		public TerminalNode BIT() { return getToken(CopybookParser.BIT, 0); }
+		public TerminalNode COMP() { return getToken(CopybookParser.COMP, 0); }
+		public TerminalNode COMP_1() { return getToken(CopybookParser.COMP_1, 0); }
+		public TerminalNode COMP_2() { return getToken(CopybookParser.COMP_2, 0); }
+		public TerminalNode COMP_3() { return getToken(CopybookParser.COMP_3, 0); }
+		public TerminalNode COMP_4() { return getToken(CopybookParser.COMP_4, 0); }
+		public TerminalNode COMP_5() { return getToken(CopybookParser.COMP_5, 0); }
+		public TerminalNode COMPUTATIONAL() { return getToken(CopybookParser.COMPUTATIONAL, 0); }
+		public TerminalNode COMPUTATIONAL_1() { return getToken(CopybookParser.COMPUTATIONAL_1, 0); }
+		public TerminalNode COMPUTATIONAL_2() { return getToken(CopybookParser.COMPUTATIONAL_2, 0); }
+		public TerminalNode COMPUTATIONAL_3() { return getToken(CopybookParser.COMPUTATIONAL_3, 0); }
+		public TerminalNode COMPUTATIONAL_4() { return getToken(CopybookParser.COMPUTATIONAL_4, 0); }
+		public TerminalNode COMPUTATIONAL_5() { return getToken(CopybookParser.COMPUTATIONAL_5, 0); }
+		public TerminalNode CONTROL_POINT() { return getToken(CopybookParser.CONTROL_POINT, 0); }
+		public TerminalNode DATE() { return getToken(CopybookParser.DATE, 0); }
+		public TerminalNode DISPLAY() { return getToken(CopybookParser.DISPLAY, 0); }
+		public TerminalNode DISPLAY_1() { return getToken(CopybookParser.DISPLAY_1, 0); }
+		public TerminalNode DOUBLE() { return getToken(CopybookParser.DOUBLE, 0); }
+		public TerminalNode EVENT() { return getToken(CopybookParser.EVENT, 0); }
+		public TerminalNode FUNCTION_POINTER() { return getToken(CopybookParser.FUNCTION_POINTER, 0); }
+		public TerminalNode INDEX() { return getToken(CopybookParser.INDEX, 0); }
+		public TerminalNode KANJI() { return getToken(CopybookParser.KANJI, 0); }
+		public TerminalNode LOCK() { return getToken(CopybookParser.LOCK, 0); }
+		public TerminalNode NATIONAL() { return getToken(CopybookParser.NATIONAL, 0); }
+		public TerminalNode PACKED_DECIMAL() { return getToken(CopybookParser.PACKED_DECIMAL, 0); }
+		public TerminalNode POINTER() { return getToken(CopybookParser.POINTER, 0); }
+		public TerminalNode PROCEDURE_POINTER() { return getToken(CopybookParser.PROCEDURE_POINTER, 0); }
+		public TerminalNode REAL() { return getToken(CopybookParser.REAL, 0); }
+		public TerminalNode TASK() { return getToken(CopybookParser.TASK, 0); }
+		public TerminalNode USAGE() { return getToken(CopybookParser.USAGE, 0); }
+		public TerminalNode IS() { return getToken(CopybookParser.IS, 0); }
+		public TerminalNode TRUNCATED() { return getToken(CopybookParser.TRUNCATED, 0); }
+		public TerminalNode EXTENDED() { return getToken(CopybookParser.EXTENDED, 0); }
 		public DataUsageClauseContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
 		@Override public int getRuleIndex() { return RULE_dataUsageClause; }
 		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof CopybookListener ) ((CopybookListener)listener).enterDataUsageClause(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof CopybookListener ) ((CopybookListener)listener).exitDataUsageClause(this);
+		}
+		@Override
 		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof CopyBookVisitor ) return ((CopyBookVisitor<? extends T>)visitor).visitDataUsageClause(this);
+			if ( visitor instanceof CopybookVisitor ) return ((CopybookVisitor<? extends T>)visitor).visitDataUsageClause(this);
 			else return visitor.visitChildren(this);
 		}
 	}
@@ -2190,21 +2361,29 @@ public class CopyBookParser extends Parser {
 		public DataValueIntervalContext dataValueInterval(int i) {
 			return getRuleContext(DataValueIntervalContext.class,i);
 		}
-		public TerminalNode VALUE() { return getToken(CopyBookParser.VALUE, 0); }
-		public TerminalNode VALUES() { return getToken(CopyBookParser.VALUES, 0); }
-		public TerminalNode IS() { return getToken(CopyBookParser.IS, 0); }
-		public TerminalNode ARE() { return getToken(CopyBookParser.ARE, 0); }
-		public List<TerminalNode> COMMACHAR() { return getTokens(CopyBookParser.COMMACHAR); }
+		public TerminalNode VALUE() { return getToken(CopybookParser.VALUE, 0); }
+		public TerminalNode VALUES() { return getToken(CopybookParser.VALUES, 0); }
+		public TerminalNode IS() { return getToken(CopybookParser.IS, 0); }
+		public TerminalNode ARE() { return getToken(CopybookParser.ARE, 0); }
+		public List<TerminalNode> COMMACHAR() { return getTokens(CopybookParser.COMMACHAR); }
 		public TerminalNode COMMACHAR(int i) {
-			return getToken(CopyBookParser.COMMACHAR, i);
+			return getToken(CopybookParser.COMMACHAR, i);
 		}
 		public DataValueClauseContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
 		@Override public int getRuleIndex() { return RULE_dataValueClause; }
 		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof CopybookListener ) ((CopybookListener)listener).enterDataValueClause(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof CopybookListener ) ((CopybookListener)listener).exitDataValueClause(this);
+		}
+		@Override
 		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof CopyBookVisitor ) return ((CopyBookVisitor<? extends T>)visitor).visitDataValueClause(this);
+			if ( visitor instanceof CopybookVisitor ) return ((CopybookVisitor<? extends T>)visitor).visitDataValueClause(this);
 			else return visitor.visitChildren(this);
 		}
 	}
@@ -2335,8 +2514,16 @@ public class CopyBookParser extends Parser {
 		}
 		@Override public int getRuleIndex() { return RULE_dataValueInterval; }
 		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof CopybookListener ) ((CopybookListener)listener).enterDataValueInterval(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof CopybookListener ) ((CopybookListener)listener).exitDataValueInterval(this);
+		}
+		@Override
 		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof CopyBookVisitor ) return ((CopyBookVisitor<? extends T>)visitor).visitDataValueInterval(this);
+			if ( visitor instanceof CopybookVisitor ) return ((CopybookVisitor<? extends T>)visitor).visitDataValueInterval(this);
 			else return visitor.visitChildren(this);
 		}
 	}
@@ -2385,8 +2572,16 @@ public class CopyBookParser extends Parser {
 		}
 		@Override public int getRuleIndex() { return RULE_dataValueIntervalFrom; }
 		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof CopybookListener ) ((CopybookListener)listener).enterDataValueIntervalFrom(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof CopybookListener ) ((CopybookListener)listener).exitDataValueIntervalFrom(this);
+		}
+		@Override
 		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof CopyBookVisitor ) return ((CopyBookVisitor<? extends T>)visitor).visitDataValueIntervalFrom(this);
+			if ( visitor instanceof CopybookVisitor ) return ((CopybookVisitor<? extends T>)visitor).visitDataValueIntervalFrom(this);
 			else return visitor.visitChildren(this);
 		}
 	}
@@ -2455,15 +2650,23 @@ public class CopyBookParser extends Parser {
 		public LiteralContext literal() {
 			return getRuleContext(LiteralContext.class,0);
 		}
-		public TerminalNode THROUGH() { return getToken(CopyBookParser.THROUGH, 0); }
-		public TerminalNode THRU() { return getToken(CopyBookParser.THRU, 0); }
+		public TerminalNode THROUGH() { return getToken(CopybookParser.THROUGH, 0); }
+		public TerminalNode THRU() { return getToken(CopybookParser.THRU, 0); }
 		public DataValueIntervalToContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
 		@Override public int getRuleIndex() { return RULE_dataValueIntervalTo; }
 		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof CopybookListener ) ((CopybookListener)listener).enterDataValueIntervalTo(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof CopybookListener ) ((CopybookListener)listener).exitDataValueIntervalTo(this);
+		}
+		@Override
 		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof CopyBookVisitor ) return ((CopyBookVisitor<? extends T>)visitor).visitDataValueIntervalTo(this);
+			if ( visitor instanceof CopybookVisitor ) return ((CopybookVisitor<? extends T>)visitor).visitDataValueIntervalTo(this);
 			else return visitor.visitChildren(this);
 		}
 	}
@@ -2510,8 +2713,16 @@ public class CopyBookParser extends Parser {
 		}
 		@Override public int getRuleIndex() { return RULE_identifier; }
 		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof CopybookListener ) ((CopybookListener)listener).enterIdentifier(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof CopybookListener ) ((CopybookListener)listener).exitIdentifier(this);
+		}
+		@Override
 		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof CopyBookVisitor ) return ((CopyBookVisitor<? extends T>)visitor).visitIdentifier(this);
+			if ( visitor instanceof CopybookVisitor ) return ((CopybookVisitor<? extends T>)visitor).visitIdentifier(this);
 			else return visitor.visitChildren(this);
 		}
 	}
@@ -2550,8 +2761,16 @@ public class CopyBookParser extends Parser {
 		}
 		@Override public int getRuleIndex() { return RULE_qualifiedDataName; }
 		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof CopybookListener ) ((CopybookListener)listener).enterQualifiedDataName(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof CopybookListener ) ((CopybookListener)listener).exitQualifiedDataName(this);
+		}
+		@Override
 		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof CopyBookVisitor ) return ((CopyBookVisitor<? extends T>)visitor).visitQualifiedDataName(this);
+			if ( visitor instanceof CopybookVisitor ) return ((CopybookVisitor<? extends T>)visitor).visitQualifiedDataName(this);
 			else return visitor.visitChildren(this);
 		}
 	}
@@ -2601,8 +2820,16 @@ public class CopyBookParser extends Parser {
 		}
 		@Override public int getRuleIndex() { return RULE_conditionName; }
 		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof CopybookListener ) ((CopybookListener)listener).enterConditionName(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof CopybookListener ) ((CopybookListener)listener).exitConditionName(this);
+		}
+		@Override
 		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof CopyBookVisitor ) return ((CopyBookVisitor<? extends T>)visitor).visitConditionName(this);
+			if ( visitor instanceof CopybookVisitor ) return ((CopybookVisitor<? extends T>)visitor).visitConditionName(this);
 			else return visitor.visitChildren(this);
 		}
 	}
@@ -2638,8 +2865,16 @@ public class CopyBookParser extends Parser {
 		}
 		@Override public int getRuleIndex() { return RULE_dataName; }
 		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof CopybookListener ) ((CopybookListener)listener).enterDataName(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof CopybookListener ) ((CopybookListener)listener).exitDataName(this);
+		}
+		@Override
 		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof CopyBookVisitor ) return ((CopyBookVisitor<? extends T>)visitor).visitDataName(this);
+			if ( visitor instanceof CopybookVisitor ) return ((CopybookVisitor<? extends T>)visitor).visitDataName(this);
 			else return visitor.visitChildren(this);
 		}
 	}
@@ -2675,8 +2910,16 @@ public class CopyBookParser extends Parser {
 		}
 		@Override public int getRuleIndex() { return RULE_indexName; }
 		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof CopybookListener ) ((CopybookListener)listener).enterIndexName(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof CopybookListener ) ((CopybookListener)listener).exitIndexName(this);
+		}
+		@Override
 		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof CopyBookVisitor ) return ((CopyBookVisitor<? extends T>)visitor).visitIndexName(this);
+			if ( visitor instanceof CopybookVisitor ) return ((CopybookVisitor<? extends T>)visitor).visitIndexName(this);
 			else return visitor.visitChildren(this);
 		}
 	}
@@ -2704,14 +2947,22 @@ public class CopyBookParser extends Parser {
 
 	@SuppressWarnings("CheckReturnValue")
 	public static class CobolWordContext extends ParserRuleContext {
-		public TerminalNode IDENTIFIER() { return getToken(CopyBookParser.IDENTIFIER, 0); }
+		public TerminalNode IDENTIFIER() { return getToken(CopybookParser.IDENTIFIER, 0); }
 		public CobolWordContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
 		@Override public int getRuleIndex() { return RULE_cobolWord; }
 		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof CopybookListener ) ((CopybookListener)listener).enterCobolWord(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof CopybookListener ) ((CopybookListener)listener).exitCobolWord(this);
+		}
+		@Override
 		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof CopyBookVisitor ) return ((CopyBookVisitor<? extends T>)visitor).visitCobolWord(this);
+			if ( visitor instanceof CopybookVisitor ) return ((CopybookVisitor<? extends T>)visitor).visitCobolWord(this);
 			else return visitor.visitChildren(this);
 		}
 	}
@@ -2739,7 +2990,7 @@ public class CopyBookParser extends Parser {
 
 	@SuppressWarnings("CheckReturnValue")
 	public static class LiteralContext extends ParserRuleContext {
-		public TerminalNode NONNUMERICLITERAL() { return getToken(CopyBookParser.NONNUMERICLITERAL, 0); }
+		public TerminalNode NONNUMERICLITERAL() { return getToken(CopybookParser.NONNUMERICLITERAL, 0); }
 		public FigurativeConstantContext figurativeConstant() {
 			return getRuleContext(FigurativeConstantContext.class,0);
 		}
@@ -2760,8 +3011,16 @@ public class CopyBookParser extends Parser {
 		}
 		@Override public int getRuleIndex() { return RULE_literal; }
 		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof CopybookListener ) ((CopybookListener)listener).enterLiteral(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof CopybookListener ) ((CopybookListener)listener).exitLiteral(this);
+		}
+		@Override
 		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof CopyBookVisitor ) return ((CopyBookVisitor<? extends T>)visitor).visitLiteral(this);
+			if ( visitor instanceof CopybookVisitor ) return ((CopybookVisitor<? extends T>)visitor).visitLiteral(this);
 			else return visitor.visitChildren(this);
 		}
 	}
@@ -2830,15 +3089,23 @@ public class CopyBookParser extends Parser {
 
 	@SuppressWarnings("CheckReturnValue")
 	public static class BooleanLiteralContext extends ParserRuleContext {
-		public TerminalNode TRUE() { return getToken(CopyBookParser.TRUE, 0); }
-		public TerminalNode FALSE() { return getToken(CopyBookParser.FALSE, 0); }
+		public TerminalNode TRUE() { return getToken(CopybookParser.TRUE, 0); }
+		public TerminalNode FALSE() { return getToken(CopybookParser.FALSE, 0); }
 		public BooleanLiteralContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
 		@Override public int getRuleIndex() { return RULE_booleanLiteral; }
 		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof CopybookListener ) ((CopybookListener)listener).enterBooleanLiteral(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof CopybookListener ) ((CopybookListener)listener).exitBooleanLiteral(this);
+		}
+		@Override
 		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof CopyBookVisitor ) return ((CopyBookVisitor<? extends T>)visitor).visitBooleanLiteral(this);
+			if ( visitor instanceof CopybookVisitor ) return ((CopybookVisitor<? extends T>)visitor).visitBooleanLiteral(this);
 			else return visitor.visitChildren(this);
 		}
 	}
@@ -2875,8 +3142,8 @@ public class CopyBookParser extends Parser {
 
 	@SuppressWarnings("CheckReturnValue")
 	public static class NumericLiteralContext extends ParserRuleContext {
-		public TerminalNode NUMERICLITERAL() { return getToken(CopyBookParser.NUMERICLITERAL, 0); }
-		public TerminalNode ZERO() { return getToken(CopyBookParser.ZERO, 0); }
+		public TerminalNode NUMERICLITERAL() { return getToken(CopybookParser.NUMERICLITERAL, 0); }
+		public TerminalNode ZERO() { return getToken(CopybookParser.ZERO, 0); }
 		public IntegerLiteralContext integerLiteral() {
 			return getRuleContext(IntegerLiteralContext.class,0);
 		}
@@ -2885,8 +3152,16 @@ public class CopyBookParser extends Parser {
 		}
 		@Override public int getRuleIndex() { return RULE_numericLiteral; }
 		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof CopybookListener ) ((CopybookListener)listener).enterNumericLiteral(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof CopybookListener ) ((CopybookListener)listener).exitNumericLiteral(this);
+		}
+		@Override
 		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof CopyBookVisitor ) return ((CopyBookVisitor<? extends T>)visitor).visitNumericLiteral(this);
+			if ( visitor instanceof CopybookVisitor ) return ((CopybookVisitor<? extends T>)visitor).visitNumericLiteral(this);
 			else return visitor.visitChildren(this);
 		}
 	}
@@ -2939,17 +3214,25 @@ public class CopyBookParser extends Parser {
 
 	@SuppressWarnings("CheckReturnValue")
 	public static class IntegerLiteralContext extends ParserRuleContext {
-		public TerminalNode INTEGERLITERAL() { return getToken(CopyBookParser.INTEGERLITERAL, 0); }
-		public TerminalNode LEVEL_NUMBER_66() { return getToken(CopyBookParser.LEVEL_NUMBER_66, 0); }
-		public TerminalNode LEVEL_NUMBER_77() { return getToken(CopyBookParser.LEVEL_NUMBER_77, 0); }
-		public TerminalNode LEVEL_NUMBER_88() { return getToken(CopyBookParser.LEVEL_NUMBER_88, 0); }
+		public TerminalNode INTEGERLITERAL() { return getToken(CopybookParser.INTEGERLITERAL, 0); }
+		public TerminalNode LEVEL_NUMBER_66() { return getToken(CopybookParser.LEVEL_NUMBER_66, 0); }
+		public TerminalNode LEVEL_NUMBER_77() { return getToken(CopybookParser.LEVEL_NUMBER_77, 0); }
+		public TerminalNode LEVEL_NUMBER_88() { return getToken(CopybookParser.LEVEL_NUMBER_88, 0); }
 		public IntegerLiteralContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
 		@Override public int getRuleIndex() { return RULE_integerLiteral; }
 		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof CopybookListener ) ((CopybookListener)listener).enterIntegerLiteral(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof CopybookListener ) ((CopybookListener)listener).exitIntegerLiteral(this);
+		}
+		@Override
 		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof CopyBookVisitor ) return ((CopyBookVisitor<? extends T>)visitor).visitIntegerLiteral(this);
+			if ( visitor instanceof CopybookVisitor ) return ((CopybookVisitor<? extends T>)visitor).visitIntegerLiteral(this);
 			else return visitor.visitChildren(this);
 		}
 	}
@@ -2986,9 +3269,9 @@ public class CopyBookParser extends Parser {
 
 	@SuppressWarnings("CheckReturnValue")
 	public static class CicsDfhRespLiteralContext extends ParserRuleContext {
-		public TerminalNode DFHRESP() { return getToken(CopyBookParser.DFHRESP, 0); }
-		public TerminalNode LPARENCHAR() { return getToken(CopyBookParser.LPARENCHAR, 0); }
-		public TerminalNode RPARENCHAR() { return getToken(CopyBookParser.RPARENCHAR, 0); }
+		public TerminalNode DFHRESP() { return getToken(CopybookParser.DFHRESP, 0); }
+		public TerminalNode LPARENCHAR() { return getToken(CopybookParser.LPARENCHAR, 0); }
+		public TerminalNode RPARENCHAR() { return getToken(CopybookParser.RPARENCHAR, 0); }
 		public CobolWordContext cobolWord() {
 			return getRuleContext(CobolWordContext.class,0);
 		}
@@ -3000,8 +3283,16 @@ public class CopyBookParser extends Parser {
 		}
 		@Override public int getRuleIndex() { return RULE_cicsDfhRespLiteral; }
 		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof CopybookListener ) ((CopybookListener)listener).enterCicsDfhRespLiteral(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof CopybookListener ) ((CopybookListener)listener).exitCicsDfhRespLiteral(this);
+		}
+		@Override
 		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof CopyBookVisitor ) return ((CopyBookVisitor<? extends T>)visitor).visitCicsDfhRespLiteral(this);
+			if ( visitor instanceof CopybookVisitor ) return ((CopybookVisitor<? extends T>)visitor).visitCicsDfhRespLiteral(this);
 			else return visitor.visitChildren(this);
 		}
 	}
@@ -3074,9 +3365,9 @@ public class CopyBookParser extends Parser {
 
 	@SuppressWarnings("CheckReturnValue")
 	public static class CicsDfhValueLiteralContext extends ParserRuleContext {
-		public TerminalNode DFHVALUE() { return getToken(CopyBookParser.DFHVALUE, 0); }
-		public TerminalNode LPARENCHAR() { return getToken(CopyBookParser.LPARENCHAR, 0); }
-		public TerminalNode RPARENCHAR() { return getToken(CopyBookParser.RPARENCHAR, 0); }
+		public TerminalNode DFHVALUE() { return getToken(CopybookParser.DFHVALUE, 0); }
+		public TerminalNode LPARENCHAR() { return getToken(CopybookParser.LPARENCHAR, 0); }
+		public TerminalNode RPARENCHAR() { return getToken(CopybookParser.RPARENCHAR, 0); }
 		public CobolWordContext cobolWord() {
 			return getRuleContext(CobolWordContext.class,0);
 		}
@@ -3088,8 +3379,16 @@ public class CopyBookParser extends Parser {
 		}
 		@Override public int getRuleIndex() { return RULE_cicsDfhValueLiteral; }
 		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof CopybookListener ) ((CopybookListener)listener).enterCicsDfhValueLiteral(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof CopybookListener ) ((CopybookListener)listener).exitCicsDfhValueLiteral(this);
+		}
+		@Override
 		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof CopyBookVisitor ) return ((CopyBookVisitor<? extends T>)visitor).visitCicsDfhValueLiteral(this);
+			if ( visitor instanceof CopybookVisitor ) return ((CopybookVisitor<? extends T>)visitor).visitCicsDfhValueLiteral(this);
 			else return visitor.visitChildren(this);
 		}
 	}
@@ -3162,30 +3461,38 @@ public class CopyBookParser extends Parser {
 
 	@SuppressWarnings("CheckReturnValue")
 	public static class FigurativeConstantContext extends ParserRuleContext {
-		public TerminalNode ALL() { return getToken(CopyBookParser.ALL, 0); }
+		public TerminalNode ALL() { return getToken(CopybookParser.ALL, 0); }
 		public LiteralContext literal() {
 			return getRuleContext(LiteralContext.class,0);
 		}
-		public TerminalNode HIGH_VALUE() { return getToken(CopyBookParser.HIGH_VALUE, 0); }
-		public TerminalNode HIGH_VALUES() { return getToken(CopyBookParser.HIGH_VALUES, 0); }
-		public TerminalNode LOW_VALUE() { return getToken(CopyBookParser.LOW_VALUE, 0); }
-		public TerminalNode LOW_VALUES() { return getToken(CopyBookParser.LOW_VALUES, 0); }
-		public TerminalNode NULL_() { return getToken(CopyBookParser.NULL_, 0); }
-		public TerminalNode NULLS() { return getToken(CopyBookParser.NULLS, 0); }
-		public TerminalNode QUOTE() { return getToken(CopyBookParser.QUOTE, 0); }
-		public TerminalNode QUOTES() { return getToken(CopyBookParser.QUOTES, 0); }
-		public TerminalNode SPACE() { return getToken(CopyBookParser.SPACE, 0); }
-		public TerminalNode SPACES() { return getToken(CopyBookParser.SPACES, 0); }
-		public TerminalNode ZERO() { return getToken(CopyBookParser.ZERO, 0); }
-		public TerminalNode ZEROS() { return getToken(CopyBookParser.ZEROS, 0); }
-		public TerminalNode ZEROES() { return getToken(CopyBookParser.ZEROES, 0); }
+		public TerminalNode HIGH_VALUE() { return getToken(CopybookParser.HIGH_VALUE, 0); }
+		public TerminalNode HIGH_VALUES() { return getToken(CopybookParser.HIGH_VALUES, 0); }
+		public TerminalNode LOW_VALUE() { return getToken(CopybookParser.LOW_VALUE, 0); }
+		public TerminalNode LOW_VALUES() { return getToken(CopybookParser.LOW_VALUES, 0); }
+		public TerminalNode NULL_() { return getToken(CopybookParser.NULL_, 0); }
+		public TerminalNode NULLS() { return getToken(CopybookParser.NULLS, 0); }
+		public TerminalNode QUOTE() { return getToken(CopybookParser.QUOTE, 0); }
+		public TerminalNode QUOTES() { return getToken(CopybookParser.QUOTES, 0); }
+		public TerminalNode SPACE() { return getToken(CopybookParser.SPACE, 0); }
+		public TerminalNode SPACES() { return getToken(CopybookParser.SPACES, 0); }
+		public TerminalNode ZERO() { return getToken(CopybookParser.ZERO, 0); }
+		public TerminalNode ZEROS() { return getToken(CopybookParser.ZEROS, 0); }
+		public TerminalNode ZEROES() { return getToken(CopybookParser.ZEROES, 0); }
 		public FigurativeConstantContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
 		@Override public int getRuleIndex() { return RULE_figurativeConstant; }
 		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof CopybookListener ) ((CopybookListener)listener).enterFigurativeConstant(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof CopybookListener ) ((CopybookListener)listener).exitFigurativeConstant(this);
+		}
+		@Override
 		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof CopyBookVisitor ) return ((CopyBookVisitor<? extends T>)visitor).visitFigurativeConstant(this);
+			if ( visitor instanceof CopybookVisitor ) return ((CopybookVisitor<? extends T>)visitor).visitFigurativeConstant(this);
 			else return visitor.visitChildren(this);
 		}
 	}

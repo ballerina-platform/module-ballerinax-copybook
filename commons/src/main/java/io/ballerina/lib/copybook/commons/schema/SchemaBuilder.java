@@ -1,6 +1,24 @@
+/*
+ * Copyright (c) 2023, WSO2 LLC. (http://www.wso2.com) All Rights Reserved.
+ *
+ * WSO2 LLC. licenses this file to you under the Apache License,
+ * Version 2.0 (the "License"); you may not use this file except
+ * in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
+ */
+
 package io.ballerina.lib.copybook.commons.schema;
 
-import io.ballerina.lib.copybook.commons.generated.CopyBookVisitor;
+import io.ballerina.lib.copybook.commons.generated.CopybookVisitor;
 import org.antlr.v4.runtime.tree.ErrorNode;
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.antlr.v4.runtime.tree.RuleNode;
@@ -10,54 +28,54 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.regex.Pattern;
 
-import static io.ballerina.lib.copybook.commons.generated.CopyBookParser.BooleanLiteralContext;
-import static io.ballerina.lib.copybook.commons.generated.CopyBookParser.CicsDfhRespLiteralContext;
-import static io.ballerina.lib.copybook.commons.generated.CopyBookParser.CicsDfhValueLiteralContext;
-import static io.ballerina.lib.copybook.commons.generated.CopyBookParser.CobolWordContext;
-import static io.ballerina.lib.copybook.commons.generated.CopyBookParser.ConditionNameContext;
-import static io.ballerina.lib.copybook.commons.generated.CopyBookParser.DataBlankWhenZeroClauseContext;
-import static io.ballerina.lib.copybook.commons.generated.CopyBookParser.DataDescriptionContext;
-import static io.ballerina.lib.copybook.commons.generated.CopyBookParser.DataDescriptionEntryClausesContext;
-import static io.ballerina.lib.copybook.commons.generated.CopyBookParser.DataDescriptionEntryContext;
-import static io.ballerina.lib.copybook.commons.generated.CopyBookParser.DataDescriptionEntryFormat1Context;
-import static io.ballerina.lib.copybook.commons.generated.CopyBookParser.DataDescriptionEntryFormat2Context;
-import static io.ballerina.lib.copybook.commons.generated.CopyBookParser.DataDescriptionEntryFormat3Context;
-import static io.ballerina.lib.copybook.commons.generated.CopyBookParser.DataExternalClauseContext;
-import static io.ballerina.lib.copybook.commons.generated.CopyBookParser.DataGlobalClauseContext;
-import static io.ballerina.lib.copybook.commons.generated.CopyBookParser.DataJustifiedClauseContext;
-import static io.ballerina.lib.copybook.commons.generated.CopyBookParser.DataNameContext;
-import static io.ballerina.lib.copybook.commons.generated.CopyBookParser.DataOccursClauseContext;
-import static io.ballerina.lib.copybook.commons.generated.CopyBookParser.DataOccursSortContext;
-import static io.ballerina.lib.copybook.commons.generated.CopyBookParser.DataOccursToContext;
-import static io.ballerina.lib.copybook.commons.generated.CopyBookParser.DataPictureClauseContext;
-import static io.ballerina.lib.copybook.commons.generated.CopyBookParser.DataRedefinesClauseContext;
-import static io.ballerina.lib.copybook.commons.generated.CopyBookParser.DataRenamesClauseContext;
-import static io.ballerina.lib.copybook.commons.generated.CopyBookParser.DataSignClauseContext;
-import static io.ballerina.lib.copybook.commons.generated.CopyBookParser.DataSynchronizedClauseContext;
-import static io.ballerina.lib.copybook.commons.generated.CopyBookParser.DataUsageClauseContext;
-import static io.ballerina.lib.copybook.commons.generated.CopyBookParser.DataValueClauseContext;
-import static io.ballerina.lib.copybook.commons.generated.CopyBookParser.DataValueIntervalContext;
-import static io.ballerina.lib.copybook.commons.generated.CopyBookParser.DataValueIntervalFromContext;
-import static io.ballerina.lib.copybook.commons.generated.CopyBookParser.DataValueIntervalToContext;
-import static io.ballerina.lib.copybook.commons.generated.CopyBookParser.FigurativeConstantContext;
-import static io.ballerina.lib.copybook.commons.generated.CopyBookParser.IdentifierContext;
-import static io.ballerina.lib.copybook.commons.generated.CopyBookParser.IndexNameContext;
-import static io.ballerina.lib.copybook.commons.generated.CopyBookParser.IntegerLiteralContext;
-import static io.ballerina.lib.copybook.commons.generated.CopyBookParser.LiteralContext;
-import static io.ballerina.lib.copybook.commons.generated.CopyBookParser.NumericLiteralContext;
-import static io.ballerina.lib.copybook.commons.generated.CopyBookParser.PictureCardinalityContext;
-import static io.ballerina.lib.copybook.commons.generated.CopyBookParser.PictureCharsContext;
-import static io.ballerina.lib.copybook.commons.generated.CopyBookParser.PictureStringContext;
-import static io.ballerina.lib.copybook.commons.generated.CopyBookParser.QualifiedDataNameContext;
-import static io.ballerina.lib.copybook.commons.generated.CopyBookParser.StartRuleContext;
+import static io.ballerina.lib.copybook.commons.generated.CopybookParser.BooleanLiteralContext;
+import static io.ballerina.lib.copybook.commons.generated.CopybookParser.CicsDfhRespLiteralContext;
+import static io.ballerina.lib.copybook.commons.generated.CopybookParser.CicsDfhValueLiteralContext;
+import static io.ballerina.lib.copybook.commons.generated.CopybookParser.CobolWordContext;
+import static io.ballerina.lib.copybook.commons.generated.CopybookParser.ConditionNameContext;
+import static io.ballerina.lib.copybook.commons.generated.CopybookParser.DataBlankWhenZeroClauseContext;
+import static io.ballerina.lib.copybook.commons.generated.CopybookParser.DataDescriptionContext;
+import static io.ballerina.lib.copybook.commons.generated.CopybookParser.DataDescriptionEntryClausesContext;
+import static io.ballerina.lib.copybook.commons.generated.CopybookParser.DataDescriptionEntryContext;
+import static io.ballerina.lib.copybook.commons.generated.CopybookParser.DataDescriptionEntryFormat1Context;
+import static io.ballerina.lib.copybook.commons.generated.CopybookParser.DataDescriptionEntryFormat2Context;
+import static io.ballerina.lib.copybook.commons.generated.CopybookParser.DataDescriptionEntryFormat3Context;
+import static io.ballerina.lib.copybook.commons.generated.CopybookParser.DataExternalClauseContext;
+import static io.ballerina.lib.copybook.commons.generated.CopybookParser.DataGlobalClauseContext;
+import static io.ballerina.lib.copybook.commons.generated.CopybookParser.DataJustifiedClauseContext;
+import static io.ballerina.lib.copybook.commons.generated.CopybookParser.DataNameContext;
+import static io.ballerina.lib.copybook.commons.generated.CopybookParser.DataOccursClauseContext;
+import static io.ballerina.lib.copybook.commons.generated.CopybookParser.DataOccursSortContext;
+import static io.ballerina.lib.copybook.commons.generated.CopybookParser.DataOccursToContext;
+import static io.ballerina.lib.copybook.commons.generated.CopybookParser.DataPictureClauseContext;
+import static io.ballerina.lib.copybook.commons.generated.CopybookParser.DataRedefinesClauseContext;
+import static io.ballerina.lib.copybook.commons.generated.CopybookParser.DataRenamesClauseContext;
+import static io.ballerina.lib.copybook.commons.generated.CopybookParser.DataSignClauseContext;
+import static io.ballerina.lib.copybook.commons.generated.CopybookParser.DataSynchronizedClauseContext;
+import static io.ballerina.lib.copybook.commons.generated.CopybookParser.DataUsageClauseContext;
+import static io.ballerina.lib.copybook.commons.generated.CopybookParser.DataValueClauseContext;
+import static io.ballerina.lib.copybook.commons.generated.CopybookParser.DataValueIntervalContext;
+import static io.ballerina.lib.copybook.commons.generated.CopybookParser.DataValueIntervalFromContext;
+import static io.ballerina.lib.copybook.commons.generated.CopybookParser.DataValueIntervalToContext;
+import static io.ballerina.lib.copybook.commons.generated.CopybookParser.FigurativeConstantContext;
+import static io.ballerina.lib.copybook.commons.generated.CopybookParser.IdentifierContext;
+import static io.ballerina.lib.copybook.commons.generated.CopybookParser.IndexNameContext;
+import static io.ballerina.lib.copybook.commons.generated.CopybookParser.IntegerLiteralContext;
+import static io.ballerina.lib.copybook.commons.generated.CopybookParser.LiteralContext;
+import static io.ballerina.lib.copybook.commons.generated.CopybookParser.NumericLiteralContext;
+import static io.ballerina.lib.copybook.commons.generated.CopybookParser.PictureCardinalityContext;
+import static io.ballerina.lib.copybook.commons.generated.CopybookParser.PictureCharsContext;
+import static io.ballerina.lib.copybook.commons.generated.CopybookParser.PictureStringContext;
+import static io.ballerina.lib.copybook.commons.generated.CopybookParser.QualifiedDataNameContext;
+import static io.ballerina.lib.copybook.commons.generated.CopybookParser.StartRuleContext;
 
-public class SchemaBuilder implements CopyBookVisitor<CopybookNode> {
+public class SchemaBuilder implements CopybookVisitor<CopybookNode> {
     private final Schema schema = new Schema();
     private GroupItem possibleParent;
     private final Set<String> redefinedItemNames = new HashSet<>();
-    private final List<String> errors = new ArrayList<>(); // TODO: check for redfinedItems in tree and put errors if
-    // not exisits
+    private final List<String> errors = new ArrayList<>();
 
     public Schema getSchema() {
         return this.schema;
@@ -67,9 +85,10 @@ public class SchemaBuilder implements CopyBookVisitor<CopybookNode> {
     public CopybookNode visitStartRule(StartRuleContext ctx) {
         this.possibleParent = null;
         visitDataDescription(ctx.dataDescription());
-        for (CopybookNode typedef : schema.getTypeDefinitions()) {
+        for (CopybookNode typedef : this.schema.getTypeDefinitions()) {
             addRedefinedItems(typedef);
         }
+        this.schema.addErrors(this.errors);
         return null;
     }
 
@@ -117,7 +136,6 @@ public class SchemaBuilder implements CopyBookVisitor<CopybookNode> {
             return null;
         }
 
-        // TODO: fix redefine clause tryout
         boolean redefines = ctx.dataDescriptionEntryClauses().dataRedefinesClause(0) != null;
         String redefinedItemName = null;
         if (redefines) {
@@ -131,13 +149,23 @@ public class SchemaBuilder implements CopyBookVisitor<CopybookNode> {
         DataOccursClauseContext occursClause = ctx.dataDescriptionEntryClauses().dataOccursClause(0);
         int occurs = Utils.getOccurringCount(occursClause);
         if (pictureClause == null || pictureClause.pictureString() == null) {
-            return new GroupItem(level, name, occurs, redefines, redefinedItemName, getParent(level));
+            return new GroupItem(level, name, occurs, redefinedItemName, getParent(level));
         }
         PictureStringContext pictureType = pictureClause.pictureString();
+        String pictureString = pictureType.getText().toUpperCase();
+        validatePictureString(pictureString);
         // TODO: validate picture type and add errors in the schema for currently not supported items
-        return new DataItem(level, name, pictureType.getText().toUpperCase(), Utils.isNumeric(pictureType),
-                            Utils.getReadLength(pictureType), occurs, Utils.getFloatingPointLength(pictureType),
-                            redefinedItemName, getParent(level));
+        return new DataItem(level, name, pictureString, Utils.isNumeric(pictureType), Utils.getReadLength(pictureType),
+                            occurs, Utils.getFloatingPointLength(pictureType), redefinedItemName, getParent(level));
+    }
+
+    private void validatePictureString(String pictureString) {
+        String supportedPictureFormats = "^(X+|X\\(\\d+\\)|9+(\\.9+)?|S9\\(\\d+\\)|9\\(\\d+\\)(\\.9+)?"
+                + "|-9\\(\\d+\\)\\.9+|Z\\(\\d+\\)9+\\.9+)$";
+        if (Pattern.compile(supportedPictureFormats).matcher(pictureString).find()) {
+            return;
+        }
+        this.errors.add("Unsupported picture string '" + pictureString + "' found in copybook schema");
     }
 
     @Override

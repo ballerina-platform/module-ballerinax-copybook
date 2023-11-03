@@ -1,4 +1,4 @@
-// Generated from CopyBook.g4 by ANTLR 4.13.1
+// Generated from Copybook.g4 by ANTLR 4.13.1
 package io.ballerina.lib.copybook.commons.generated;
 import org.antlr.v4.runtime.Lexer;
 import org.antlr.v4.runtime.CharStream;
@@ -10,7 +10,7 @@ import org.antlr.v4.runtime.dfa.DFA;
 import org.antlr.v4.runtime.misc.*;
 
 @SuppressWarnings({"all", "warnings", "unchecked", "unused", "cast", "CheckReturnValue", "this-escape"})
-public class CopyBookLexer extends Lexer {
+public class CopybookLexer extends Lexer {
 	static { RuntimeMetaData.checkVersion("4.13.1", RuntimeMetaData.VERSION); }
 
 	protected static final DFA[] _decisionToDFA;
@@ -161,13 +161,13 @@ public class CopyBookLexer extends Lexer {
 	    int dataValueUsed = 0;
 
 
-	public CopyBookLexer(CharStream input) {
+	public CopybookLexer(CharStream input) {
 		super(input);
 		_interp = new LexerATNSimulator(this,_ATN,_decisionToDFA,_sharedContextCache);
 	}
 
 	@Override
-	public String getGrammarFileName() { return "CopyBook.g4"; }
+	public String getGrammarFileName() { return "Copybook.g4"; }
 
 	@Override
 	public String[] getRuleNames() { return ruleNames; }
