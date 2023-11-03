@@ -21,9 +21,9 @@
        10 PQQPEEII-QQEQQIEII-DEIE                    PIC  X(08).
        10 PQQPEEII-QQEQQIEII-IFME                    PIC  X(06).
        10 IIEQQ-FDEMIFEZ                           PIC  X(08).
-       10 EFEI-IEIK-MIMEEQQ                        PIC I9(09).
-       10 PQQPEEII-QQEQQIEII-IEQQIEMEE-MIME           PIC I9(04).
-       10 PQQPEEII-QQEQQIEII-MIE-IQQME-MIME           PIC I9(04).
+       10 EFEI-IEIK-MIMEEQQ                        PIC 9(09).
+       10 PQQPEEII-QQEQQIEII-IEQQIEMEE-MIME           PIC S9(04).
+       10 PQQPEEII-QQEQQIEII-MIE-IQQME-MIME           PIC S9(04).
        10 PQQPEEII-QQEQQIEII-QQEIIQQM-EPDE             PIC  9(04).
           88 IIEEEIIEIM                           VALUE 0.
           88 IMIIEEEIIEIM                         VALUE 1.

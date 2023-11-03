@@ -49,7 +49,7 @@ public class Schema {
         return "{" + "\"schema\"" + ":" + typeDefinitions + "}";
     }
 
-    public void setErrors(List<String> errors) {
+    public void addErrors(List<String> errors) {
         this.errors.addAll(errors);
     }
 

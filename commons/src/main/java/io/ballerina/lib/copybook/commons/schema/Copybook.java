@@ -43,7 +43,7 @@ public class Copybook {
         SchemaBuilder visitor = new SchemaBuilder();
         startRule.accept(visitor);
         Schema schema = visitor.getSchema();
-        schema.setErrors(errorListener.getErrors());
+        schema.addErrors(errorListener.getErrors());
         return schema;
     }
 }

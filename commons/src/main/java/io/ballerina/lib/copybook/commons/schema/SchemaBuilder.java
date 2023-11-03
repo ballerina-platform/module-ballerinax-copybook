@@ -24,8 +24,11 @@ import org.antlr.v4.runtime.tree.ParseTree;
 import org.antlr.v4.runtime.tree.RuleNode;
 import org.antlr.v4.runtime.tree.TerminalNode;
 
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
+import java.util.regex.Pattern;
 
 import static io.ballerina.lib.copybook.commons.generated.CopybookParser.BooleanLiteralContext;
 import static io.ballerina.lib.copybook.commons.generated.CopybookParser.CicsDfhRespLiteralContext;
@@ -72,6 +75,7 @@ public class SchemaBuilder implements CopybookVisitor<CopybookNode> {
     private final Schema schema = new Schema();
     private GroupItem possibleParent;
     private final Set<String> redefinedItemNames = new HashSet<>();
+    private final List<String> errors = new ArrayList<>();
 
     public Schema getSchema() {
         return this.schema;
@@ -81,9 +85,10 @@ public class SchemaBuilder implements CopybookVisitor<CopybookNode> {
     public CopybookNode visitStartRule(StartRuleContext ctx) {
         this.possibleParent = null;
         visitDataDescription(ctx.dataDescription());
-        for (CopybookNode typedef : schema.getTypeDefinitions()) {
+        for (CopybookNode typedef : this.schema.getTypeDefinitions()) {
             addRedefinedItems(typedef);
         }
+        this.schema.addErrors(this.errors);
         return null;
     }
 
@@ -147,10 +152,20 @@ public class SchemaBuilder implements CopybookVisitor<CopybookNode> {
             return new GroupItem(level, name, occurs, redefinedItemName, getParent(level));
         }
         PictureStringContext pictureType = pictureClause.pictureString();
+        String pictureString = pictureType.getText().toUpperCase();
+        validatePictureString(pictureString);
         // TODO: validate picture type and add errors in the schema for currently not supported items
-        return new DataItem(level, name, pictureType.getText().toUpperCase(), Utils.isNumeric(pictureType),
-                            Utils.getReadLength(pictureType), occurs, Utils.getFloatingPointLength(pictureType),
-                            redefinedItemName, getParent(level));
+        return new DataItem(level, name, pictureString, Utils.isNumeric(pictureType), Utils.getReadLength(pictureType),
+                            occurs, Utils.getFloatingPointLength(pictureType), redefinedItemName, getParent(level));
+    }
+
+    private void validatePictureString(String pictureString) {
+        String supportedPictureFormats = "^(X+|X\\(\\d+\\)|9+(\\.9+)?|S9\\(\\d+\\)|9\\(\\d+\\)(\\.9+)?"
+                + "|-9\\(\\d+\\)\\.9+|Z\\(\\d+\\)9+\\.9+)$";
+        if (Pattern.compile(supportedPictureFormats).matcher(pictureString).find()) {
+            return;
+        }
+        this.errors.add("Unsupported picture string '" + pictureString + "' found in copybook schema");
     }
 
     @Override
