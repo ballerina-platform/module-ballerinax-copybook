@@ -112,7 +112,13 @@ isolated function validateMaxByte(string value, DataItem dataItem) returns error
             return error Error(string `The fractional part of the decimal value ${value} exceeds the maximum byte size of ${dataItem.getFloatingPointLength()}`);
         }
     }
-    if value.length() > dataItem.getReadLength() {
-        return error Error(string `Value ${value} exceeds the max byte size ${dataItem.getReadLength()}`);
+    int maxReadBytes = dataItem.getReadLength(); 
+    if dataItem.isNumeric() {
+        // handle pic with optional sign ex: s9(9)
+        boolean valueHasSign = value.startsWith("+") || value.startsWith("-");
+        maxReadBytes = dataItem.getReadLength() + (dataItem.isSigned() && valueHasSign ? 1 : 0);
+    }
+    if value.length() > maxReadBytes {
+        return error Error(string `Value ${value} exceeds the max byte size ${maxReadBytes}`);
     }
 }

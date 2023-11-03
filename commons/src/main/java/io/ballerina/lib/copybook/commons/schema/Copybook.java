@@ -41,7 +41,11 @@ public class Copybook {
 
         CopybookParser.StartRuleContext startRule = parser.startRule();
         SchemaBuilder visitor = new SchemaBuilder();
-        startRule.accept(visitor);
+        try {
+            startRule.accept(visitor);
+        } catch (Exception e) {
+            // Intentionally kept empty, already handled by the error listener.
+        }
         Schema schema = visitor.getSchema();
         schema.addErrors(errorListener.getErrors());
         return schema;

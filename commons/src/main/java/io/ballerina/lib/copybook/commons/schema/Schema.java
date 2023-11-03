@@ -28,11 +28,11 @@ public class Schema {
     private final Map<String, CopybookNode> redefinedItems = new HashMap<>();
     private final List<String> errors = new ArrayList<>();
 
-    public void addTypeDefinition(CopybookNode copybookNode) {
+    void addTypeDefinition(CopybookNode copybookNode) {
         this.typeDefinitions.add(copybookNode);
     }
 
-    public void addRedefinedItem(CopybookNode copybookNode) {
+    void addRedefinedItem(CopybookNode copybookNode) {
         this.redefinedItems.put(copybookNode.getName(), copybookNode);
     }
 
@@ -49,7 +49,7 @@ public class Schema {
         return "{" + "\"schema\"" + ":" + typeDefinitions + "}";
     }
 
-    public void addErrors(List<String> errors) {
+    void addErrors(List<String> errors) {
         this.errors.addAll(errors);
     }
 

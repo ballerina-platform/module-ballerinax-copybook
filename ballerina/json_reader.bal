@@ -172,17 +172,20 @@ class JsonReader {
             return self.handleDecimalValue(<decimal>value, dataItem);
         }
         int maxByteSize = dataItem.getReadLength();
-        if value.toString().length() > maxByteSize {
+        if value.toString().length() > maxByteSize || (dataItem.getPicture().startsWith("+") && value > 0 && value.toString().length() > maxByteSize - 1) {
             return error Error(string `Value ${value} exceeds maximux byte size ${maxByteSize} at ${self.getPath()}`);
         }
-        boolean hasSignInPicture = dataItem.getPicture().startsWith("-") || dataItem.getPicture().startsWith("+");
-        if hasSignInPicture {
+        if dataItem.getPicture().startsWith("-") {
             // Add " " in the begining of the string if the data has is positive
             return value < 0 ? value.toString().padZero(maxByteSize)
                 : value.toString().padZero(maxByteSize - 1).padStart(maxByteSize);
+        } else if dataItem.getPicture().startsWith("+") {
+            // Add "+" in the begining of the string if the data has is positive
+            return value < 0 ? value.toString().padZero(maxByteSize)
+                            : "+" + value.toString().padZero(maxByteSize - 1).padStart(maxByteSize-1);
         }
-        boolean hasSInPicture = dataItem.getPicture().startsWith("S"); // handle S9(9)
-        if hasSInPicture && value < 0 {
+        // handle S9(9)
+        if dataItem.isSigned() && value < 0 {
             return value.toString().padZero(maxByteSize + 1); // +1 for sign byte
         }
         return value.toString().padZero(maxByteSize);
@@ -219,18 +222,22 @@ class JsonReader {
         string fraction = coercedDecimalString.substring(seperatorIndex + 1, coercedDecimalString.length());
 
         int expectedWholeNumberLength = dataItem.getReadLength() - dataItem.getFloatingPointLength() - 1; // -1 here for "."
+        expectedWholeNumberLength -= dataItem.getPicture().startsWith("+") && input > 0d ? 1 : 0; // if PIC has + and value is + then remove the space allocated for + sign 
         if wholeNumber.length() > expectedWholeNumberLength {
             return error Error(string `Value ${input} exceeds the max byte limit of whole number ${expectedWholeNumberLength} at ${self.getPath()}`);
         } else if fraction.length() > dataItem.getFloatingPointLength() {
             fraction = fraction.substring(0, dataItem.getFloatingPointLength());
         }
 
-        boolean hasSignInPicture = dataItem.getPicture().startsWith("-") || dataItem.getPicture().startsWith("+");
         boolean hasZInPic = dataItem.getPicture().startsWith("Z");
         string decimalString = wholeNumber + "." + fraction.padEnd(dataItem.getFloatingPointLength(), "0");
-        if hasSignInPicture && input >= 0d {
+        if dataItem.getPicture().startsWith("-") && input >= 0d {
             // -1 for sign place holder (first char)
             return " " + decimalString.padZero(dataItem.getReadLength() - 1, hasZInPic ? " " : "0");
+        }
+        if dataItem.getPicture().startsWith("+") && input > 0d {
+            // -1 for sign place holder (first char)
+            return "+" + decimalString.padZero(dataItem.getReadLength() - 1, hasZInPic ? " " : "0");
         }
         return decimalString.padZero(dataItem.getReadLength(), hasZInPic ? " " : "0");
     }

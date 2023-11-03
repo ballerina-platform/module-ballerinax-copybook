@@ -14,15 +14,28 @@
 // specific language governing permissions and limitations
 // under the License.
 
-import ballerina/test;
 import ballerina/io;
+import ballerina/test;
 
-@test:Config
-isolated function testConvertor() returns error? {
-    Converter convertor = check new("resources/mainframe.cpy");
-    string input = check io:fileReadString("resources/input.txt");
+@test:Config {
+    dataProvider: testConvertorDataProvider
+}
+isolated function testConvertor(string copybookFilePath, string inputFilePath) returns error? {
+    Converter convertor = check new (copybookFilePath);
+    string[] input = check io:fileReadLines(inputFilePath);
+    foreach string line in input {
+        map<json> jsonData = check convertor.toJson(line);
+        string output = check convertor.toCopybook(jsonData);
+        test:assertEquals(output, line);
+    }
+}
 
-    map<json> jsonData = check convertor.toJson(input);
-    string output = check convertor.toCopybook(jsonData);
-    test:assertEquals(output, input);
+isolated function testConvertorDataProvider() returns [string, string][] {
+    [string, string][] filePaths = [];
+    foreach int i in 1 ... 4 {
+        string copybookFilePath = string `resources/mainframe-records/record-${i}.cpy`;
+        string inputFilePath = string `resources/mainframe-inputs/input-${i}.txt`;
+        filePaths.push([copybookFilePath, inputFilePath]);
+    }
+    return filePaths;
 }
