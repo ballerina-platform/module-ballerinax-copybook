@@ -24,9 +24,9 @@ import static io.ballerina.lib.copybook.commons.generated.CopybookParser.DataOcc
 import static io.ballerina.lib.copybook.commons.generated.CopybookParser.PictureCardinalityContext;
 import static io.ballerina.lib.copybook.commons.generated.CopybookParser.PictureStringContext;
 
-public class Utils {
-    private static final String ALPHA = "A";
-    private static final String ALPHA_NUMERIC = "X";
+public final class Utils {
+    private static final char ALPHA = 'A';
+    private static final char ALPHA_NUMERIC = 'X';
     private static final String SING_INTEGER = "S";
     private static final String PLUS_SING = "+";
     private static final String MINUS_SIGN = "-";
@@ -34,8 +34,8 @@ public class Utils {
     private static final String DECIMAL_SEPARATOR_V = "V";
 
     static boolean isNumeric(PictureStringContext pictureType) {
-        String firstPicChar = pictureType.pictureChars(0).getText().toUpperCase();
-        return !ALPHA.equals(firstPicChar) && !ALPHA_NUMERIC.equals(firstPicChar);
+        char firstPicChar = pictureType.getText().toUpperCase().toCharArray()[0];
+        return ALPHA != firstPicChar && ALPHA_NUMERIC != firstPicChar;
     }
 
     static boolean isSigned(String picture) {
