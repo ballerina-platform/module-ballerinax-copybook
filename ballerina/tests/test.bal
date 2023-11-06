@@ -20,7 +20,7 @@ import ballerina/test;
     dataProvider: testConvertorDataProvider
 }
 isolated function testConvertor(string copybookFilePath, string inputFilePath) returns error? {
-    Converter convertor = check new (copybookFilePath);
+    Convertor convertor = check new (copybookFilePath);
     string[] input = check io:fileReadLines(inputFilePath);
     foreach string line in input {
         map<json> jsonData = check (check convertor.toJson(line)).get("data").ensureType();

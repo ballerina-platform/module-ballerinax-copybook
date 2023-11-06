@@ -13,15 +13,16 @@
 // KIND, either express or implied.  See the License for the
 // specific language governing permissions and limitations
 // under the License.
+
 import ballerina/constraint;
 import ballerina/file;
 import ballerina/jballerina.java;
 
-# This class represents a copybook converter that facilitates the conversion of ASCII data to and from JSON data.
-public isolated class Converter {
+# This class represents a copybook convertor that facilitates the conversion of ASCII data to and from JSON data.
+public isolated class Convertor {
     private final Schema schema;
 
-    # Initializes the converter with a schema.
+    # Initializes the convertor with a schema.
     # + schemaFilePath - The path of the copybook file
     # + return - Nil on success, error otherwise
     public isolated function init(string schemaFilePath) returns error? {
