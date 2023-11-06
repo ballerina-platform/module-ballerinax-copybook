@@ -38,3 +38,14 @@ isolated function testConvertorDataProvider() returns [string, string][] {
     }
     return filePaths;
 }
+
+@test:Config
+isolated function testConvertorWithTargetRecordName() returns error? {
+    Convertor convertor = check new ("resources/mainframe-records/record-5.cpy");
+    string[] input = check io:fileReadLines("resources/mainframe-inputs/input-5.txt");
+    foreach string line in input {
+        map<json> jsonData = check (check convertor.toJson(line, "DATA-DETAIL-REGISTRY")).get("data").ensureType();
+        string output = check convertor.toCopybook(jsonData, "DATA-DETAIL-REGISTRY");
+        test:assertEquals(output, line);
+    }
+}
