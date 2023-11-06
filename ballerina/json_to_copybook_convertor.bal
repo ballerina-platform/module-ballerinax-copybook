@@ -14,7 +14,7 @@
 // specific language governing permissions and limitations
 // under the License.
 
-class JsonReader {
+class JsonToCopybookConvertor {
     *Visitor;
 
     private final string[] value = [];
@@ -33,7 +33,7 @@ class JsonReader {
         self.path.push(ROOT_JSON_PATH);
         Node typedef = getTypeDefinition(schema, self.targetRecordName);
         if data !is map<json> {
-            self.errors.push(error Error(string `Invalid value ${data.toString()} found at ${self.getPath()}`));
+            self.errors.push(error Error(string `Invalid value '${data.toString()}' found at ${self.getPath()}`));
             _ = self.path.pop();
             return;
         }
@@ -69,7 +69,7 @@ class JsonReader {
             int paddLength = remainingElements * elementSize;
             self.value.push("".padEnd(paddLength));
         } else {
-            self.errors.push(error Error(string `Found an invalid value ${data.toString()} at ${self.getPath()}.` +
+            self.errors.push(error Error(string `Found an invalid value '${data.toString()}' at ${self.getPath()}.` +
                     string `A '${groupItem.getElementCount() < 0 ? "map<json>" : "map<json>[]"}' value is expected`));
         }
         _ = self.path.pop();
@@ -130,7 +130,7 @@ class JsonReader {
                 primitiveValue = check self.handlePrimitiveArray(data, dataItem);
             }
             if primitiveValue is () {
-                check error Error(string `Found an invalid value ${data.toString()} at ${self.getPath()}.` +
+                check error Error(string `Found an invalid value '${data.toString()}' at ${self.getPath()}.` +
                     string `A ${dataItem.getElementCount() < 0 ? "primitive" : "array"} value is expected`);
                 return;
             }
@@ -159,7 +159,7 @@ class JsonReader {
             return error Error(string `Expected a numeric value at ${self.getPath()} but found string "${value}"`);
         }
         if value.length() > dataItem.getReadLength() {
-            return error Error(string `Value ${value} exceeds the max length ${maxLength} at ${self.getPath()}`);
+            return error Error(string `Value '${value}' exceeds the max length ${maxLength} at ${self.getPath()}`);
         }
         return value.padEnd(maxLength);
     }
@@ -211,7 +211,7 @@ class JsonReader {
         // TODO: handle special case Z for fraction
         if !dataItem.isDecimal() && !dataItem.isNumeric() {
             string expectedType = dataItem.isNumeric() ? "int" : "string";
-            return error Error(string `Found invalid value ${input.toString()} at ${self.getPath()}. A '${expectedType}' value is expected`);
+            return error Error(string `Found invalid value '${input.toString()}' at ${self.getPath()}. A '${expectedType}' value is expected`);
         }
         if dataItem.isNumeric() && !dataItem.isDecimal() {
             return self.handleIntValue(<int>input, dataItem);
@@ -224,7 +224,7 @@ class JsonReader {
         int expectedWholeNumberLength = dataItem.getReadLength() - dataItem.getFloatingPointLength() - 1; // -1 here for "."
         expectedWholeNumberLength -= dataItem.getPicture().startsWith("+") && input > 0d ? 1 : 0; // if PIC has + and value is + then remove the space allocated for + sign 
         if wholeNumber.length() > expectedWholeNumberLength {
-            return error Error(string `Value ${input} exceeds the max byte limit of whole number ${expectedWholeNumberLength} at ${self.getPath()}`);
+            return error Error(string `Value '${input}' exceeds the max byte limit of whole number ${expectedWholeNumberLength} at ${self.getPath()}`);
         } else if fraction.length() > dataItem.getFloatingPointLength() {
             fraction = fraction.substring(0, dataItem.getFloatingPointLength());
         }
@@ -246,7 +246,12 @@ class JsonReader {
         return string `'${".".'join(...self.path)}'`;
     }
 
-    isolated function getValue() returns string {
+    isolated function getValue() returns string|error {
+        if self.errors.length() > 0 {
+            string[] errorMsgs = self.errors.'map(err => err.message());
+            map<string[]> errorDetail = {errors: errorMsgs};
+            return error Error("JSON to copybook data conversion failed.", detail = errorDetail);
+        }
         return "".'join(...self.value);
     }
 }
