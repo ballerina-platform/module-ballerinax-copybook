@@ -13,7 +13,6 @@
 // KIND, either express or implied.  See the License for the
 // specific language governing permissions and limitations
 // under the License.
-
 import ballerina/io;
 import ballerina/test;
 
@@ -24,7 +23,7 @@ isolated function testConvertor(string copybookFilePath, string inputFilePath) r
     Converter convertor = check new (copybookFilePath);
     string[] input = check io:fileReadLines(inputFilePath);
     foreach string line in input {
-        map<json> jsonData = check convertor.toJson(line);
+        map<json> jsonData = check (check convertor.toJson(line)).get("data").ensureType();
         string output = check convertor.toCopybook(jsonData);
         test:assertEquals(output, line);
     }

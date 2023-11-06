@@ -28,13 +28,13 @@ class DataCoercer {
     isolated function coerce(GroupValue data) returns map<json>|error {
         self.path.push(ROOT_JSON_PATH);
         map<json> coercedData = check self.coerceData(data, self.schema).cloneWithType();
+        map<json> result = {data: coercedData};
         if self.errors.length() > 0 {
             string[] errorMsgs = self.errors.'map(err => err.message());
-            map<string[]> errorDetail = {errors: errorMsgs};
-            return error Error("Data coercion failed.", detail = errorDetail);
+            result[ERRORS] = errorMsgs;
         }
         _ = self.path.pop();
-        return coercedData;
+        return result;
     }
 
     private isolated function coerceData(GroupValue data, Node parentNode) returns GroupValue {

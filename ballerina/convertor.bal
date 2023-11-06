@@ -38,6 +38,9 @@ public isolated class Converter {
 
     public isolated function toCopybook(record {} input, string? targetRecordName = ()) returns string|error {
         readonly & map<json> readonlyJson = check input.cloneWithType();
+        if readonlyJson.hasKey(ERRORS) {
+            return error Error("Data coercion failed.", detail = readonlyJson.get(ERRORS));
+        }
         lock {
             check self.validateTargetRecordName(targetRecordName);
             JsonToCopybookConvertor convertor = new (self.schema, targetRecordName);
