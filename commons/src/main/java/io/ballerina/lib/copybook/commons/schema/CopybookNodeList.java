@@ -27,7 +27,6 @@ import java.util.List;
 import java.util.ListIterator;
 
 public class CopybookNodeList implements List<CopybookNode> {
-
     private final List<CopybookNode> copybookNodeList = new ArrayList<>();
 
     @Override

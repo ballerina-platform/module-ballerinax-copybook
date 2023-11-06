@@ -22,10 +22,10 @@ import io.ballerina.runtime.api.Environment;
 import io.ballerina.runtime.api.Module;
 
 public final class ModuleUtils {
-
     private static Module copybookModule;
 
-    private ModuleUtils() {}
+    private ModuleUtils() {
+    }
 
     public static void setModule(Environment env) {
         copybookModule = env.getCurrentModule();

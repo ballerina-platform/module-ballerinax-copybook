@@ -18,26 +18,26 @@
 
 package io.ballerina.lib.copybook.commons.schema;
 
+import java.util.regex.Pattern;
+
 import static io.ballerina.lib.copybook.commons.generated.CopybookParser.DataOccursClauseContext;
 import static io.ballerina.lib.copybook.commons.generated.CopybookParser.PictureStringContext;
 
 public final class Utils {
-    private static final char ALPHA = 'A';
-    private static final char ALPHA_NUMERIC = 'X';
-    private static final String SING_INTEGER = "S";
+
+    private Utils() {
+    }
 
     static boolean isNumeric(PictureStringContext pictureType) {
-        char firstPicChar = pictureType.getText().toUpperCase().toCharArray()[0];
-        return ALPHA != firstPicChar && ALPHA_NUMERIC != firstPicChar;
+        return !Pattern.compile("^[AX].*$").matcher(getPictureString(pictureType)).find();
     }
 
     static boolean isSigned(String picture) {
-        String firstPicChar = picture.substring(0, 1).toUpperCase();
-        return SING_INTEGER.equals(firstPicChar);
+        return Pattern.compile("^S.*$").matcher(picture).find();
     }
 
     static int getReadLength(PictureStringContext pictureType) {
-        return LengthCalculator.calculateReadLength(pictureType.getText().toUpperCase());
+        return LengthCalculator.calculateReadLength(getPictureString(pictureType));
     }
 
     static int getOccurringCount(DataOccursClauseContext occursClause) {
@@ -57,6 +57,10 @@ public final class Utils {
     }
 
     static int getFloatingPointLength(PictureStringContext pictureType) {
-        return LengthCalculator.calculateFractionLength(pictureType.getText().toUpperCase());
+        return LengthCalculator.calculateFractionLength(getPictureString(pictureType));
+    }
+
+    static String getPictureString(PictureStringContext pictureType) {
+        return pictureType.getText().toUpperCase();
     }
 }
