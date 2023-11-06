@@ -53,9 +53,6 @@ public isolated class Convertor {
     # + return - The converted ASCII string. In case of an error, an error is returned
     public isolated function toCopybook(record {} input, string? targetRecordName = ()) returns string|error {
         readonly & map<json> readonlyJson = check input.cloneWithType();
-        if readonlyJson.hasKey(ERRORS) {
-            return error Error("Data coercion failed.", detail = readonlyJson.get(ERRORS));
-        }
         lock {
             check self.validateTargetRecordName(targetRecordName);
             JsonToCopybookConvertor convertor = new (self.schema, targetRecordName);
@@ -94,7 +91,10 @@ public isolated class Convertor {
 
     private isolated function toRecord(string copybookData, typedesc<record {}> t, string? targetRecordName = ()) returns record {}|error {
         map<json> copybookJson = check self.toJson(copybookData, targetRecordName);
-        return constraint:validate(copybookJson, t);
+        if copybookJson.hasKey(ERRORS) {
+            return error Error("Data coercion failed.", detail = copybookJson.get(ERRORS));
+        }
+        return constraint:validate(copybookJson.get(DATA), t);
     }
 }
 
