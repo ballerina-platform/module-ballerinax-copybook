@@ -63,6 +63,17 @@ dependencies = [
 
 [[package]]
 org = "ballerina"
+name = "lang.regexp"
+version = "0.0.0"
+dependencies = [
+	{org = "ballerina", name = "jballerina.java"}
+]
+modules = [
+	{org = "ballerina", packageName = "lang.regexp", moduleName = "lang.regexp"}
+]
+
+[[package]]
+org = "ballerina"
 name = "lang.value"
 version = "0.0.0"
 dependencies = [
@@ -108,6 +119,7 @@ dependencies = [
 	{org = "ballerina", name = "file"},
 	{org = "ballerina", name = "io"},
 	{org = "ballerina", name = "jballerina.java"},
+	{org = "ballerina", name = "lang.regexp"},
 	{org = "ballerina", name = "test"}
 ]
 modules = [

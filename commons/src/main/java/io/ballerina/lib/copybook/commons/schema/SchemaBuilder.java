@@ -154,14 +154,13 @@ public class SchemaBuilder implements CopybookVisitor<CopybookNode> {
         PictureStringContext pictureType = pictureClause.pictureString();
         String pictureString = pictureType.getText().toUpperCase();
         validatePictureString(pictureString);
-        // TODO: validate picture type and add errors in the schema for currently not supported items
         return new DataItem(level, name, pictureString, Utils.isNumeric(pictureType), Utils.getReadLength(pictureType),
                             occurs, Utils.getFloatingPointLength(pictureType), redefinedItemName, getParent(level));
     }
 
     private void validatePictureString(String pictureString) {
-        String supportedPictureFormats = "^(X+|X\\(\\d+\\)|9+(\\.9+)?|S9\\(\\d+\\)|9\\(\\d+\\)(\\.9+)?"
-                + "|-9\\(\\d+\\)\\.9+|Z\\(\\d+\\)9+\\.9+)$";
+        String supportedPictureFormats = "^(X+|X\\(\\d+\\)|(\\+|-)?9+(\\.9+)?|S9\\(\\d+\\)|9\\(\\d+\\)(\\.9+)?"
+                + "|(\\+|-9)\\(\\d+\\)\\.9+|Z\\(\\d+\\)9+\\.9+)$";
         if (Pattern.compile(supportedPictureFormats).matcher(pictureString).find()) {
             return;
         }

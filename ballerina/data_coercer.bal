@@ -18,6 +18,7 @@ class DataCoercer {
     private final Schema schema;
     private final string? targetRecordName;
     private final error[] errors = [];
+    private final string[] path = [];
 
     isolated function init(Schema schema, string? targetRecordName) {
         self.schema = schema;
@@ -25,12 +26,15 @@ class DataCoercer {
     }
 
     isolated function coerce(GroupValue data) returns map<json>|error {
+        self.path.push(ROOT_JSON_PATH);
+        map<json> coercedData = check self.coerceData(data, self.schema).cloneWithType();
+        map<json> result = {data: coercedData};
         if self.errors.length() > 0 {
             string[] errorMsgs = self.errors.'map(err => err.message());
-            map<string[]> errorDetail = {errors: errorMsgs};
-            return error Error("Data coercion failed.", detail = errorDetail);
+            result[ERRORS] = errorMsgs;
         }
-        return self.coerceData(data, self.schema).cloneWithType();
+        _ = self.path.pop();
+        return result;
     }
 
     private isolated function coerceData(GroupValue data, Node parentNode) returns GroupValue {
@@ -41,78 +45,133 @@ class DataCoercer {
             if node is () {
                 continue;
             }
+            self.path.push(name);
             if 'field is string|string[] && node is DataItem {
-                anydata|error coercedItemValue = coerceDataItemValue('field, node);
-                if coercedItemValue is error {
-                    self.errors.push(coercedItemValue);
-                    continue;
-                }
-                coercedValue[name] = coercedItemValue;
+                coercedValue[name] = self.coerceDataItemValue('field, node);
             } else if 'field is GroupValue {
                 coercedValue[name] = self.coerceData('field, node);
             } else if 'field is GroupValue[] {
                 GroupValue[] corecedArray = [];
+                int i = 0;
                 foreach GroupValue groupValue in 'field {
+                    self.path.push(string `[${i}]`);
                     corecedArray.push(self.coerceData(groupValue, node));
+                    _ = self.path.pop();
+                    i += 1;
                 }
                 coercedValue[name] = corecedArray;
             }
+            _ = self.path.pop();
         }
         return coercedValue;
     }
-}
 
-isolated function coerceDataItemValue(string|string[] data, DataItem dataItem) returns anydata|error {
-    // Trim to remove spaces allocated for sing or Z prefix in decimal
-    if data is string {
+    private isolated function coerceDataItemValue(string|string[] data, DataItem dataItem) returns anydata {
+        // Trim to remove spaces allocated for sing or Z prefix in decimal
+        if data is string {
+            if dataItem.isDecimal() {
+                return self.coerceDecimal(data, dataItem);
+            }
+            if dataItem.isNumeric() {
+                return self.coerceInt(data, dataItem);
+            }
+            return self.getValidatedString(data, dataItem);
+        }
+        anydata[] elements = [];
         if dataItem.isDecimal() {
-            string decimalString = data.trim();
-            check validateMaxByte(decimalString, dataItem);
-            return decimal:fromString(decimalString);
+            int i = 0;
+            foreach string element in data {
+                self.path.push(string `[${i}]`);
+                elements.push(self.coerceDecimal(element, dataItem));
+                _ = self.path.pop();
+                i += 1;
+            }
+            return elements;
         }
         if dataItem.isNumeric() {
-            string intString = data.trim();
-            check validateMaxByte(intString, dataItem);
-            return int:fromString(intString);
+            int i = 0;
+            foreach string element in data {
+                self.path.push(string `[${i}]`);
+                elements.push(self.coerceInt(element, dataItem));
+                _ = self.path.pop();
+                i += 1;
+            }
+            return elements;
         }
-        check validateMaxByte(data, dataItem);
+        foreach string element in data {
+            int i = 0;
+            self.path.push(string `[${i}]`);
+            elements.push(self.getValidatedString(element, dataItem));
+            _ = self.path.pop();
+            i += 1;
+        }
+        return;
+    }
+
+    private isolated function coerceDecimal(string data, DataItem dataItem) returns decimal? {
+        string decimalString = data.trim();
+        error|decimal coercedValue = decimal:fromString(decimalString);
+        if coercedValue is error {
+            self.errors.push(error Error(string `"Failed to convert the value '${data}' to a 'decimal' at ${self.getPath()}".`));
+            return;
+        }
+        error? validation = self.validateMaxByte(decimalString, dataItem);
+        if validation is error {
+            self.errors.push(validation);
+            return;
+        }
+        return coercedValue;
+    }
+
+    private isolated function coerceInt(string data, DataItem dataItem) returns int? {
+        string intString = data.trim();
+        error|int coercedValue = int:fromString(intString);
+        if coercedValue is error {
+            self.errors.push(error Error(string `"Failed to convert the value '${data}' to an 'int' at ${self.getPath()}".`));
+            return;
+        }
+        error? validation = self.validateMaxByte(intString, dataItem);
+        if validation is error {
+            self.errors.push(validation);
+            return;
+        }
+        return coercedValue;
+    }
+
+    private isolated function getValidatedString(string data, DataItem dataItem) returns string? {
+        error? validation = self.validateMaxByte(data, dataItem);
+        if validation is error {
+            self.errors.push(validation);
+        }
         return data;
     }
-    anydata[] elements = [];
-    if dataItem.isDecimal() {
-        foreach string element in data {
-            string decimalString = element.trim();
-            check validateMaxByte(decimalString, dataItem);
-            elements.push(check decimal:fromString(decimalString));
-        }
-        return elements;
-    }
-    if dataItem.isNumeric() {
-        foreach string element in data {
-            string intString = element.trim();
-            check validateMaxByte(intString, dataItem);
-            elements.push(check int:fromString(intString));
-        }
-        return elements;
-    }
-    foreach string element in data {
-        check validateMaxByte(element, dataItem);
-    }
-    return data;
-}
 
-isolated function validateMaxByte(string value, DataItem dataItem) returns error? {
-    if dataItem.isDecimal() {
-        int? seperatorIndex = value.indexOf(".");
-        int wholeNumberMaxLength = dataItem.getReadLength() - dataItem.getFloatingPointLength() - 1;
-        if (seperatorIndex is int && seperatorIndex > wholeNumberMaxLength) || (seperatorIndex is () && value.length() > wholeNumberMaxLength) {
-            return error Error(string `The whole number part of decimal value ${value} exceeds the maximum byte size of ${wholeNumberMaxLength}`);
+    private isolated function validateMaxByte(string value, DataItem dataItem) returns error? {
+        if dataItem.isDecimal() {
+            int? seperatorIndex = value.indexOf(".");
+            int wholeNumberMaxLength = dataItem.getReadLength() - dataItem.getFloatingPointLength() - 1;
+            if (seperatorIndex is int && seperatorIndex > wholeNumberMaxLength) || (seperatorIndex is () && value.length() > wholeNumberMaxLength) {
+                return error Error(string `The integral part of the decimal value` +
+                    string ` '${value}' exceeds the maximum byte size of ${wholeNumberMaxLength} at ${self.getPath()}.`);
+            }
+            if seperatorIndex is int && value.substring(seperatorIndex + 1).length() > dataItem.getFloatingPointLength() {
+                return error Error(string `"The decimal value '${value}' has a fractional part that exceeds the maximum` +
+                string ` byte size of ${dataItem.getFloatingPointLength()} at ${self.getPath()}."`);
+            }
         }
-        if seperatorIndex is int && value.substring(seperatorIndex + 1).length() > dataItem.getFloatingPointLength() {
-            return error Error(string `The fractional part of the decimal value ${value} exceeds the maximum byte size of ${dataItem.getFloatingPointLength()}`);
+        int maxReadBytes = dataItem.getReadLength();
+        if dataItem.isNumeric() {
+            // handle pic with optional sign ex: s9(9)
+            boolean valueHasSign = value.startsWith("+") || value.startsWith("-");
+            maxReadBytes = dataItem.getReadLength() + (dataItem.isSigned() && valueHasSign ? 1 : 0);
+        }
+        if value.length() > maxReadBytes {
+            return error Error(string `"The value '${value}' exceeds the maximum byte size of ${maxReadBytes} ` +
+                string `at ${self.getPath()}."`);
         }
     }
-    if value.length() > dataItem.getReadLength() {
-        return error Error(string `Value ${value} exceeds the max byte size ${dataItem.getReadLength()}`);
+
+    private isolated function getPath() returns string {
+        return string `'${".".'join(...self.path)}'`;
     }
 }

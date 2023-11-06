@@ -77,7 +77,7 @@ public final class Utils {
         BString[] bStrings = nativeSchema.getErrors().stream().map(StringUtils::fromString).toArray(BString[]::new);
         BArray errors = ValueCreator.createArrayValue(bStrings);
         BMap<BString, Object> errorDetail = ValueCreator.createMapValue();
-        errorDetail.put(StringUtils.fromString("schema-errors"), errors);
+        errorDetail.put(StringUtils.fromString("parser-errors"), errors);
         return createError("Error while parsing the Copybook schema.", errorDetail);
     }
 

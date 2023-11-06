@@ -1,0 +1,26 @@
+01  EXAMPLE.
+    05  DUMMY-GROUP-1.
+        10  DUMMY-SUB-GROUP-1.
+            15  DUMMY-GROUP-1-OBJECT-A   PIC 9(4).
+            15  DUMMY-GROUP-1-OBJECT-B   PIC X.
+            15  DUMMY-GROUP-1-OBJECT-C   PIC 9(4).
+            15  DUMMY-GROUP-1-OBJECT-D   PIC X(40).
+            15  DUMMY-GROUP-1-OBJECT-E   PIC X(8).
+            15  DUMMY-GROUP-1-OBJECT-F   PIC XX.
+            15  DUMMY-GROUP-1-OBJECT-G   REDEFINES
+                DUMMY-GROUP-1-OBJECT-F   PIC XX.
+            15  DUMMY-GROUP-1-OBJECT-H   PIC 9(4).
+    05  DUMMY-GROUP-2                    PIC X(201).
+    05  DUMMY-GROUP-3     REDEFINES      DUMMY-GROUP-2.
+        10  DUMMY-GROUP-2-OBJECT-A       PIC X(14).
+        10  DUMMY-GROUP-2-OBJECT-B       PIC 9(7).
+        10  DUMMY-GROUP-2-OBJECT-C       PIC XXXX.
+        10  DUMMY-GROUP-2-OBJECT-D       PIC X.
+        10  DUMMY-GROUP-2-OBJECT-E       PIC X(7).
+        10  DUMMY-GROUP-2-OBJECT-F       REDEFINES
+             DUMMY-GROUP-2-OBJECT-E      PIC X(7).
+        10  DUMMY-SUBGROUP-2-GETSDROPPED.
+          15  DUMMY-SUBGROUP-2-OBJECT-A  PIC X(12)
+            OCCURS 12.
+        10  DUMMY-GROUP-2-OBJECT-G       PIC X(12).
+        10  DUMMY-GROUP-2-OBJECT-H       PIC X(12).

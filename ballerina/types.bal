@@ -31,3 +31,7 @@ type PrimitiveType string|int|float|decimal;
 type PrimitiveArrayType string[]|int[]|float[]|decimal[];
 
 const ROOT_JSON_PATH = "$";
+
+const ERRORS = "errors";
+
+const DATA = "data";
