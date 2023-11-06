@@ -15,6 +15,7 @@
 // under the License.
 
 import ballerina/jballerina.java;
+import ballerina/lang.regexp;
 
 isolated function stringify(FieldValue fieldValue) returns string {
     if fieldValue is string {
@@ -184,4 +185,16 @@ isolated function findNodeByName(Node parent, string name) returns Node? {
         return parent;
     }
     return;
+}
+
+isolated function getSupressZeroCount(string pictureString) returns int {
+    regexp:Groups? groups = re `^Z\((\d+)\).*$`.findGroups(pictureString);
+    if groups is () {
+        return 0;
+    }
+    regexp:Span? span = groups[1];
+    if span is () {
+        return 0;
+    }
+    return checkpanic int:fromString(span.substring());
 }
