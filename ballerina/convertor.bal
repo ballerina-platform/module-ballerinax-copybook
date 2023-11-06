@@ -13,19 +13,28 @@
 // KIND, either express or implied.  See the License for the
 // specific language governing permissions and limitations
 // under the License.
-
 import ballerina/constraint;
 import ballerina/file;
 import ballerina/jballerina.java;
 
+# This class represents a copybook converter that facilitates the conversion of ASCII data to and from JSON data.
 public isolated class Converter {
     private final Schema schema;
 
+    # Initializes the converter with a schema.
+    # + schemaFilePath - The path of the copybook file
+    # + return - Nil on success, error otherwise
     public isolated function init(string schemaFilePath) returns error? {
         string absolutePath = check file:getAbsolutePath(schemaFilePath);
         self.schema = check parseSchemaFile(absolutePath);
     }
 
+    # Converts the given ASCII string to a JSON value.
+    # + copybookData - The ASCII string that needs to be converted to JSON
+    # + targetRecordName - The name of the copybook record definition in the copybook. This parameter must be a string
+    # if the provided schema file contains more than one copybook record type definition
+    # + return - A JSON value in the following formats: `{data: converted-json-value}` 
+    # or `{data: partial-converted-json-value, errors: [list of coercion errors]}`. In case of an error, an error is returned
     public isolated function toJson(string copybookData, string? targetRecordName = ()) returns map<json>|error {
         lock {
             check self.validateTargetRecordName(targetRecordName);
@@ -36,6 +45,11 @@ public isolated class Converter {
         }
     }
 
+    # Converts the provided record or map<json> value to ASCII data.
+    # + input - The JSON value that needs to be converted as copybook data
+    # + targetRecordName - The name of the copybook record definition in the copybook. This parameter must be a string
+    # if the provided schema file contains more than one copybook record type definition
+    # + return - The converted ASCII string. In case of an error, an error is returned
     public isolated function toCopybook(record {} input, string? targetRecordName = ()) returns string|error {
         readonly & map<json> readonlyJson = check input.cloneWithType();
         if readonlyJson.hasKey(ERRORS) {
@@ -67,6 +81,12 @@ public isolated class Converter {
         }
     }
 
+    # Converts the given ASCII string to a Ballerina record.
+    # + copybookData - The ASCII string that needs to be converted to a record value
+    # + targetRecordName - The name of the copybook record definition in the copybook. This parameter must be a string
+    # if the provided schema file contains more than one copybook record type definition
+    # + t - The type of the target record type
+    # + return - A record value on success, an error in case of coercion errors
     public isolated function fromCopybook(string copybookData, string? targetRecordName = (), typedesc<record {}> t = <>) returns t|error = @java:Method {
         'class: "io.ballerina.lib.copybook.runtime.convertor.Utils"
     } external;
