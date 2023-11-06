@@ -229,17 +229,18 @@ class JsonToCopybookConvertor {
             fraction = fraction.substring(0, dataItem.getFloatingPointLength());
         }
 
-        boolean hasZInPic = dataItem.getPicture().startsWith("Z");
+        // Handle supress zero ex: Z(9)9.8;
+        int supressZeroCount = getSupressZeroCount(dataItem.getPicture());
         string decimalString = wholeNumber + "." + fraction.padEnd(dataItem.getFloatingPointLength(), "0");
         if dataItem.getPicture().startsWith("-") && input >= 0d {
             // -1 for sign place holder (first char)
-            return " " + decimalString.padZero(dataItem.getReadLength() - 1, hasZInPic ? " " : "0");
+            return " " + decimalString.padZero(dataItem.getReadLength() - 1 - supressZeroCount).padStart(dataItem.getReadLength() - 1);
         }
         if dataItem.getPicture().startsWith("+") && input > 0d {
             // -1 for sign place holder (first char)
-            return "+" + decimalString.padZero(dataItem.getReadLength() - 1, hasZInPic ? " " : "0");
+            return "+" + decimalString.padZero(dataItem.getReadLength() - 1 - supressZeroCount).padStart(dataItem.getReadLength() - 1);
         }
-        return decimalString.padZero(dataItem.getReadLength(), hasZInPic ? " " : "0");
+        return decimalString.padZero(dataItem.getReadLength() - supressZeroCount).padStart(dataItem.getReadLength());
     }
 
     private isolated function getPath() returns string {
