@@ -31,13 +31,13 @@ class PictureStringValidator {
     }
 
     static boolean isInt(String pictureString) {
-        // ex: PIC 999 or PIC +999 or PIC -999
+        // ex: PIC 999
         return Pattern.compile("^9+$").matcher(pictureString).find();
     }
 
     static boolean isDecimal(String pictureString) {
         // ex: PIC 99.99 or -99.99 or +99.99
-        return Pattern.compile("^[+-]?9+.9+$").matcher(pictureString).find();
+        return Pattern.compile("^[+-]?9+\\.9+$").matcher(pictureString).find();
     }
 
     static boolean isAlphaNumericWithCardinality(String pictureString) {
@@ -56,7 +56,7 @@ class PictureStringValidator {
     }
 
     static boolean isDecimalWithCardinality(String pictureString) {
-        // ex: PIC 9(9).333
+        // ex: PIC 9(9).333 or -9(9).333 or +9(9).333
         return Pattern.compile("^[+-]?9\\(\\d+\\)\\.9+$").matcher(pictureString).find();
     }
 

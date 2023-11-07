@@ -114,7 +114,8 @@ class LengthCalculator {
     }
 
     private static int getReadLengthDecimalWithSuppressedZeros(String pictureString) {
-        Matcher matcher = Pattern.compile("^Z\\((?<suppressedZeros>\\d+)\\)(?<decimal>9+.9+)$").matcher(pictureString);
+        Matcher matcher = Pattern.compile("^Z\\((?<suppressedZeros>\\d+)\\)(?<decimal>9+\\.9+)$")
+                .matcher(pictureString);
         if (matcher.find()) {
             int suppressedCardinality = Integer.parseInt(matcher.group("suppressedZeros"));
             int decimalLength = matcher.group("decimal").length();

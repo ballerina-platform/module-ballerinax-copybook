@@ -7,7 +7,7 @@
    03 DATA1-USER-ACCOUNT              PIC X(019).
    03 DATA1-BIRTH-DATE                PIC X(010).
    03 DATA1-NAME                      PIC X(040).
-   03 DATA1-CREDIT-LIMIT              PIC +9999999.
+   03 DATA1-CREDIT-LIMIT              PIC 9999999.
    03 DATA1-LIMIT-USED                PIC +99999.99.
    03 DATA1-STATUS OCCURS 4 TIMES.
       05 DATA1-STATUS-FLAG            PIC X(001).
