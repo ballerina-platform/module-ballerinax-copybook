@@ -28,7 +28,6 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.regex.Pattern;
 
 import static io.ballerina.lib.copybook.commons.generated.CopybookParser.BooleanLiteralContext;
 import static io.ballerina.lib.copybook.commons.generated.CopybookParser.CicsDfhRespLiteralContext;
@@ -159,9 +158,7 @@ class SchemaBuilder implements CopybookVisitor<CopybookNode> {
     }
 
     private void validatePictureString(String pictureString) {
-        String supportedPictureFormats = "^(X+|X\\(\\d+\\)|([+-])?9+(\\.9+)?|S9\\(\\d+\\)|9\\(\\d+\\)(\\.9+)?"
-                + "|(\\+|-9)\\(\\d+\\)\\.9+|Z\\(\\d+\\)9+\\.9+)$";
-        if (Pattern.compile(supportedPictureFormats).matcher(pictureString).find()) {
+        if (PictureStringValidator.isSupportedPictureString(pictureString)) {
             return;
         }
         this.errors.add("Unsupported picture string '" + pictureString + "' found in copybook schema");

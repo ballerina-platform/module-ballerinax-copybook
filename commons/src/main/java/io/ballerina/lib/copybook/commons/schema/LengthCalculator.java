@@ -3,6 +3,15 @@ package io.ballerina.lib.copybook.commons.schema;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import static io.ballerina.lib.copybook.commons.schema.PictureStringValidator.isAlphaNumeric;
+import static io.ballerina.lib.copybook.commons.schema.PictureStringValidator.isAlphaNumericWithCardinality;
+import static io.ballerina.lib.copybook.commons.schema.PictureStringValidator.isDecimal;
+import static io.ballerina.lib.copybook.commons.schema.PictureStringValidator.isDecimalWithCardinality;
+import static io.ballerina.lib.copybook.commons.schema.PictureStringValidator.isDecimalWithSuppressedZeros;
+import static io.ballerina.lib.copybook.commons.schema.PictureStringValidator.isInt;
+import static io.ballerina.lib.copybook.commons.schema.PictureStringValidator.isIntWithCardinality;
+import static io.ballerina.lib.copybook.commons.schema.PictureStringValidator.isSignRememberedIntWithCardinality;
+
 class LengthCalculator {
 
     private LengthCalculator() {
@@ -48,37 +57,12 @@ class LengthCalculator {
         return 0;
     }
 
-    private static boolean isAlphaNumeric(String pictureString) {
-        // ex: PIC XXX
-        return Pattern.compile("^X+$").matcher(pictureString).find();
-    }
-
-    private static boolean isInt(String pictureString) {
-        // ex: PIC 999 or PIC +999 or PIC -999
-        return Pattern.compile("^9+$").matcher(pictureString).find();
-    }
-
-    private static boolean isDecimal(String pictureString) {
-        // ex: PIC 99.99 or -99.99 or +99.99
-        return Pattern.compile("^[+-]?9+.9+$").matcher(pictureString).find();
-    }
-
-    private static boolean isAlphaNumericWithCardinality(String pictureString) {
-        // ex: PIC X(9)
-        return Pattern.compile("^X\\(\\d+\\)$").matcher(pictureString).find();
-    }
-
     private static int getReadLengthAlphaNumericWithCardinality(String pictureString) {
         Matcher matcher = Pattern.compile("^X\\((?<cardinality>\\d+)\\)$").matcher(pictureString);
         if (matcher.find()) {
             return Integer.parseInt(matcher.group("cardinality"));
         }
         return 0;
-    }
-
-    private static boolean isIntWithCardinality(String pictureString) {
-        // ex: PIC 9(2)
-        return Pattern.compile("^9\\(\\d+\\)$").matcher(pictureString).find();
     }
 
     private static int getReadLengthIntWithCardinality(String pictureString) {
@@ -89,22 +73,12 @@ class LengthCalculator {
         return 0;
     }
 
-    private static boolean isSignRememberedIntWithCardinality(String pictureString) {
-        // ex: PIC S9(2)
-        return Pattern.compile("^S9\\(\\d+\\)$").matcher(pictureString).find();
-    }
-
     private static int getReadLengthSignRememberedIntWithCardinality(String pictureString) {
         Matcher matcher = Pattern.compile("^S9\\((?<cardinality>\\d+)\\)$").matcher(pictureString);
         if (matcher.find()) {
             return Integer.parseInt(matcher.group("cardinality"));
         }
         return 0;
-    }
-
-    private static boolean isDecimalWithCardinality(String pictureString) {
-        // ex: PIC 9(9).333
-        return Pattern.compile("^[+-]?9\\(\\d+\\)\\.9+$").matcher(pictureString).find();
     }
 
     private static int getReadLengthDecimalWithCardinality(String pictureString) {
@@ -121,14 +95,8 @@ class LengthCalculator {
         return 0;
     }
 
-    private static boolean isDecimalWithSuppressedZeros(String pictureString) {
-        // PIC Z(9)99.99
-        return Pattern.compile("^Z\\(\\d+\\)9+.9+$").matcher(pictureString).find();
-    }
-
     private static int getReadLengthDecimalWithSuppressedZeros(String pictureString) {
-        Matcher matcher = Pattern.compile("^Z\\((?<suppressedZeros>\\d+)\\)(?<decimal>9+.9+)$")
-                .matcher(pictureString);
+        Matcher matcher = Pattern.compile("^Z\\((?<suppressedZeros>\\d+)\\)(?<decimal>9+.9+)$").matcher(pictureString);
         if (matcher.find()) {
             int suppressedCardinality = Integer.parseInt(matcher.group("suppressedZeros"));
             int decimalLength = matcher.group("decimal").length();
