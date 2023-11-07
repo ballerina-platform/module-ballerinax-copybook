@@ -14,6 +14,7 @@
 // specific language governing permissions and limitations
 // under the License.
 
+# Represents copybook module related errors.
 public type Error distinct error;
 
 type Iterator object {
