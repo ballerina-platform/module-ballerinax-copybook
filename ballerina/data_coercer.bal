@@ -115,7 +115,8 @@ class DataCoercer {
         string decimalString = data.trim();
         error|decimal coercedValue = decimal:fromString(decimalString);
         if coercedValue is error {
-            self.errors.push(error Error(string `"Failed to convert the value '${data}' to a 'decimal' at ${self.getPath()}".`));
+            self.errors.push(error Error(string `Failed to convert the value '${data}' to a 'decimal' `
+                + string `at ${self.getPath()}.`));
             return;
         }
         Error? validation = self.validateMaxByte(decimalString, dataItem);
@@ -130,7 +131,8 @@ class DataCoercer {
         string intString = data.trim();
         error|int coercedValue = int:fromString(intString);
         if coercedValue is error {
-            self.errors.push(error Error(string `"Failed to convert the value '${data}' to an 'int' at ${self.getPath()}".`));
+            self.errors.push(error Error(string `Failed to convert the value '${data}' to an 'int' `
+                + string `at ${self.getPath()}.`));
             return;
         }
         Error? validation = self.validateMaxByte(intString, dataItem);
@@ -153,13 +155,15 @@ class DataCoercer {
         if dataItem.isDecimal() {
             int? seperatorIndex = value.indexOf(".");
             int wholeNumberMaxLength = dataItem.getReadLength() - dataItem.getFloatingPointLength() - 1;
-            if (seperatorIndex is int && seperatorIndex > wholeNumberMaxLength) || (seperatorIndex is () && value.length() > wholeNumberMaxLength) {
+            if (seperatorIndex is int && seperatorIndex > wholeNumberMaxLength)
+                || (seperatorIndex is () && value.length() > wholeNumberMaxLength) {
                 return error Error(string `The integral part of the decimal value` +
                     string ` '${value}' exceeds the maximum byte size of ${wholeNumberMaxLength} at ${self.getPath()}.`);
             }
-            if seperatorIndex is int && value.substring(seperatorIndex + 1).length() > dataItem.getFloatingPointLength() {
-                return error Error(string `"The decimal value '${value}' has a fractional part that exceeds the maximum` +
-                string ` byte size of ${dataItem.getFloatingPointLength()} at ${self.getPath()}."`);
+            if seperatorIndex is int
+                && value.substring(seperatorIndex + 1).length() > dataItem.getFloatingPointLength() {
+                return error Error(string `The decimal value '${value}' has a fractional part that exceeds the maximum` +
+                string ` byte size of ${dataItem.getFloatingPointLength()} at ${self.getPath()}.`);
             }
         }
         int maxReadBytes = dataItem.getReadLength();
@@ -169,8 +173,8 @@ class DataCoercer {
             maxReadBytes = dataItem.getReadLength() + (dataItem.isSigned() && valueHasSign ? 1 : 0);
         }
         if value.length() > maxReadBytes {
-            return error Error(string `"The value '${value}' exceeds the maximum byte size of ${maxReadBytes} ` +
-                string `at ${self.getPath()}."`);
+            return error Error(string `The value '${value}' exceeds the maximum byte size of ${maxReadBytes} ` +
+                string `at ${self.getPath()}.`);
         }
     }
 

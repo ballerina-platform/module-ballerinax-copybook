@@ -94,11 +94,13 @@ public isolated class Convertor {
     # if the provided schema file contains more than one copybook record type definition
     # + t - The type of the target record type
     # + return - A record value on success, a `copybook:Error` in case of coercion errors
-    public isolated function fromCopybook(string copybookData, string? targetRecordName = (), typedesc<record {}> t = <>) returns t|Error = @java:Method {
+    public isolated function fromCopybook(string copybookData, string? targetRecordName = (),
+            typedesc<record {}> t = <>) returns t|Error = @java:Method {
         'class: "io.ballerina.lib.copybook.runtime.convertor.Utils"
     } external;
 
-    private isolated function toRecord(string copybookData, typedesc<record {}> t, string? targetRecordName = ()) returns record {}|Error {
+    private isolated function toRecord(string copybookData, typedesc<record {}> t,
+            string? targetRecordName = ()) returns record {}|Error {
         do {
             map<json> copybookJson = check self.toJson(copybookData, targetRecordName);
             if copybookJson.hasKey(ERRORS) {
