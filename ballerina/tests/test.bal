@@ -13,6 +13,7 @@
 // KIND, either express or implied.  See the License for the
 // specific language governing permissions and limitations
 // under the License.
+
 import ballerina/io;
 import ballerina/test;
 
@@ -31,7 +32,7 @@ isolated function testConvertor(string copybookFilePath, string inputFilePath) r
 
 isolated function testConvertorDataProvider() returns [string, string][] {
     [string, string][] filePaths = [];
-    foreach int i in 1 ... 4 {
+    foreach int i in 1 ... 5 {
         string copybookFilePath = string `resources/mainframe-records/record-${i}.cpy`;
         string inputFilePath = string `resources/mainframe-inputs/input-${i}.txt`;
         filePaths.push([copybookFilePath, inputFilePath]);
@@ -41,11 +42,22 @@ isolated function testConvertorDataProvider() returns [string, string][] {
 
 @test:Config
 isolated function testConvertorWithTargetRecordName() returns error? {
-    Convertor convertor = check new ("resources/mainframe-records/record-5.cpy");
-    string[] input = check io:fileReadLines("resources/mainframe-inputs/input-5.txt");
+    Convertor convertor = check new ("resources/mainframe-records/record-6.cpy");
+    string[] input = check io:fileReadLines("resources/mainframe-inputs/input-6.txt");
     foreach string line in input {
         map<json> jsonData = check (check convertor.toJson(line, "DATA-DETAIL-REGISTRY")).get("data").ensureType();
         string output = check convertor.toCopybook(jsonData, "DATA-DETAIL-REGISTRY");
+        test:assertEquals(output, line);
+    }
+}
+
+@test:Config
+isolated function testConvertorFromCopybook() returns error? {
+    Convertor convertor = check new ("resources/mainframe-records/record-7.cpy");
+    string[] input = check io:fileReadLines("resources/mainframe-inputs/input-7.txt");
+    foreach string line in input {
+        Copybook copybook = check convertor.fromCopybook(line, "Record2");
+        string output = check convertor.toCopybook(copybook, "Record2");
         test:assertEquals(output, line);
     }
 }
