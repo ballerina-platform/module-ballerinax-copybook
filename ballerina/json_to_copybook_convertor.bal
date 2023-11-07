@@ -69,8 +69,9 @@ class JsonToCopybookConvertor {
             int paddLength = remainingElements * elementSize;
             self.value.push("".padEnd(paddLength));
         } else {
-            self.errors.push(error Error(string `Found an invalid value '${data.toString()}' at ${self.getPath()}.` +
-                    string `A '${groupItem.getElementCount() < 0 ? "map<json>" : "map<json>[]"}' value is expected`));
+            self.errors.push(error Error(string `Found an invalid value '${data is () ? "null" : data.toString()}'`
+                + string `at ${self.getPath()}. A '${groupItem.getElementCount() < 0 ? "map<json>" : "map<json>[]"}'`
+                + "value is expected"));
         }
         _ = self.path.pop();
     }
@@ -103,12 +104,14 @@ class JsonToCopybookConvertor {
             self.visitDataItem(targetChild, value.get(targetChild.getName()));
         }
 
-        if redefiningItemNameWithValue is string && self.visitAllowedRedefiningItems.hasKey(redefiningItemNameWithValue) {
+        if redefiningItemNameWithValue is string
+            && self.visitAllowedRedefiningItems.hasKey(redefiningItemNameWithValue) {
             _ = self.visitAllowedRedefiningItems.remove(redefiningItemNameWithValue);
         }
     }
 
-    private isolated function findRedefiningItemNameWithValue(map<json> parentValue, string[] redefiningItemdNames) returns string? {
+    private isolated function findRedefiningItemNameWithValue(map<json> parentValue, string[] redefiningItemdNames)
+    returns string? {
         foreach string itemName in redefiningItemdNames {
             if parentValue.hasKey(itemName) {
                 return itemName;
@@ -166,13 +169,15 @@ class JsonToCopybookConvertor {
 
     private isolated function handleIntValue(int value, DataItem dataItem) returns string|error {
         if !dataItem.isNumeric() {
-            return error Error(string `Numeric value ${value} found at ${self.getPath()}. Expecting a non-numeric value`);
+            return error Error(string `Numeric value ${value} found at ${self.getPath()}.`
+                + " Expecting a non-numeric value");
         }
         if dataItem.isDecimal() {
             return self.handleDecimalValue(<decimal>value, dataItem);
         }
         int maxByteSize = dataItem.getReadLength();
-        if value.toString().length() > maxByteSize || (dataItem.getPicture().startsWith("+") && value > 0 && value.toString().length() > maxByteSize - 1) {
+        if value.toString().length() > maxByteSize
+            || (dataItem.getPicture().startsWith("+") && value > 0 && value.toString().length() > maxByteSize - 1) {
             return error Error(string `Value ${value} exceeds maximux byte size ${maxByteSize} at ${self.getPath()}`);
         }
         if dataItem.getPicture().startsWith("-") {
@@ -182,7 +187,7 @@ class JsonToCopybookConvertor {
         } else if dataItem.getPicture().startsWith("+") {
             // Add "+" in the begining of the string if the data has is positive
             return value < 0 ? value.toString().padZero(maxByteSize)
-                            : "+" + value.toString().padZero(maxByteSize - 1).padStart(maxByteSize-1);
+                : "+" + value.toString().padZero(maxByteSize - 1).padStart(maxByteSize - 1);
         }
         // handle S9(9)
         if dataItem.isSigned() && value < 0 {
@@ -191,7 +196,8 @@ class JsonToCopybookConvertor {
         return value.toString().padZero(maxByteSize);
     }
 
-    private isolated function handlePrimitiveArray(PrimitiveArrayType array, DataItem dataItem) returns string|error {
+    private isolated function handlePrimitiveArray(PrimitiveArrayType array, DataItem dataItem)
+    returns string|error {
         string[] elements = [];
         PrimitiveType[] primitiveArray = array; // This is allowed by covariance
         foreach int i in 0 ..< primitiveArray.length() {
@@ -211,7 +217,8 @@ class JsonToCopybookConvertor {
         // TODO: handle special case Z for fraction
         if !dataItem.isDecimal() && !dataItem.isNumeric() {
             string expectedType = dataItem.isNumeric() ? "int" : "string";
-            return error Error(string `Found invalid value '${input.toString()}' at ${self.getPath()}. A '${expectedType}' value is expected`);
+            return error Error(string `Found invalid value '${input.toString()}' at ${self.getPath()}.`
+                + string ` A '${expectedType}' value is expected`);
         }
         if dataItem.isNumeric() && !dataItem.isDecimal() {
             return self.handleIntValue(<int>input, dataItem);
@@ -221,10 +228,13 @@ class JsonToCopybookConvertor {
         string wholeNumber = coercedDecimalString.substring(0, seperatorIndex);
         string fraction = coercedDecimalString.substring(seperatorIndex + 1, coercedDecimalString.length());
 
-        int expectedWholeNumberLength = dataItem.getReadLength() - dataItem.getFloatingPointLength() - 1; // -1 here for "."
-        expectedWholeNumberLength -= dataItem.getPicture().startsWith("+") && input > 0d ? 1 : 0; // if PIC has + and value is + then remove the space allocated for + sign 
+        // A deducted of 1 made from readLength for decimal seperator "."
+        int expectedWholeNumberLength = dataItem.getReadLength() - dataItem.getFloatingPointLength() - 1;
+        // If PIC has + and value is positive then remove the space allocated for "+" sign 
+        expectedWholeNumberLength -= dataItem.getPicture().startsWith("+") && input > 0d ? 1 : 0;
         if wholeNumber.length() > expectedWholeNumberLength {
-            return error Error(string `Value '${input}' exceeds the max byte limit of whole number ${expectedWholeNumberLength} at ${self.getPath()}`);
+            return error Error(string `Value '${input}' exceeds the max byte limit of whole number `
+                + string `${expectedWholeNumberLength} at ${self.getPath()}`);
         } else if fraction.length() > dataItem.getFloatingPointLength() {
             fraction = fraction.substring(0, dataItem.getFloatingPointLength());
         }
@@ -233,12 +243,14 @@ class JsonToCopybookConvertor {
         int supressZeroCount = getSupressZeroCount(dataItem.getPicture());
         string decimalString = wholeNumber + "." + fraction.padEnd(dataItem.getFloatingPointLength(), "0");
         if dataItem.getPicture().startsWith("-") && input >= 0d {
-            // -1 for sign place holder (first char)
-            return " " + decimalString.padZero(dataItem.getReadLength() - 1 - supressZeroCount).padStart(dataItem.getReadLength() - 1);
+            // A deducted of 1 made from readLength for sign place holder " "
+            return " " + decimalString.padZero(dataItem.getReadLength() - 1 - supressZeroCount)
+                .padStart(dataItem.getReadLength() - 1);
         }
         if dataItem.getPicture().startsWith("+") && input > 0d {
-            // -1 for sign place holder (first char)
-            return "+" + decimalString.padZero(dataItem.getReadLength() - 1 - supressZeroCount).padStart(dataItem.getReadLength() - 1);
+            // A deducted of 1 made from readLength for sign char "+"
+            return "+" + decimalString.padZero(dataItem.getReadLength() - 1 - supressZeroCount)
+                .padStart(dataItem.getReadLength() - 1);
         }
         return decimalString.padZero(dataItem.getReadLength() - supressZeroCount).padStart(dataItem.getReadLength());
     }

@@ -48,7 +48,7 @@ isolated function sanitize(GroupValue data) returns GroupValue {
     GroupValue sanitizedValue = {};
     foreach [string, anydata] [name, 'field] in data.entries() {
         if 'field is string {
-            // Trim the trailing spaces to preserve spaces appeard in PIC X or PIC A
+            // Trim only the trailing spaces to preserve spaces appeard in PIC X or PIC A
             string trimmedValue = trimRight('field);
             if 'field.trim() != "" {
                 sanitizedValue[name] = trimmedValue;

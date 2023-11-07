@@ -67,7 +67,7 @@ class DataCoercer {
     }
 
     private isolated function coerceDataItemValue(string|string[] data, DataItem dataItem) returns anydata {
-        // Trim to remove spaces allocated for sing or Z prefix in decimal
+        // Trim to remove spaces allocated for sign or Z prefix in decimal
         if data is string {
             if dataItem.isDecimal() {
                 return self.coerceDecimal(data, dataItem);
