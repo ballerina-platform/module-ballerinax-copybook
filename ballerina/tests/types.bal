@@ -14,23 +14,7 @@
 // specific language governing permissions and limitations
 // under the License.
 
-# Represents copybook module related errors.
-public type Error distinct error;
-
-type Iterator object {
-    public isolated function next() returns record {|string:Char value;|}?;
-};
-
-type GroupValue record {
-
-};
-
-type FieldValue string|string[]|GroupValue|GroupValue[];
-
-type PrimitiveType string|int|float|decimal;
-
-type PrimitiveArrayType string[]|int[]|float[]|decimal[];
-
-const ROOT_JSON_PATH = "$";
-const ERRORS = "errors";
-const DATA = "data";
+type Copybook record {|
+    Record1 Record1?;
+    Record2 Record2?;
+|};

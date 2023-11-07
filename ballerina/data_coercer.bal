@@ -17,7 +17,7 @@
 class DataCoercer {
     private final Schema schema;
     private final string? targetRecordName;
-    private final error[] errors = [];
+    private final Error[] errors = [];
     private final string[] path = [];
 
     isolated function init(Schema schema, string? targetRecordName) {
@@ -25,9 +25,12 @@ class DataCoercer {
         self.targetRecordName = targetRecordName;
     }
 
-    isolated function coerce(GroupValue data) returns map<json>|error {
+    isolated function coerce(GroupValue data) returns map<json>|Error {
         self.path.push(ROOT_JSON_PATH);
-        map<json> coercedData = check self.coerceData(data, self.schema).cloneWithType();
+        map<json>|error coercedData = self.coerceData(data, self.schema).cloneWithType();
+        if coercedData is error {
+            return createError(coercedData);
+        }
         map<json> result = {data: coercedData};
         if self.errors.length() > 0 {
             string[] errorMsgs = self.errors.'map(err => err.message());
@@ -115,8 +118,8 @@ class DataCoercer {
             self.errors.push(error Error(string `"Failed to convert the value '${data}' to a 'decimal' at ${self.getPath()}".`));
             return;
         }
-        error? validation = self.validateMaxByte(decimalString, dataItem);
-        if validation is error {
+        Error? validation = self.validateMaxByte(decimalString, dataItem);
+        if validation is Error {
             self.errors.push(validation);
             return;
         }
@@ -130,8 +133,8 @@ class DataCoercer {
             self.errors.push(error Error(string `"Failed to convert the value '${data}' to an 'int' at ${self.getPath()}".`));
             return;
         }
-        error? validation = self.validateMaxByte(intString, dataItem);
-        if validation is error {
+        Error? validation = self.validateMaxByte(intString, dataItem);
+        if validation is Error {
             self.errors.push(validation);
             return;
         }
@@ -139,14 +142,14 @@ class DataCoercer {
     }
 
     private isolated function getValidatedString(string data, DataItem dataItem) returns string? {
-        error? validation = self.validateMaxByte(data, dataItem);
-        if validation is error {
+        Error? validation = self.validateMaxByte(data, dataItem);
+        if validation is Error {
             self.errors.push(validation);
         }
         return data;
     }
 
-    private isolated function validateMaxByte(string value, DataItem dataItem) returns error? {
+    private isolated function validateMaxByte(string value, DataItem dataItem) returns Error? {
         if dataItem.isDecimal() {
             int? seperatorIndex = value.indexOf(".");
             int wholeNumberMaxLength = dataItem.getReadLength() - dataItem.getFloatingPointLength() - 1;

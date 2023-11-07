@@ -24,10 +24,14 @@ public isolated class Convertor {
 
     # Initializes the convertor with a schema.
     # + schemaFilePath - The path of the copybook file
-    # + return - Nil on success, error otherwise
-    public isolated function init(string schemaFilePath) returns error? {
-        string absolutePath = check file:getAbsolutePath(schemaFilePath);
-        self.schema = check parseSchemaFile(absolutePath);
+    # + return - `copybook:Error` on failure, Nil otherwise
+    public isolated function init(string schemaFilePath) returns Error? {
+        do {
+            string absolutePath = check file:getAbsolutePath(schemaFilePath);
+            self.schema = check parseSchemaFile(absolutePath);
+        } on fail error err {
+            return createError(err);
+        }
     }
 
     # Converts the given ASCII string to a JSON value.
@@ -35,8 +39,9 @@ public isolated class Convertor {
     # + targetRecordName - The name of the copybook record definition in the copybook. This parameter must be a string
     # if the provided schema file contains more than one copybook record type definition
     # + return - A JSON value in the following formats: `{data: converted-json-value}` 
-    # or `{data: partial-converted-json-value, errors: [list of coercion errors]}`. In case of an error, an error is returned
-    public isolated function toJson(string copybookData, string? targetRecordName = ()) returns map<json>|error {
+    # or `{data: partial-converted-json-value, errors: [list of coercion errors]}`. In case of an error, a 
+    # `copybook:Error` is returned
+    public isolated function toJson(string copybookData, string? targetRecordName = ()) returns map<json>|Error {
         lock {
             check self.validateTargetRecordName(targetRecordName);
             CopybookReader copybookReader = new (copybookData.iterator(), self.schema, targetRecordName);
@@ -50,18 +55,22 @@ public isolated class Convertor {
     # + input - The JSON value that needs to be converted as copybook data
     # + targetRecordName - The name of the copybook record definition in the copybook. This parameter must be a string
     # if the provided schema file contains more than one copybook record type definition
-    # + return - The converted ASCII string. In case of an error, an error is returned
-    public isolated function toCopybook(record {} input, string? targetRecordName = ()) returns string|error {
-        readonly & map<json> readonlyJson = check input.cloneWithType();
-        lock {
-            check self.validateTargetRecordName(targetRecordName);
-            JsonToCopybookConvertor convertor = new (self.schema, targetRecordName);
-            convertor.visitSchema(self.schema, readonlyJson);
-            return convertor.getValue();
+    # + return - The converted ASCII string. In case of an error, a `copybook:Error` is is returned
+    public isolated function toCopybook(record {} input, string? targetRecordName = ()) returns string|Error {
+        do {
+            readonly & map<json> readonlyJson = check input.cloneWithType();
+            lock {
+                check self.validateTargetRecordName(targetRecordName);
+                JsonToCopybookConvertor convertor = new (self.schema, targetRecordName);
+                convertor.visitSchema(self.schema, readonlyJson);
+                return convertor.getValue();
+            }
+        } on fail error err {
+            return createError(err);
         }
     }
 
-    private isolated function validateTargetRecordName(string? targetRecordName) returns error? {
+    private isolated function validateTargetRecordName(string? targetRecordName) returns Error? {
         lock {
             if targetRecordName is () {
                 if self.schema.getTypeDefinitions().length() == 1 {
@@ -84,17 +93,21 @@ public isolated class Convertor {
     # + targetRecordName - The name of the copybook record definition in the copybook. This parameter must be a string
     # if the provided schema file contains more than one copybook record type definition
     # + t - The type of the target record type
-    # + return - A record value on success, an error in case of coercion errors
-    public isolated function fromCopybook(string copybookData, string? targetRecordName = (), typedesc<record {}> t = <>) returns t|error = @java:Method {
+    # + return - A record value on success, a `copybook:Error` in case of coercion errors
+    public isolated function fromCopybook(string copybookData, string? targetRecordName = (), typedesc<record {}> t = <>) returns t|Error = @java:Method {
         'class: "io.ballerina.lib.copybook.runtime.convertor.Utils"
     } external;
 
-    private isolated function toRecord(string copybookData, typedesc<record {}> t, string? targetRecordName = ()) returns record {}|error {
-        map<json> copybookJson = check self.toJson(copybookData, targetRecordName);
-        if copybookJson.hasKey(ERRORS) {
-            return error Error("Data coercion failed.", detail = copybookJson.get(ERRORS));
+    private isolated function toRecord(string copybookData, typedesc<record {}> t, string? targetRecordName = ()) returns record {}|Error {
+        do {
+            map<json> copybookJson = check self.toJson(copybookData, targetRecordName);
+            if copybookJson.hasKey(ERRORS) {
+                return error Error("Data coercion failed.", detail = copybookJson.get(ERRORS));
+            }
+            return check constraint:validate(copybookJson.get(DATA), t);
+        } on fail error err {
+            return createError(err);
         }
-        return constraint:validate(copybookJson.get(DATA), t);
     }
 }
 

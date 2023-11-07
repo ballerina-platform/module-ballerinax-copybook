@@ -259,7 +259,7 @@ class JsonToCopybookConvertor {
         return string `'${".".'join(...self.path)}'`;
     }
 
-    isolated function getValue() returns string|error {
+    isolated function getValue() returns string|Error {
         if self.errors.length() > 0 {
             string[] errorMsgs = self.errors.'map(err => err.message());
             map<string[]> errorDetail = {errors: errorMsgs};

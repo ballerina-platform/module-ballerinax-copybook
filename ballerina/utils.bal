@@ -198,3 +198,10 @@ isolated function getSupressZeroCount(string pictureString) returns int {
     }
     return checkpanic int:fromString(span.substring());
 }
+
+isolated function createError(error err) returns Error {
+    if err is Error {
+        return err;
+    }
+    return error Error(err.message(), err);
+}
