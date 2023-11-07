@@ -28,7 +28,6 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.regex.Pattern;
 
 import static io.ballerina.lib.copybook.commons.generated.CopybookParser.BooleanLiteralContext;
 import static io.ballerina.lib.copybook.commons.generated.CopybookParser.CicsDfhRespLiteralContext;
@@ -71,13 +70,13 @@ import static io.ballerina.lib.copybook.commons.generated.CopybookParser.Picture
 import static io.ballerina.lib.copybook.commons.generated.CopybookParser.QualifiedDataNameContext;
 import static io.ballerina.lib.copybook.commons.generated.CopybookParser.StartRuleContext;
 
-public class SchemaBuilder implements CopybookVisitor<CopybookNode> {
+class SchemaBuilder implements CopybookVisitor<CopybookNode> {
     private final Schema schema = new Schema();
     private GroupItem possibleParent;
     private final Set<String> redefinedItemNames = new HashSet<>();
     private final List<String> errors = new ArrayList<>();
 
-    public Schema getSchema() {
+    Schema getSchema() {
         return this.schema;
     }
 
@@ -152,16 +151,14 @@ public class SchemaBuilder implements CopybookVisitor<CopybookNode> {
             return new GroupItem(level, name, occurs, redefinedItemName, getParent(level));
         }
         PictureStringContext pictureType = pictureClause.pictureString();
-        String pictureString = pictureType.getText().toUpperCase();
+        String pictureString = Utils.getPictureString(pictureType);
         validatePictureString(pictureString);
         return new DataItem(level, name, pictureString, Utils.isNumeric(pictureType), Utils.getReadLength(pictureType),
                             occurs, Utils.getFloatingPointLength(pictureType), redefinedItemName, getParent(level));
     }
 
     private void validatePictureString(String pictureString) {
-        String supportedPictureFormats = "^(X+|X\\(\\d+\\)|(\\+|-)?9+(\\.9+)?|S9\\(\\d+\\)|9\\(\\d+\\)(\\.9+)?"
-                + "|(\\+|-9)\\(\\d+\\)\\.9+|Z\\(\\d+\\)9+\\.9+)$";
-        if (Pattern.compile(supportedPictureFormats).matcher(pictureString).find()) {
+        if (PictureStringValidator.isSupportedPictureString(pictureString)) {
             return;
         }
         this.errors.add("Unsupported picture string '" + pictureString + "' found in copybook schema");

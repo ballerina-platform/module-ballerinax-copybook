@@ -147,30 +147,20 @@ public final class Utils {
         GroupItem groupItem = (GroupItem) bObject.getNativeData(NATIVE_VALUE);
         List<BObject> children = new ArrayList<>();
         for (CopybookNode child : groupItem.getChildren()) {
-            BObject element = child instanceof GroupItem ?
-                    ValueCreator.createObjectValue(getModule(), GROUP_ITEM_TYPE_NAME) :
-                    ValueCreator.createObjectValue(getModule(), DATA_ITEM_TYPE_NAME);
-            element.addNativeData(NATIVE_VALUE, child);
+            BObject element = createBObjectWithNativeObject(child);
             children.add(element);
         }
-        ObjectType elementType = TypeCreator.createObjectType(NODE_TYPE_NAME, getModule(), 0);
-        ArrayType arrayType = TypeCreator.createArrayType(elementType);
-        return ValueCreator.createArrayValue(children.toArray(), arrayType);
+        return createBArrayOfNodes(children);
     }
 
     public static BArray getTypeDefinitions(BObject bObject) {
         Schema schema = (Schema) bObject.getNativeData(NATIVE_VALUE);
         List<BObject> children = new ArrayList<>();
         for (CopybookNode child : schema.getTypeDefinitions()) {
-            BObject element = child instanceof GroupItem ?
-                    ValueCreator.createObjectValue(getModule(), GROUP_ITEM_TYPE_NAME) :
-                    ValueCreator.createObjectValue(getModule(), DATA_ITEM_TYPE_NAME);
-            element.addNativeData(NATIVE_VALUE, child);
+            BObject element = createBObjectWithNativeObject(child);
             children.add(element);
         }
-        ObjectType elementType = TypeCreator.createObjectType(NODE_TYPE_NAME, getModule(), 0);
-        ArrayType arrayType = TypeCreator.createArrayType(elementType);
-        return ValueCreator.createArrayValue(children.toArray(), arrayType);
+        return createBArrayOfNodes(children);
     }
 
     public static BMap<BString, Object> getRedefinedItems(BObject bObject) {
@@ -179,10 +169,7 @@ public final class Utils {
         MapType mapType = TypeCreator.createMapType(constraintType);
         BMap<BString, Object> bMap = ValueCreator.createMapValue(mapType);
         for (CopybookNode child : schema.getRedefinedItems().values()) {
-            BObject element = child instanceof GroupItem ?
-                    ValueCreator.createObjectValue(getModule(), GROUP_ITEM_TYPE_NAME) :
-                    ValueCreator.createObjectValue(getModule(), DATA_ITEM_TYPE_NAME);
-            element.addNativeData(NATIVE_VALUE, child);
+            BObject element = createBObjectWithNativeObject(child);
             bMap.put(StringUtils.fromString(child.getName()), element);
         }
         return bMap;
@@ -192,12 +179,20 @@ public final class Utils {
         Schema schema = (Schema) bObject.getNativeData(NATIVE_VALUE);
         List<BObject> children = new ArrayList<>();
         for (CopybookNode child : schema.getTypeDefinitions()) {
-            BObject element = child instanceof GroupItem ?
-                    ValueCreator.createObjectValue(getModule(), GROUP_ITEM_TYPE_NAME) :
-                    ValueCreator.createObjectValue(getModule(), DATA_ITEM_TYPE_NAME);
-            element.addNativeData(NATIVE_VALUE, child);
+            BObject element = createBObjectWithNativeObject(child);
             children.add(element);
         }
+        return createBArrayOfNodes(children);
+    }
+
+    private static BObject createBObjectWithNativeObject(CopybookNode nativeObject) {
+        String objectTypeName = nativeObject instanceof GroupItem ? GROUP_ITEM_TYPE_NAME : DATA_ITEM_TYPE_NAME;
+        BObject element = ValueCreator.createObjectValue(getModule(), objectTypeName);
+        element.addNativeData(NATIVE_VALUE, nativeObject);
+        return element;
+    }
+
+    private static BArray createBArrayOfNodes(List<BObject> children) {
         ObjectType elementType = TypeCreator.createObjectType(NODE_TYPE_NAME, getModule(), 0);
         ArrayType arrayType = TypeCreator.createArrayType(elementType);
         return ValueCreator.createArrayValue(children.toArray(), arrayType);

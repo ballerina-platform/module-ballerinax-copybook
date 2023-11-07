@@ -114,7 +114,7 @@ class CopybookReader {
             chars.push(data.value);
         }
         string token = "".'join(...chars);
-        // Handle optional signs ex:S9
+        // Handle optional sign in PIC S9
         if dataItem.isSigned() && re`^(\+|-).*$`.find(token.trim()) !is ()   {
             var additionalChar = self.copybookIterator.next();
             if additionalChar !is () {

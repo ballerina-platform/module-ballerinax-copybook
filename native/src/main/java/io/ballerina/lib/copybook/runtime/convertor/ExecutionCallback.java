@@ -23,12 +23,7 @@ import io.ballerina.runtime.api.async.Callback;
 import io.ballerina.runtime.api.values.BError;
 
 
-public final class ExecutionCallback implements Callback {
-    private final Future balFuture;
-
-    public ExecutionCallback(Future balFuture) {
-        this.balFuture = balFuture;
-    }
+public record ExecutionCallback(Future balFuture) implements Callback {
 
     @Override
     public void notifySuccess(Object result) {
