@@ -56,7 +56,7 @@ class CopybookReader {
             }
         }
 
-        // Reset the iterator to previous text itterator
+        // Reset the iterator to previous text iterator
         self.copybookIterator = temp;
     }
 
@@ -73,7 +73,7 @@ class CopybookReader {
             self.addValue(dataItem.getName(), self.read(dataItem), data);
         }
 
-        // Reset the iterator to previous text itterator
+        // Reset the iterator to previous text iterator
         self.copybookIterator = temp;
     }
 
@@ -86,7 +86,7 @@ class CopybookReader {
             redefinedItemName = item.getRedefinedItemName();
         }
         if redefinedItemName is string {
-            // Obtain the itterator from redfinedValues map if the provided item is a redefining item
+            // Obtain the iterator from redfinedValues map if the provided item is a redefining item
             return self.redfinedValues.get(redefinedItemName).iterator();
         }
         return self.copybookIterator;

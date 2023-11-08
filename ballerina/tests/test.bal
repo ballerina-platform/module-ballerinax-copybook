@@ -13,7 +13,6 @@
 // KIND, either express or implied.  See the License for the
 // specific language governing permissions and limitations
 // under the License.
-
 import ballerina/io;
 import ballerina/test;
 
@@ -41,7 +40,7 @@ isolated function testConvertor(string copybookFilePath, string inputFilePath) r
 isolated function testConvertorDataProvider() returns [string, string][] {
     [string, string][] filePaths = [];
     foreach int i in 1 ... 5 {
-        filePaths.push([getCopybookPath(string `copybook-${i}`), getInputPath(string `input-${i}`)]);
+        filePaths.push([getCopybookPath(string `copybook-${i}`), getInputPath(string `copybook-${i}`)]);
     }
     return filePaths;
 }
@@ -49,7 +48,7 @@ isolated function testConvertorDataProvider() returns [string, string][] {
 @test:Config
 isolated function testConvertorWithTargetRecordName() returns error? {
     Convertor convertor = check new (getCopybookPath("copybook-6"));
-    string[] input = check io:fileReadLines(getInputPath("input-6"));
+    string[] input = check io:fileReadLines(getInputPath("copybook-6"));
     foreach string line in input {
         map<json> jsonData = check (check convertor.toJson(line, "DATA-DETAIL-REGISTRY")).get(DATA).ensureType();
         string output = check convertor.toCopybook(jsonData, "DATA-DETAIL-REGISTRY");
@@ -60,7 +59,7 @@ isolated function testConvertorWithTargetRecordName() returns error? {
 @test:Config
 isolated function testToJsonWithInvalidTargetRecordName() returns error? {
     Convertor convertor = check new (getCopybookPath("copybook-7"));
-    string input = check io:fileReadString(getInputPath("input-7"));
+    string input = check io:fileReadString(getInputPath("copybook-7"));
     Copybook7|Error copybook = convertor.fromCopybook(input, "InvalidName");
     if copybook !is Error {
         test:assertFail("Expected a 'copybook:Error'");
@@ -71,7 +70,7 @@ isolated function testToJsonWithInvalidTargetRecordName() returns error? {
 @test:Config
 isolated function testToJsonRequiresTargetRecordName() returns error? {
     Convertor convertor = check new (getCopybookPath("copybook-7"));
-    string input = check io:fileReadString(getInputPath("input-7"));
+    string input = check io:fileReadString(getInputPath("copybook-7"));
     Copybook7|Error copybook = convertor.fromCopybook(input);
     if copybook !is Error {
         test:assertFail("Expected a 'copybook:Error'");
@@ -82,7 +81,7 @@ isolated function testToJsonRequiresTargetRecordName() returns error? {
 @test:Config
 isolated function testfromCopybookApi() returns error? {
     Convertor convertor = check new (getCopybookPath("copybook-7"));
-    string[] input = check io:fileReadLines(getInputPath("input-7"));
+    string[] input = check io:fileReadLines(getInputPath("copybook-7"));
     foreach string line in input {
         Copybook7 copybook = check convertor.fromCopybook(line, "Record2");
         string output = check convertor.toCopybook(copybook, "Record2");
@@ -93,7 +92,7 @@ isolated function testfromCopybookApi() returns error? {
 @test:Config
 isolated function testfromCopybookReturningError() returns error? {
     Convertor convertor = check new (getCopybookPath("copybook-8"));
-    string input = check io:fileReadString(getInputPath("input-8"));
+    string input = check io:fileReadString(getInputPath("copybook-8"));
     Copybook8|Error copybook = convertor.fromCopybook(input);
     if copybook !is Error {
         test:assertFail("Expected a 'copybook:Error' but found a 'string'");
@@ -101,4 +100,13 @@ isolated function testfromCopybookReturningError() returns error? {
     json expectedErrorDetail = check getErrorDetail("copybook-8");
     json actualErrorDetail = check copybook.detail().ensureType();
     test:assertEquals(actualErrorDetail.toJson(), expectedErrorDetail);
+}
+
+@test:Config
+isolated function testToCopybookWithoutRedefinedItems() returns error? {
+    Convertor convertor = check new (getCopybookPath("copybook-1"));
+    json jsonInput = check io:fileReadJson(getCopybookJsonPath("copybook-1"));
+    string asciiData = check convertor.toCopybook(check jsonInput.cloneWithType());
+    string expectedAscii = check io:fileReadString(getInputPath("copybook-1"));
+    test:assertEquals(asciiData, expectedAscii);
 }

@@ -44,7 +44,7 @@ class JsonToCopybookConvertor {
     }
 
     isolated function visitGroupItem(GroupItem groupItem, anydata data = ()) {
-        if isRedifiningItem(groupItem) && !self.visitAllowedRedefiningItems.hasKey(groupItem.getName()) {
+        if isRedefiningItem(groupItem) && !self.visitAllowedRedefiningItems.hasKey(groupItem.getName()) {
             return;
         }
         self.path.push(groupItem.getName());
@@ -73,7 +73,7 @@ class JsonToCopybookConvertor {
     }
 
     private isolated function visitChild(GroupItem parent, Node child, map<json> value) {
-        if isRedifiningItem(child) {
+        if isRedefiningItem(child) {
             return;
         }
         Node targetChild = child;
@@ -111,7 +111,7 @@ class JsonToCopybookConvertor {
     }
 
     isolated function visitDataItem(DataItem dataItem, anydata data = ()) {
-        if isRedifiningItem(dataItem) && !self.visitAllowedRedefiningItems.hasKey(dataItem.getName()) {
+        if isRedefiningItem(dataItem) && !self.visitAllowedRedefiningItems.hasKey(dataItem.getName()) {
             return;
         }
         self.path.push(dataItem.getName());
@@ -138,7 +138,7 @@ class JsonToCopybookConvertor {
 
     private isolated function handlePrimitive(PrimitiveType value, DataItem dataItem) returns string|error {
         if value is string {
-            return self.handleStringVlaue(value, dataItem);
+            return self.handleStringValue(value, dataItem);
         }
         if value is int {
             return self.handleIntValue(value, dataItem);
@@ -146,7 +146,7 @@ class JsonToCopybookConvertor {
         return self.handleDecimalValue(<decimal>value, dataItem);
     }
 
-    private isolated function handleStringVlaue(string value, DataItem dataItem) returns string|Error {
+    private isolated function handleStringValue(string value, DataItem dataItem) returns string|Error {
         int maxLength = dataItem.getReadLength();
         if dataItem.isNumeric() {
             return error Error(string `Expected a numeric value at ${self.getPath()} but found string "${value}"`);
@@ -168,14 +168,14 @@ class JsonToCopybookConvertor {
         int maxByteSize = dataItem.getReadLength();
         if value.toString().length() > maxByteSize
             || (dataItem.getPicture().startsWith("+") && value > 0 && value.toString().length() > maxByteSize - 1) {
-            return error Error(string `Value ${value} exceeds maximux byte size ${maxByteSize} at ${self.getPath()}`);
+            return error Error(string `Value ${value} exceeds maximum byte size ${maxByteSize} at ${self.getPath()}`);
         }
         if dataItem.getPicture().startsWith("-") {
-            // Add " " in the begining of the string if the data has is positive
+            // Add " " in the beginning of the string if the data has is positive
             return value < 0 ? value.toString().padZero(maxByteSize)
                 : value.toString().padZero(maxByteSize - 1).padStart(maxByteSize);
         } else if dataItem.getPicture().startsWith("+") {
-            // Add "+" in the begining of the string if the data has is positive
+            // Add "+" in the beginning of the string if the data has is positive
             return value < 0 ? value.toString().padZero(maxByteSize)
                 : "+" + value.toString().padZero(maxByteSize - 1).padStart(maxByteSize - 1);
         }

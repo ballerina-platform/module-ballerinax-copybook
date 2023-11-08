@@ -96,8 +96,8 @@ class SchemaBuilder implements CopybookVisitor<CopybookNode> {
             this.schema.addRedefinedItem(item);
             return;
         }
-        if (item instanceof GroupItem) {
-            ((GroupItem) item).getChildren().forEach(this::addRedefinedItems);
+        if (item instanceof GroupItem groupItem) {
+            groupItem.getChildren().forEach(this::addRedefinedItems);
         }
     }
 
@@ -105,8 +105,8 @@ class SchemaBuilder implements CopybookVisitor<CopybookNode> {
     public CopybookNode visitDataDescription(DataDescriptionContext ctx) {
         for (int i = 0; i < ctx.getChildCount(); i++) {
             CopybookNode copybookNode = visitDataDescriptionEntry(ctx.dataDescriptionEntry(i));
-            if (copybookNode instanceof GroupItem) {
-                this.possibleParent = (GroupItem) copybookNode;
+            if (copybookNode instanceof GroupItem groupItem) {
+                this.possibleParent = groupItem;
             }
             if (isRootLevelNode(copybookNode)) {
                 this.schema.addTypeDefinition(copybookNode);

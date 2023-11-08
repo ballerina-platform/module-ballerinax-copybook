@@ -136,7 +136,7 @@ isolated function getTypeDefinition(Schema schema, string? targetRecordName) ret
     panic error(string `Unable to find targert record ${targetRecordName}`);
 }
 
-isolated function isRedifiningItem(Node node) returns boolean {
+isolated function isRedefiningItem(Node node) returns boolean {
     if node is DataItem {
         return node.getRedefinedItemName() != ();
     } else if node is GroupItem {
