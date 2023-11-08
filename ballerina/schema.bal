@@ -39,8 +39,8 @@ distinct class Schema {
         'class: "io.ballerina.lib.copybook.runtime.convertor.Utils"
     } external;
 
-    isolated function accept(Visitor visitor) {
-        visitor.visitSchema(self);
+    isolated function accept(Visitor visitor, anydata data = ()) {
+        visitor.visitSchema(self, data);
     }
 
     isolated function toString() returns string {

@@ -38,11 +38,7 @@ class JsonToCopybookConvertor {
             return;
         }
         if data.hasKey(typedef.getName()) {
-            if typedef is GroupItem {
-                self.visitGroupItem(typedef, data.get(typedef.getName()));
-            } else if typedef is DataItem {
-                self.visitDataItem(typedef, data.get(typedef.getName()));
-            }
+            typedef.accept(self, data.get(typedef.getName()));
         }
         _ = self.path.pop();
     }
@@ -97,13 +93,7 @@ class JsonToCopybookConvertor {
             }
             targetChild = redifiningItem;
         }
-
-        if targetChild is GroupItem {
-            self.visitGroupItem(targetChild, value.get(targetChild.getName()));
-        } else if targetChild is DataItem {
-            self.visitDataItem(targetChild, value.get(targetChild.getName()));
-        }
-
+        targetChild.accept(self, value.get(targetChild.getName()));
         if redefiningItemNameWithValue is string
             && self.visitAllowedRedefiningItems.hasKey(redefiningItemNameWithValue) {
             _ = self.visitAllowedRedefiningItems.remove(redefiningItemNameWithValue);
