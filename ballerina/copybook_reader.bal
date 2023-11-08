@@ -31,11 +31,7 @@ class CopybookReader {
 
     isolated function visitSchema(Schema schema, anydata data = ()) {
         Node typeDef = getTypeDefinition(schema, self.targetRecordName);
-        if typeDef is GroupItem {
-            self.visitGroupItem(typeDef);
-        } else if typeDef is DataItem {
-            self.visitDataItem(typeDef);
-        }
+        typeDef.accept(self);
     }
 
     isolated function visitGroupItem(GroupItem groupItem, anydata data = ()) {
@@ -47,7 +43,7 @@ class CopybookReader {
             foreach int i in 0 ..< groupItem.getElementCount() {
                 GroupValue groupValue = {};
                 foreach var child in groupItem.getChildren() {
-                    self.visitChild(child, groupValue);
+                    child.accept(self, groupValue);
                 }
                 elements.push(groupValue);
             }
@@ -55,21 +51,13 @@ class CopybookReader {
         } else {
             GroupValue groupValue = {};
             foreach var child in groupItem.getChildren() {
-                self.visitChild(child, groupValue);
+                child.accept(self, groupValue);
                 self.addValue(groupItem.getName(), groupValue, data);
             }
         }
 
         // Reset the iterator to previous text itterator
         self.copybookIterator = temp;
-    }
-
-    private isolated function visitChild(Node child, GroupValue groupValue) {
-        if child is GroupItem {
-            self.visitGroupItem(child, groupValue);
-        } else if child is DataItem {
-            self.visitDataItem(child, groupValue);
-        }
     }
 
     isolated function visitDataItem(DataItem dataItem, anydata data = ()) {
@@ -115,7 +103,7 @@ class CopybookReader {
         }
         string token = "".'join(...chars);
         // Handle optional sign in PIC S9
-        if dataItem.isSigned() && re`^(\+|-).*$`.find(token.trim()) !is ()   {
+        if dataItem.isSigned() && re `^(\+|-).*$`.find(token.trim()) !is () {
             var additionalChar = self.copybookIterator.next();
             if additionalChar !is () {
                 chars.push(additionalChar.value);

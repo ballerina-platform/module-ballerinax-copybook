@@ -59,8 +59,8 @@ isolated distinct class DataItem {
         'class: "io.ballerina.lib.copybook.runtime.convertor.Utils"
     } external;
 
-    function accept(Visitor visitor) {
-        visitor.visitDataItem(self);
+    isolated function accept(Visitor visitor, anydata data = ()) {
+        visitor.visitDataItem(self, data);
     }
 
     isolated function toString() returns string {

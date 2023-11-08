@@ -16,6 +16,6 @@
 
 type Visitor distinct object {
     isolated function visitSchema(Schema schema, anydata data = ());
-    function visitGroupItem(GroupItem groupItem, anydata data = ());
-    function visitDataItem(DataItem dataItem, anydata data = ());
+    isolated function visitGroupItem(GroupItem groupItem, anydata data = ());
+    isolated function visitDataItem(DataItem dataItem, anydata data = ());
 };

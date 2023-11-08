@@ -18,5 +18,5 @@ type Node distinct object {
     isolated function getLevel() returns int;
     isolated function getName() returns string;
     isolated function getElementCount() returns int;
-    function accept(Visitor visitor);
+    isolated function accept(Visitor visitor, anydata data = ());
 };

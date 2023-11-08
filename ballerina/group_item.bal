@@ -39,8 +39,8 @@ distinct class GroupItem {
         'class: "io.ballerina.lib.copybook.runtime.convertor.Utils"
     } external;
 
-    function accept(Visitor visitor) {
-        visitor.visitGroupItem(self);
+    isolated function accept(Visitor visitor, anydata data = ()) {
+        visitor.visitGroupItem(self, data);
     }
 
     isolated function toString() returns string {
