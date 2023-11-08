@@ -17,15 +17,19 @@
 import ballerina/io;
 
 isolated function getCopybookPath(string fileName) returns string {
-    return string `resources/mainframe-records/${fileName}.cpy`;
+    return string `resources/copybooks/${fileName}.cpy`;
 }
 
 isolated function getInputPath(string fileName) returns string {
-    return string `resources/mainframe-inputs/${fileName}.txt`;
+    return string `resources/copybook-inputs/${fileName}.txt`;
 }
 
 isolated function getSchemaPath(string fileName) returns string {
     return string `resources/schema/${fileName}.json`;
+}
+
+isolated function getCopybookJsonPath(string fileName) returns string {
+    return string `resources/copybook-json/${fileName}.json`;
 }
 
 isolated function getErrorDetail(string fileName) returns json|error {

@@ -16,7 +16,7 @@
       15 MF-HDQQ-QQEPMZIIEEK                       OCCURS 02 TIMES.
          25 MF-HDQQ-QQEPMZQQMEQQ                     PIC X(48).
          25 MF-HDQQ-QQEPMZQQIEIE                    PIC X(48).
-      15 EFMMEQQ                                  PIC X(92).
+      15 FILLER                                  PIC X(92).
    05 PQQPEEII-QQEQQIEII-EPMIQQPM-EQQEE.
       10 PQQPEEII-QQEQQIEII-DEIE                    PIC  X(08).
       10 PQQPEEII-QQEQQIEII-IFME                    PIC  X(06).
@@ -620,7 +620,7 @@
                88 MPEM-EMI-EEME-EI-DPD           VALUE 'E'.
                88 MPEM-EMI-EEME-QQEQQ-MEM-EHK      VALUE 'M'.
                88 MPEM-IMEEME-IP-EEME-EMI        VALUE 'E'.
-         10 EFMMEQQ                               PIC X(2605).
+         10 FILLER                               PIC X(2605).
       05 PIIPII-DEIE-FM  REDEFINES PMEM-PIIPII-DEIE.
          10 PMEM-DEIEFMI-FM.
             15 PMEM-EMEII                        PIC X(08).
@@ -754,7 +754,7 @@
                   30 FM-ELEM-EMMIEM-PQQEM-EMI     PIC -9(9).99.
                   30 FM-ELEM-ELPFQQZ-DI           PIC X(008).
                   30 FM-ELEM-EEIFVVE-IIEIII-FMD   PIC X(001).
-         10 EFMMEQQ                               PIC X(6070).
+         10 FILLER                               PIC X(6070).
       05 PIIPII-DEIE-IM REDEFINES PMEM-PIIPII-DEIE.
          10 PMEM-DEIEFMI-IM.
             15 ELIQQE-EMMIEM-PQQEM-EMI             PIC -9(9).99.
@@ -864,4 +864,4 @@
                   30 IM-ELEM-EMMIEM-PQQEM-EMI     PIC -9(9).99.
                   30 IM-ELEM-ELPFQQZ-DI           PIC X(008).
                   30 IM-ELEM-EEIFVVE-IIEIII-FMD   PIC X(001).
-         10 EFMMEQQ                               PIC X(7722).
+         10 FILLER                               PIC X(7722).
