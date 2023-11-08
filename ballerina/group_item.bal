@@ -39,7 +39,7 @@ distinct class GroupItem {
         'class: "io.ballerina.lib.copybook.runtime.convertor.Utils"
     } external;
 
-    function accept(Visitor visitor) {
+    isolated function accept(Visitor visitor) {
         visitor.visitGroupItem(self);
     }
 
