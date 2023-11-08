@@ -43,3 +43,4 @@ target
 **/build
 
 docker.env
+.DS_Store
