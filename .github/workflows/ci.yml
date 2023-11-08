@@ -17,4 +17,5 @@ jobs:
     secrets: inherit
     with:
       repo-name: module-ballerinax-copybook
-      publish-required: 'true'
+      publish-required: true
+
