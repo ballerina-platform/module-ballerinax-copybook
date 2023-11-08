@@ -14,7 +14,11 @@
 // specific language governing permissions and limitations
 // under the License.
 
-type Copybook record {|
+type Copybook7 record {|
     Record1 Record1?;
     Record2 Record2?;
+|};
+
+type Copybook8 record {|
+    Employee Employee?;
 |};

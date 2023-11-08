@@ -32,7 +32,7 @@ isolated function testConvertor(string copybookFilePath, string inputFilePath) r
     Convertor convertor = check new (copybookFilePath);
     string[] input = check io:fileReadLines(inputFilePath);
     foreach string line in input {
-        map<json> jsonData = check (check convertor.toJson(line)).get("data").ensureType();
+        map<json> jsonData = check (check convertor.toJson(line)).get(DATA).ensureType();
         string output = check convertor.toCopybook(jsonData);
         test:assertEquals(output, line);
     }
@@ -51,19 +51,54 @@ isolated function testConvertorWithTargetRecordName() returns error? {
     Convertor convertor = check new (getCopybookPath("copybook-6"));
     string[] input = check io:fileReadLines(getInputPath("input-6"));
     foreach string line in input {
-        map<json> jsonData = check (check convertor.toJson(line, "DATA-DETAIL-REGISTRY")).get("data").ensureType();
+        map<json> jsonData = check (check convertor.toJson(line, "DATA-DETAIL-REGISTRY")).get(DATA).ensureType();
         string output = check convertor.toCopybook(jsonData, "DATA-DETAIL-REGISTRY");
         test:assertEquals(output, line);
     }
 }
 
 @test:Config
-isolated function testConvertorFromCopybook() returns error? {
+isolated function testToJsonWithInvalidTargetRecordName() returns error? {
+    Convertor convertor = check new (getCopybookPath("copybook-7"));
+    string input = check io:fileReadString(getInputPath("input-7"));
+    Copybook7|Error copybook = convertor.fromCopybook(input, "InvalidName");
+    if copybook !is Error {
+        test:assertFail("Expected a 'copybook:Error'");
+    }
+    test:assertEquals(copybook.message(), "Invalid target record name 'InvalidName'");
+}
+
+@test:Config
+isolated function testToJsonRequiresTargetRecordName() returns error? {
+    Convertor convertor = check new (getCopybookPath("copybook-7"));
+    string input = check io:fileReadString(getInputPath("input-7"));
+    Copybook7|Error copybook = convertor.fromCopybook(input);
+    if copybook !is Error {
+        test:assertFail("Expected a 'copybook:Error'");
+    }
+    test:assertEquals(copybook.message(), "The copybook schema has multiple record definitions. The targetRecordName must not be nil");
+}
+
+@test:Config
+isolated function testfromCopybookApi() returns error? {
     Convertor convertor = check new (getCopybookPath("copybook-7"));
     string[] input = check io:fileReadLines(getInputPath("input-7"));
     foreach string line in input {
-        Copybook copybook = check convertor.fromCopybook(line, "Record2");
+        Copybook7 copybook = check convertor.fromCopybook(line, "Record2");
         string output = check convertor.toCopybook(copybook, "Record2");
         test:assertEquals(output, line);
     }
+}
+
+@test:Config
+isolated function testfromCopybookReturningError() returns error? {
+    Convertor convertor = check new (getCopybookPath("copybook-8"));
+    string input = check io:fileReadString(getInputPath("input-8"));
+    Copybook8|Error copybook = convertor.fromCopybook(input);
+    if copybook !is Error {
+        test:assertFail("Expected a 'copybook:Error' but found a 'string'");
+    }
+    json expectedErrorDetail = check getErrorDetail("copybook-8");
+    json actualErrorDetail = check copybook.detail().ensureType();
+    test:assertEquals(actualErrorDetail.toJson(), expectedErrorDetail);
 }

@@ -84,7 +84,7 @@ public isolated class Convertor {
                     return;
                 }
             }
-            return error Error(string `Invalid target record name ${targetRecordName}`);
+            return error Error(string `Invalid target record name '${targetRecordName}'`);
         }
     }
 
@@ -104,7 +104,7 @@ public isolated class Convertor {
         do {
             map<json> copybookJson = check self.toJson(copybookData, targetRecordName);
             if copybookJson.hasKey(ERRORS) {
-                return error Error("Data coercion failed.", detail = copybookJson.get(ERRORS));
+                return error Error("Data coercion failed.", errors = copybookJson.get(ERRORS));
             }
             return check constraint:validate(copybookJson.get(DATA), t);
         } on fail error err {

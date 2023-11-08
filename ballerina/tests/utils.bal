@@ -14,6 +14,8 @@
 // specific language governing permissions and limitations
 // under the License.
 
+import ballerina/io;
+
 isolated function getCopybookPath(string fileName) returns string {
     return string `resources/mainframe-records/${fileName}.cpy`;
 }
@@ -24,4 +26,13 @@ isolated function getInputPath(string fileName) returns string {
 
 isolated function getSchemaPath(string fileName) returns string {
     return string `resources/schema/${fileName}.json`;
+}
+
+isolated function getErrorDetail(string fileName) returns json|error {
+    string filePath = string `resources/errors/${fileName}.json`;
+    json errors = check io:fileReadJson(filePath);
+    if errors !is map<json> || !errors.hasKey(ERRORS) {
+        return error(string `Invalid error fomart in '${filePath}'`);
+    }
+    return errors;
 }
