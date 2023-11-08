@@ -1,0 +1,31 @@
+[package]
+org = "ballerinax"
+name = "copybook"
+version = "@toml.version@"
+authors = ["Ballerina"]
+keywords = ["copybook", "serdes", "cobol", "mainframe"]
+repository = "https://github.com/ballerina-platform/module-ballerinax-copybook"
+icon = "icon.png"
+license = ["Apache-2.0"]
+distribution = "2201.8.0"
+
+[platform.java17]
+graalvmCompatible = true
+
+[[platform.java17.dependency]]
+groupId = "io.ballerina.lib"
+artifactId = "copybook-native"
+version = "@project.version@"
+path="../native/build/libs/copybook-native-@project.version@.jar"
+
+[[platform.java17.dependency]]
+groupId = "io.ballerina.lib"
+artifactId = "copybook-commons"
+version = "@toml.version@"
+path = "../commons/build/libs/copybook-commons-@project.version@.jar"
+
+[[platform.java17.dependency]]
+groupId = "org.antlr"
+artifactId = "antlr4-runtimee"
+version = "@antlr.version@"
+path="./lib/antlr4-runtime-@antlr.version@.jar"

@@ -1,0 +1,7 @@
+{
+  "errors": [
+    "Failed to convert the value 'Gru' to an 'int' at '$.Employee.EmployeeId'.",
+    "Failed to convert the value '0L' to an 'int' at '$.Employee.ContractYears'.",
+    "The integral part of the decimal value '00008000' exceeds the maximum byte size of 4 at '$.Employee.Bonus'."
+  ]
+}
