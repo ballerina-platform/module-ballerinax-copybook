@@ -17,6 +17,14 @@
 import ballerina/io;
 import ballerina/test;
 
+@test:Config
+isolated function testParseSchemaFile() returns error? {
+    Schema schema = check parseSchemaFile(getCopybookPath("copybook-1"));
+    json expected = check io:fileReadJson(getSchemaPath("copybook-1"));
+    json actual = check schema.toString().fromJsonString();
+    test:assertEquals(actual, expected);
+}
+
 @test:Config {
     dataProvider: testConvertorDataProvider
 }
@@ -33,17 +41,15 @@ isolated function testConvertor(string copybookFilePath, string inputFilePath) r
 isolated function testConvertorDataProvider() returns [string, string][] {
     [string, string][] filePaths = [];
     foreach int i in 1 ... 5 {
-        string copybookFilePath = string `resources/mainframe-records/record-${i}.cpy`;
-        string inputFilePath = string `resources/mainframe-inputs/input-${i}.txt`;
-        filePaths.push([copybookFilePath, inputFilePath]);
+        filePaths.push([getCopybookPath(string `copybook-${i}`), getInputPath(string `input-${i}`)]);
     }
     return filePaths;
 }
 
 @test:Config
 isolated function testConvertorWithTargetRecordName() returns error? {
-    Convertor convertor = check new ("resources/mainframe-records/record-6.cpy");
-    string[] input = check io:fileReadLines("resources/mainframe-inputs/input-6.txt");
+    Convertor convertor = check new (getCopybookPath("copybook-6"));
+    string[] input = check io:fileReadLines(getInputPath("input-6"));
     foreach string line in input {
         map<json> jsonData = check (check convertor.toJson(line, "DATA-DETAIL-REGISTRY")).get("data").ensureType();
         string output = check convertor.toCopybook(jsonData, "DATA-DETAIL-REGISTRY");
@@ -53,8 +59,8 @@ isolated function testConvertorWithTargetRecordName() returns error? {
 
 @test:Config
 isolated function testConvertorFromCopybook() returns error? {
-    Convertor convertor = check new ("resources/mainframe-records/record-7.cpy");
-    string[] input = check io:fileReadLines("resources/mainframe-inputs/input-7.txt");
+    Convertor convertor = check new (getCopybookPath("copybook-7"));
+    string[] input = check io:fileReadLines(getInputPath("input-7"));
     foreach string line in input {
         Copybook copybook = check convertor.fromCopybook(line, "Record2");
         string output = check convertor.toCopybook(copybook, "Record2");
