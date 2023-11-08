@@ -151,17 +151,23 @@ class SchemaBuilder implements CopybookVisitor<CopybookNode> {
             return new GroupItem(level, name, occurs, redefinedItemName, getParent(level));
         }
         PictureStringContext pictureType = pictureClause.pictureString();
-        String pictureString = Utils.getPictureString(pictureType);
-        validatePictureString(pictureString);
-        return new DataItem(level, name, pictureString, Utils.isNumeric(pictureType), Utils.getReadLength(pictureType),
-                            occurs, Utils.getFloatingPointLength(pictureType), redefinedItemName, getParent(level));
+        validatePicture(pictureType);
+        return new DataItem(level, name, Utils.getPictureString(pictureType), Utils.isNumeric(pictureType),
+                            Utils.getReadLength(pictureType), occurs, Utils.getFloatingPointLength(pictureType),
+                            redefinedItemName, getParent(level));
     }
 
-    private void validatePictureString(String pictureString) {
+    private void validatePicture(PictureStringContext pictureType) {
+        String pictureString = Utils.getPictureString(pictureType);
         if (PictureStringValidator.isSupportedPictureString(pictureString)) {
             return;
         }
-        this.errors.add("Unsupported picture string '" + pictureString + "' found in copybook schema");
+        String errorMsg = "Unsupported picture string '" + pictureString + "' found in copybook schema";
+        this.addError(pictureType.start.getLine(), pictureType.start.getCharPositionInLine(), errorMsg);
+    }
+
+    private void addError(int line, int charPositionInLine, String msg) {
+        this.errors.add("Error at line " + line + ", column " + charPositionInLine + ": " + msg);
     }
 
     @Override
