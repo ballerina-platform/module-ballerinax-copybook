@@ -92,3 +92,5 @@ build.dependsOn ":${packageName}-native:build"
 build.dependsOn ":${packageName}-commons:build"
 test.dependsOn ":${packageName}-native:build"
 test.dependsOn ":${packageName}-commons:build"
+
+publish.dependsOn build
