@@ -17,23 +17,23 @@
 import ballerina/io;
 
 isolated function getCopybookPath(string fileName) returns string {
-    return string `resources/copybooks/${fileName}.cpy`;
+    return string `tests/resources/copybooks/${fileName}.cpy`;
 }
 
 isolated function getInputPath(string fileName) returns string {
-    return string `resources/copybook-inputs/${fileName}.txt`;
+    return string `tests/resources/copybook-inputs/${fileName}.txt`;
 }
 
 isolated function getSchemaPath(string fileName) returns string {
-    return string `resources/schema/${fileName}.json`;
+    return string `tests/resources/schema/${fileName}.json`;
 }
 
 isolated function getCopybookJsonPath(string fileName) returns string {
-    return string `resources/copybook-json/${fileName}.json`;
+    return string `tests/resources/copybook-json/${fileName}.json`;
 }
 
 isolated function getErrorDetail(string fileName) returns json|error {
-    string filePath = string `resources/errors/${fileName}.json`;
+    string filePath = string `tests/resources/errors/${fileName}.json`;
     json errors = check io:fileReadJson(filePath);
     if errors !is map<json> || !errors.hasKey(ERRORS) {
         return error(string `Invalid error fomart in '${filePath}'`);
