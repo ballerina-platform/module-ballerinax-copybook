@@ -40,7 +40,7 @@ class LengthCalculator {
                 pictureString)) {
             return 0;
         }
-        Matcher matcher = Pattern.compile("^.*\\.(?<fraction>.9+)$").matcher(pictureString);
+        Matcher matcher = Pattern.compile("^.*\\.(?<fraction>9+)$").matcher(pictureString);
         if (matcher.find()) {
             return matcher.group("fraction").length();
         }
