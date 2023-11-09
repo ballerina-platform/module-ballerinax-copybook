@@ -83,10 +83,6 @@ task commitTomlFiles {
     }
 }
 
-clean {
-    delete 'build'
-}
-
 build.dependsOn copyToLib
 build.dependsOn ":${packageName}-native:build"
 build.dependsOn ":${packageName}-commons:build"
