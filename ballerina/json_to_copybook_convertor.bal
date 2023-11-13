@@ -218,17 +218,9 @@ class JsonToCopybookConvertor {
         string wholeNumber = coercedDecimalString.substring(0, seperatorIndex);
         string fraction = coercedDecimalString.substring(seperatorIndex + 1, coercedDecimalString.length());
 
-        // A deducted of 1 made from readLength for decimal seperator "."
-        int expectedWholeNumberLength = dataItem.getReadLength() - dataItem.getFloatingPointLength() - 1;
-        // If PIC has + and value is positive then remove the space allocated for "+" sign 
-        expectedWholeNumberLength -= dataItem.getPicture().startsWith("+") && input > 0d ? 1 : 0;
-        if wholeNumber.length() > expectedWholeNumberLength {
-            return error Error(string `Value '${input}' exceeds the max byte limit of whole number `
-                + string `${expectedWholeNumberLength} at ${self.getPath()}`);
-        } else if fraction.length() > dataItem.getFloatingPointLength() {
-            fraction = fraction.substring(0, dataItem.getFloatingPointLength());
-        }
-
+        check self.checkDecimalLength(wholeNumber, fraction, input, dataItem);
+        // Handle trailing zeros in decimal
+        fraction = fraction.substring(0, dataItem.getFloatingPointLength());
         // Handle supress zero ex: Z(9)9.8;
         int supressZeroCount = getSupressZeroCount(dataItem.getPicture());
         string decimalString = wholeNumber + "." + fraction.padEnd(dataItem.getFloatingPointLength(), "0");
@@ -245,6 +237,24 @@ class JsonToCopybookConvertor {
         return decimalString.padZero(dataItem.getReadLength() - supressZeroCount).padStart(dataItem.getReadLength());
     }
 
+    private isolated function checkDecimalLength(string wholeNumber, string fraction, decimal input, DataItem dataItem) returns error? {
+        // A deducted of 1 made from readLength for decimal seperator "."
+        int expectedWholeNumberLength = dataItem.getReadLength() - dataItem.getFloatingPointLength() - 1;
+        // If PIC has + and value is positive then remove the space allocated for "+" sign
+        expectedWholeNumberLength -= dataItem.getPicture().startsWith("+") && input > 0d ? 1 : 0;
+        if wholeNumber.length() > expectedWholeNumberLength {
+            return error Error(string `Value '${input}' exceeds the maximum number of integer digits `
+                + string `${expectedWholeNumberLength} at ${self.getPath()}`);
+        } else if fraction.length() > dataItem.getFloatingPointLength() {
+            string exeedingFractionDigits = fraction.substring(dataItem.getFloatingPointLength());
+            if check int:fromString(exeedingFractionDigits) > 0 {
+                return error Error(string `Value '${input}' exceeds the maximum number of fraction digits `
+                    + string `${dataItem.getFloatingPointLength()} at ${self.getPath()}`);
+            }
+        }
+        return;
+    }
+
     private isolated function getPath() returns string {
         return string `'${".".'join(...self.path)}'`;
     }
@@ -252,8 +262,7 @@ class JsonToCopybookConvertor {
     isolated function getValue() returns string|Error {
         if self.errors.length() > 0 {
             string[] errorMsgs = self.errors.'map(err => err.message());
-            map<string[]> errorDetail = {errors: errorMsgs};
-            return error Error("JSON to copybook data conversion failed.", detail = errorDetail);
+            return error Error("JSON to copybook data conversion failed.", errors = errorMsgs);
         }
         return "".'join(...self.value);
     }
