@@ -1,0 +1,7 @@
+{
+  "errors": [
+    "Value '2.345234' exceeds the maximum number of fraction digits 1 at '$.Employee.EmployeeId'",
+    "Value '323.33' exceeds the maximum number of integer digits 2 at '$.Employee.ContractYears'",
+    "Value '34567.6543' exceeds the maximum number of integer digits 4 at '$.Employee.APIT'"
+  ]
+}

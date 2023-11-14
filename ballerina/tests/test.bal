@@ -110,3 +110,16 @@ isolated function testToCopybookWithoutRedefinedItems() returns error? {
     string expectedAscii = check io:fileReadString(getInputPath("copybook-1"));
     test:assertEquals(asciiData, expectedAscii);
 }
+
+@test:Config
+isolated function testToCopybookReturningError() returns error? {
+    Convertor convertor = check new (getCopybookPath("copybook-9"));
+    json jsonInput = check io:fileReadJson(getCopybookJsonPath("copybook-9"));
+    string|Error copybook = convertor.toCopybook(check jsonInput.cloneWithType());
+    if copybook !is Error {
+        test:assertFail("Expected a 'copybook:Error' but found a 'string'");
+    }
+    json expectedErrorDetail = check getErrorDetail("copybook-9");
+    json actualErrorDetail = check copybook.detail().ensureType();
+    test:assertEquals(actualErrorDetail.toJson(), expectedErrorDetail);
+}
