@@ -2,8 +2,9 @@
     "Employee": {
         "EmployeeId": 2.345234,
         "ContractYears": 323.33,
-        "Salary": 5.200,
+        "Salary": 5.2002,
         "Bonus": 3412.000000,
-        "APIT": 34567.6543
+        "APIT": 34567.6543,
+        "Stationary": -345.455
     }
 }
