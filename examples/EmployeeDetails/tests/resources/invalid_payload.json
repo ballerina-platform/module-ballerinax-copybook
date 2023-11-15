@@ -1,0 +1,30 @@
+{
+    "EmployeeRecord": {
+        "EmployeeId": "0001",
+        "EmployeeName": {
+            "FirstName": "MahroofMohamed",
+            "LastName": "Sabthar"
+        },
+        "EmployeeFullName": "Mahroof   Sabthar",
+        "EmployeeSalary": 150000.00,
+        "EmployeeGrade": "A",
+        "EmployeeRating": 999.8,
+        "EmployeeDepartments": [
+            {
+                "DeptCode": 209017,
+                "DeptName": "R&D"
+            },
+            {
+                "DeptCode": 29041,
+                "DeptName": "Ballerina"
+            }
+        ],
+        "EmployeeAddress": "Vijya RoadKolonnawa",
+        "EmployeeAddressRed": {
+            "Street": "Vijya Road",
+            "City": "Kolonnawa"
+        },
+        "FineAmount": 100.00,
+        "PenaltyRating": 9.2
+    }
+}
