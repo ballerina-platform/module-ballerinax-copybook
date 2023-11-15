@@ -5,3 +5,4 @@
    03 Bonus                        PIC -9(4).999.
    03 APIT                         PIC -9(4).99.
    03 Stationary                   PIC -9(2).99.
+   03 VAT                          PIC -9(3).99.
