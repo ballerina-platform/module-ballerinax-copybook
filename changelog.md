@@ -6,6 +6,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ## [Unreleased]
 
+### Added
+- [[#5777] Add Copybook Module Spec](https://github.com/ballerina-platform/ballerina-library/issues/5777)
+
 ## [0.1.2] - 2023-11-15
 
 ### Fixed
