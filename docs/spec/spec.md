@@ -7,6 +7,7 @@ _Updated_: 2023/11/16 \
 _Edition_: Swan Lake
 
 ## Introduction
+
 The Ballerina Copybook module is designed to effortlessly manage the conversion of Copybook data structures to JSON and the reverse, as well as the conversion of Copybook ASCII to a specified Ballerina Record.
 
 The Copybook library specification has evolved and may continue to evolve in the future. The released versions of the specification can be found under the relevant GitHub tag.
@@ -43,9 +44,11 @@ The conforming implementation of the specification is released and included in t
 7. [Supported Copybook Types](#7-supported-copybook-types)
 
 ## 1. Overview
+
 This specification elaborates on converting Copybook ASCII to JSON and vice versa, as well as converting Copybook ASCII to a specific Ballerina record.
 
 The Copybook module provides three major functionalities that simplify the copybook value handling.
+
 1. Convert Copybook ASCII to JSON
 2. Convert JSON to Copybook ASCII
 3. Convert Copybook ASCII to Ballerina Record
@@ -53,42 +56,51 @@ The Copybook module provides three major functionalities that simplify the copyb
 The module presently supports a limited set of copybook types. Future updates will expand this support to include other possible picture types to enhance the module's usability.
 
 ## 2. Initialize the Copybook Converter
+
 The copybook converter needs to be initialized before performing the functionalities.
 
 ### 2.1 The `init` Method
+
 The `init` method can be used to initialize the copybook converter. This method has a parameter named `schemaFilePath` which accepts the path of the copybook definition file. The method will return an error in case of failure.
 
-
 ###### Example: Initializing the Converter
+
 ```ballerina
 copybook:Converter converter = check new ("../resources/copybook.cpy");
 ```
 
 ## 3. Convert Copybook ASCII to JSON
+
 The copybook module can be used to convert the Copybook ASCII to JSON.
 
 ### 3.1 The `toJson` API
+
 The `toJson` is the API designed for copybook ASCII to JSON conversion.
 
 #### 3.1.1 API Parameters
 
 ##### 3.1.1.1 The `copybookData` Parameter
+
 The `copybookData` is the first parameter of `toJson` API that accepts the `string` type data. The copybook ASCII value that needs to be converted can be passed using the copybookData parameter.
 
 ##### 3.1.1.2 The `targetRecordName` Parameter
+
 The `targetRecordName` parameter is the name of the copybook record definition in the copybook definition. If the provided schema file contains more than one copybook record type definition, the `string` type `targetRecordName` must be provided.
 
 #### 3.1.2 Return Type
+
 The function returns a `JSON` or `copybook:Error` value based on the conversion.
 
-- When there are no conversion errors, It returns a JSON with `data` field.
+* When there are no conversion errors, It returns a JSON with `data` field.
+
     ```json
     {
         "data": "<converted-json-value>"
     }
     ```
 
-- When there are conversion errors, It returns a JSON with `data` and `errors` fields.
+* When there are conversion errors, It returns a JSON with `data` and `errors` fields.
+
     ```json
     {
         "data": "<partial-converted-json-value>",
@@ -96,68 +108,86 @@ The function returns a `JSON` or `copybook:Error` value based on the conversion.
     }
     ```
 
-- If an error occurs during the execution, the API returns a `copybook:Error`.
+* If an error occurs during the execution, the API returns a `copybook:Error`.
 
 ###### Example: Convert to JSON
+
 ```ballerina
 json jsonValue = check converter.toJson("0001Maharoof 01500.00A+");
 ```
 
 ## 4. Convert JSON to Copybook ASCII
+
 This section describes the details of JSON to copybook ASCII conversion.
 
 ### 4.1 The `toCopybook` API
+
 The `toCopybook` API can be used to convert the given JSON or Record data into copybook ASCII data.
 
 #### 4.1.1 API Parameters
 
 ##### 4.1.1.1 The `input` Parameter
+
 The `input` parameter accepts a JSON or Ballerina record value that is needed to be converted to copybook ASCII.
 
 ##### 4.1.1.2 The `targetRecordName` Parameter
+
 The `targetRecordName` parameter is the name of the copybook record definition in the copybook definition. If the provided definition file contains more than one copybook record type definition, `targetRecordName` must be provided as a `string` value. The default value is nil.
 
 #### 4.1.2 Return Type
+
 The function returns a converted ASCII string or a `copybook:Error` based on the conversion.
 
 ###### Example: Convert to Copybook ASCII
+
 ```ballerina
 json jsonValue = check converter.toCopybook({"EmployeeName": {"Name": "Mahroof"}});
 ```
 
 ## 5. Convert Copybook ASCII to Ballerina Record
+
 The copybook module provides an API to convert a given copybook ASCII to a Ballerina record type.
 
 ### 5.1 The `fromCopybook` API
+
 The `fromCopybook` API facilitates the conversion of copybook ASCII into a given Ballerina record type.
 
 #### 5.1.1 API Parameters
 
 ##### 5.1.1.1 The `copybookData` Parameter
+
 The `copybookData` parameter is an ASCII string that needs to be converted to a Ballerina record value.
 
 ##### 5.1.1.2 The `targetRecordName` Parameter
+
 The `targetRecordName` parameter is the name of the copybook record definition in the copybook definition. If the provided copybook definition file contains more than one copybook record type definition, `targetRecordName` must be provided as a string. The default value is nil.
 
 ##### 5.1.1.3 The `t(targetRecordType)` Parameter
+
 The `t(targetRecordType)` parameter accepts the type descriptor of the target record type.
 
 #### 5.1.2 Return Type
+
 The function returns a `record` value on success, or a `copybook:Error` in case of conversion errors.
 
 ###### Example: Convert to Ballerina Record
+
 ```ballerina
 Employee employee = check converter.fromCopybook("0001Maharoof 01500.00A+");
 ```
 
 ## 6. The `copybook:Error` Type
+
 The `copybook:Error` type represents all the errors related to the Copybook module. This is a subtype of the Ballerina `error` type.
 
 ## 7. Supported Copybook Types
-- **PIC  X__**
-- **PIC  X(__)**
-- **PIC  9__**
-- **PIC  S9(_)**
-- **PIC  9(_)**
-- **PIC  -9(_).__**
-- **PIC  Z(_)9.__**
+
+| Copybook Type | Example |
+|----------|----------|
+| PIC  X__  | PIC X99, PIC X12 |
+| PIC  X(__) | PIC X(03), PIC X(20) |
+| PIC  9__ | PIC 999, PIC 999999 |
+| PIC  S9(_) | PIC S9(05), PIC S9(12) |
+| PIC  9(_) | PIC 9(07), PIC 9(14) |
+| PIC  -9(_).__ | PIC -9(9).99, PIC -9(2).999 |
+| PIC  Z(_)9.__ | PIC Z(9)9.99, PIC Z(2)9.999 |
