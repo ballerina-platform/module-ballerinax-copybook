@@ -244,7 +244,8 @@ class JsonToCopybookConvertor {
         // If PIC has + or -, then remove the space allocated for the sign
         string picture = dataItem.getPicture();
         expectedWholeNumberLength -= (picture.startsWith("+") || picture.startsWith("-")) is true ? 1 : 0;
-        if wholeNumber.length() > expectedWholeNumberLength {
+        string integerPart = wholeNumber.startsWith("-") ? wholeNumber.substring(1) : wholeNumber;
+        if integerPart.length() > expectedWholeNumberLength {
             return error Error(string `Value '${input}' exceeds the maximum number of integer digits `
                 + string `${expectedWholeNumberLength} at ${self.getPath()}`);
         } else if fraction.length() > dataItem.getFloatingPointLength() {
