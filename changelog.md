@@ -6,6 +6,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ## [Unreleased]
 
+### Added
+- [[#5777] Add Copybook Module Spec](https://github.com/ballerina-platform/ballerina-library/issues/5777)
+
 ### Fixed
 - [[#5783] Fix Incorrect Length Validation in Negative Decimals](https://github.com/ballerina-platform/ballerina-library/issues/5783)
 

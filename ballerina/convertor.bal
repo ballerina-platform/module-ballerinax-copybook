@@ -38,7 +38,7 @@ public isolated class Convertor {
     # + copybookData - The ASCII string that needs to be converted to JSON
     # + targetRecordName - The name of the copybook record definition in the copybook. This parameter must be a string
     # if the provided schema file contains more than one copybook record type definition
-    # + return - A JSON value in the following formats: `{data: converted-json-value}` 
+    # + return - A JSON value in the following formats: `{data: converted-json-value}`
     # or `{data: partial-converted-json-value, errors: [list of coercion errors]}`. In case of an error, a 
     # `copybook:Error` is returned
     public isolated function toJson(string copybookData, string? targetRecordName = ()) returns map<json>|Error {
