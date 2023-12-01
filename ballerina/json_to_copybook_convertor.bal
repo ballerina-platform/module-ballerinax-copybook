@@ -14,7 +14,7 @@
 // specific language governing permissions and limitations
 // under the License.
 
-class JsonToCopybookConvertor {
+class JsonToCopybookConverter {
     *Visitor;
 
     private final string[] value = [];

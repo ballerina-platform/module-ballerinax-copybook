@@ -32,11 +32,11 @@ distinct class Schema {
     }
 
     isolated function getTypeDefinitions() returns Node[] = @java:Method {
-        'class: "io.ballerina.lib.copybook.runtime.convertor.Utils"
+        'class: "io.ballerina.lib.copybook.runtime.converter.Utils"
     } external;
 
     isolated function getRedefinedItems() returns map<Node> = @java:Method {
-        'class: "io.ballerina.lib.copybook.runtime.convertor.Utils"
+        'class: "io.ballerina.lib.copybook.runtime.converter.Utils"
     } external;
 
     isolated function accept(Visitor visitor, anydata data = ()) {

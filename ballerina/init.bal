@@ -21,5 +21,5 @@ isolated function init() {
 }
 
 isolated function setModule() = @java:Method {
-    'class: "io.ballerina.lib.copybook.runtime.convertor.ModuleUtils"
+    'class: "io.ballerina.lib.copybook.runtime.converter.ModuleUtils"
 } external;
