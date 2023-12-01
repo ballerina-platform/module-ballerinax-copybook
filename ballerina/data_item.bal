@@ -20,27 +20,27 @@ isolated distinct class DataItem {
     *Node;
 
     isolated function getLevel() returns int = @java:Method {
-        'class: "io.ballerina.lib.copybook.runtime.convertor.Utils"
+        'class: "io.ballerina.lib.copybook.runtime.converter.Utils"
     } external;
 
     isolated function getName() returns string = @java:Method {
-        'class: "io.ballerina.lib.copybook.runtime.convertor.Utils"
+        'class: "io.ballerina.lib.copybook.runtime.converter.Utils"
     } external;
 
     isolated function getElementCount() returns int = @java:Method {
-        'class: "io.ballerina.lib.copybook.runtime.convertor.Utils"
+        'class: "io.ballerina.lib.copybook.runtime.converter.Utils"
     } external;
 
     isolated function isNumeric() returns boolean = @java:Method {
-        'class: "io.ballerina.lib.copybook.runtime.convertor.Utils"
+        'class: "io.ballerina.lib.copybook.runtime.converter.Utils"
     } external;
 
     isolated function isSigned() returns boolean = @java:Method {
-        'class: "io.ballerina.lib.copybook.runtime.convertor.Utils"
+        'class: "io.ballerina.lib.copybook.runtime.converter.Utils"
     } external;
 
     isolated function getReadLength() returns int = @java:Method {
-        'class: "io.ballerina.lib.copybook.runtime.convertor.Utils"
+        'class: "io.ballerina.lib.copybook.runtime.converter.Utils"
     } external;
 
     isolated function isDecimal() returns boolean {
@@ -48,15 +48,15 @@ isolated distinct class DataItem {
     }
 
     isolated function getFloatingPointLength() returns int = @java:Method {
-        'class: "io.ballerina.lib.copybook.runtime.convertor.Utils"
+        'class: "io.ballerina.lib.copybook.runtime.converter.Utils"
     } external;
 
     isolated function getPicture() returns string = @java:Method {
-        'class: "io.ballerina.lib.copybook.runtime.convertor.Utils"
+        'class: "io.ballerina.lib.copybook.runtime.converter.Utils"
     } external;
 
     isolated function getRedefinedItemName() returns string? = @java:Method {
-        'class: "io.ballerina.lib.copybook.runtime.convertor.Utils"
+        'class: "io.ballerina.lib.copybook.runtime.converter.Utils"
     } external;
 
     isolated function accept(Visitor visitor, anydata data = ()) {

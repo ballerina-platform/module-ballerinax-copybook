@@ -16,7 +16,7 @@
  * under the License.
  */
 
-package io.ballerina.lib.copybook.runtime.convertor;
+package io.ballerina.lib.copybook.runtime.converter;
 
 import io.ballerina.lib.copybook.commons.schema.Copybook;
 import io.ballerina.lib.copybook.commons.schema.CopybookNode;
@@ -44,7 +44,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import static io.ballerina.lib.copybook.runtime.convertor.ModuleUtils.getModule;
+import static io.ballerina.lib.copybook.runtime.converter.ModuleUtils.getModule;
 
 public final class Utils {
 
@@ -203,12 +203,12 @@ public final class Utils {
         return schema.getRedefinedItems().containsKey(name.getValue());
     }
 
-    public static Object fromCopybook(Environment env, BObject convertor, BString copybookData, Object targetRecordName,
+    public static Object fromCopybook(Environment env, BObject converter, BString copybookData, Object targetRecordName,
                                       BTypedesc typedesc) {
         Future balFuture = env.markAsync();
         ExecutionCallback callback = new ExecutionCallback(balFuture);
         Object[] paramFeed = {copybookData, true, typedesc, true, targetRecordName, true};
-        env.getRuntime().invokeMethodAsyncConcurrently(convertor, TO_RECORD_METHOD_NAME, null, null, callback, null,
+        env.getRuntime().invokeMethodAsyncConcurrently(converter, TO_RECORD_METHOD_NAME, null, null, callback, null,
                                                        PredefinedTypes.TYPE_NULL, paramFeed);
         return null;
     }

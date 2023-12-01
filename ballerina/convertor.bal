@@ -18,11 +18,11 @@ import ballerina/constraint;
 import ballerina/file;
 import ballerina/jballerina.java;
 
-# This class represents a copybook convertor that facilitates the conversion of ASCII data to and from JSON data.
-public isolated class Convertor {
+# This class represents a copybook converter that facilitates the conversion of ASCII data to and from JSON data.
+public isolated class Converter {
     private final Schema schema;
 
-    # Initializes the convertor with a schema.
+    # Initializes the converter with a schema.
     # + schemaFilePath - The path of the copybook file
     # + return - `copybook:Error` on failure, Nil otherwise
     public isolated function init(string schemaFilePath) returns Error? {
@@ -61,9 +61,9 @@ public isolated class Convertor {
             readonly & map<json> readonlyJson = check input.cloneWithType();
             lock {
                 check self.validateTargetRecordName(targetRecordName);
-                JsonToCopybookConvertor convertor = new (self.schema, targetRecordName);
-                convertor.visitSchema(self.schema, readonlyJson);
-                return convertor.getValue();
+                JsonToCopybookConverter converter = new (self.schema, targetRecordName);
+                converter.visitSchema(self.schema, readonlyJson);
+                return converter.getValue();
             }
         } on fail error err {
             return createError(err);
@@ -96,7 +96,7 @@ public isolated class Convertor {
     # + return - A record value on success, a `copybook:Error` in case of coercion errors
     public isolated function fromCopybook(string copybookData, string? targetRecordName = (),
             typedesc<record {}> t = <>) returns t|Error = @java:Method {
-        'class: "io.ballerina.lib.copybook.runtime.convertor.Utils"
+        'class: "io.ballerina.lib.copybook.runtime.converter.Utils"
     } external;
 
     private isolated function toRecord(string copybookData, typedesc<record {}> t,
@@ -114,5 +114,5 @@ public isolated class Convertor {
 }
 
 isolated function parseSchemaFile(string schemaFilePath) returns Schema|Error = @java:Method {
-    'class: "io.ballerina.lib.copybook.runtime.convertor.Utils"
+    'class: "io.ballerina.lib.copybook.runtime.converter.Utils"
 } external;

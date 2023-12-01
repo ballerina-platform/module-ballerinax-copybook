@@ -20,23 +20,23 @@ distinct class GroupItem {
     *Node;
 
     isolated function getLevel() returns int = @java:Method {
-        'class: "io.ballerina.lib.copybook.runtime.convertor.Utils"
+        'class: "io.ballerina.lib.copybook.runtime.converter.Utils"
     } external;
 
     isolated function getName() returns string = @java:Method {
-        'class: "io.ballerina.lib.copybook.runtime.convertor.Utils"
+        'class: "io.ballerina.lib.copybook.runtime.converter.Utils"
     } external;
 
     isolated function getElementCount() returns int = @java:Method {
-        'class: "io.ballerina.lib.copybook.runtime.convertor.Utils"
+        'class: "io.ballerina.lib.copybook.runtime.converter.Utils"
     } external;
 
     isolated function getRedefinedItemName() returns string? = @java:Method {
-        'class: "io.ballerina.lib.copybook.runtime.convertor.Utils"
+        'class: "io.ballerina.lib.copybook.runtime.converter.Utils"
     } external;
 
     isolated function getChildren() returns Node[] = @java:Method {
-        'class: "io.ballerina.lib.copybook.runtime.convertor.Utils"
+        'class: "io.ballerina.lib.copybook.runtime.converter.Utils"
     } external;
 
     isolated function accept(Visitor visitor, anydata data = ()) {
