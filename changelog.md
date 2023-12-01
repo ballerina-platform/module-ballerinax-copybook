@@ -6,6 +6,14 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ## [Unreleased]
 
+## [0.2.0] - 2023-12-01
+
+### Fixed
+- [[#5848]  Fix String Index Out Of Range Error During Decimal to String Conversion](https://github.com/ballerina-platform/ballerina-library/issues/5848)
+
+### Changed
+- [[#5849] Rename Copybook Convertor Object to Converter](https://github.com/ballerina-platform/ballerina-library/issues/5849)
+
 ## [0.1.3] - 2023-11-21
 
 ### Added
@@ -13,10 +21,6 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ### Fixed
 - [[#5783] Fix Incorrect Length Validation in Negative Decimals](https://github.com/ballerina-platform/ballerina-library/issues/5783)
-- [[#5848]  Fix String Index Out Of Range Error During Decimal to String Conversion](https://github.com/ballerina-platform/ballerina-library/issues/5848)
-
-### Changed
-- [[#5849] Rename Copybook Convertor Object to Converter](https://github.com/ballerina-platform/ballerina-library/issues/5849)
 
 ## [0.1.2] - 2023-11-15
 
