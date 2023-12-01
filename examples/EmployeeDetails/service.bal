@@ -23,22 +23,22 @@ type Copybook record {
 };
 
 service on new http:Listener(9090) {
-    private final copybook:Convertor convertor;
+    private final copybook:Converter converter;
 
     isolated function init() returns error? {
-        self.convertor = check new ("resources/copybook.cpy");
+        self.converter = check new ("resources/copybook.cpy");
     }
 
     isolated resource function post convertToJson(@http:Payload string asciiData) returns json|error {
-        return self.convertor.toJson(asciiData);
+        return self.converter.toJson(asciiData);
     }
 
     isolated resource function post convertToAscii(@http:Payload map<json> jsonData) returns string|error {
-        return self.convertor.toCopybook(jsonData);
+        return self.converter.toCopybook(jsonData);
     }
 
     isolated resource function post getEmployeeSalary(@http:Payload string asciiData) returns decimal|error {
-        Copybook cb = check self.convertor.fromCopybook(asciiData);
+        Copybook cb = check self.converter.fromCopybook(asciiData);
         decimal? salary = cb.EmployeeRecord?.EmployeeSalary;
         if salary is () {
             return error("No value found for EmployeeSalary");

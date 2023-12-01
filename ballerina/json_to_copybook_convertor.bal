@@ -14,7 +14,7 @@
 // specific language governing permissions and limitations
 // under the License.
 
-class JsonToCopybookConvertor {
+class JsonToCopybookConverter {
     *Visitor;
 
     private final string[] value = [];
@@ -220,7 +220,11 @@ class JsonToCopybookConvertor {
 
         check self.checkDecimalLength(wholeNumber, fraction, input, dataItem);
         // Handle trailing zeros in decimal
-        fraction = fraction.substring(0, dataItem.getFloatingPointLength());
+        if fraction.length() < dataItem.getFloatingPointLength() {
+            fraction = fraction.padEnd(dataItem.getFloatingPointLength(), "0");
+        } else if fraction.length() > dataItem.getFloatingPointLength() {
+            fraction = fraction.substring(0, dataItem.getFloatingPointLength());
+        }
         // Handle supress zero ex: Z(9)9.8;
         int supressZeroCount = getSupressZeroCount(dataItem.getPicture());
         string decimalString = wholeNumber + "." + fraction.padEnd(dataItem.getFloatingPointLength(), "0");
@@ -238,7 +242,7 @@ class JsonToCopybookConvertor {
     }
 
     private isolated function checkDecimalLength(string wholeNumber, string fraction, decimal input,
-                                                 DataItem dataItem) returns error? {
+            DataItem dataItem) returns error? {
         // A deducted of 1 made from readLength for decimal seperator "."
         int expectedWholeNumberLength = dataItem.getReadLength() - dataItem.getFloatingPointLength() - 1;
         // If PIC has + or -, then remove the space allocated for the sign

@@ -20,8 +20,8 @@ isolated function getCopybookPath(string fileName) returns string {
     return string `tests/resources/copybooks/${fileName}.cpy`;
 }
 
-isolated function getInputPath(string fileName) returns string {
-    return string `tests/resources/copybook-inputs/${fileName}.txt`;
+isolated function getAsciiFilePath(string fileName) returns string {
+    return string `tests/resources/copybook-ascii/${fileName}.txt`;
 }
 
 isolated function getSchemaPath(string fileName) returns string {

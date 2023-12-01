@@ -121,7 +121,7 @@ isolated function decimalToString(decimal value) returns string {
 }
 
 isolated function externToString(Node node) returns string = @java:Method {
-    'class: "io.ballerina.lib.copybook.runtime.convertor.Utils"
+    'class: "io.ballerina.lib.copybook.runtime.converter.Utils"
 } external;
 
 isolated function getTypeDefinition(Schema schema, string? targetRecordName) returns Node {
