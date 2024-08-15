@@ -39,6 +39,8 @@ class JsonToCopybookConverter {
         }
         if data.hasKey(typedef.getName()) {
             typedef.accept(self, data.get(typedef.getName()));
+        } else {
+            self.value.push(self.getDefaultValue(typedef));
         }
         _ = self.path.pop();
     }
@@ -82,7 +84,7 @@ class JsonToCopybookConverter {
         if !value.hasKey(child.getName()) {
             redefiningItemNameWithValue = self.findRedefiningItemNameWithValue(value, redefiningItems);
             if redefiningItemNameWithValue is () {
-                self.value.push("".padEnd(computeSize(child)));
+                self.value.push(self.getDefaultValue(child));
                 return;
             }
             self.visitAllowedRedefiningItems[redefiningItemNameWithValue] = ();
@@ -98,6 +100,12 @@ class JsonToCopybookConverter {
             && self.visitAllowedRedefiningItems.hasKey(redefiningItemNameWithValue) {
             _ = self.visitAllowedRedefiningItems.remove(redefiningItemNameWithValue);
         }
+    }
+
+    private isolated function getDefaultValue(Node node) returns string {
+        DefaultValueCreator defaultValueCreator = new;
+        node.accept(defaultValueCreator);
+        return defaultValueCreator.getDefaultValue();
     }
 
     private isolated function findRedefiningItemNameWithValue(map<json> parentValue, string[] redefiningItemdNames)

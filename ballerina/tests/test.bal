@@ -166,3 +166,10 @@ isolated function testInvalidEnumSchema() returns error? {
     }
     test:assertEquals(converter.detail(), check getErrorDetail("copybook-14"));
 }
+
+@test:Config
+isolated function testIntegerPicDefaulValues() returns error? {
+    Converter converter = check new (getCopybookPath("copybook-15"));
+    string validCopybook = check converter.toCopybook({});
+    test:assertEquals(validCopybook, check io:fileReadString(getAsciiFilePath("copybook-15")));
+}
