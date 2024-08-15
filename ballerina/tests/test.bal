@@ -27,9 +27,9 @@ isolated function testParseSchemaFile() returns error? {
 @test:Config {
     dataProvider: testConverterDataProvider
 }
-isolated function testConverter(string copybookFilePath, string inputFilePath) returns error? {
-    Converter converter = check new (copybookFilePath);
-    string[] input = check io:fileReadLines(inputFilePath);
+isolated function testConverter(string copybookName) returns error? {
+    Converter converter = check new (getCopybookPath(copybookName));
+    string[] input = check io:fileReadLines(getAsciiFilePath(copybookName));
     foreach string line in input {
         map<json> jsonData = check (check converter.toJson(line)).get(DATA).ensureType();
         string output = check converter.toCopybook(jsonData);
@@ -37,10 +37,10 @@ isolated function testConverter(string copybookFilePath, string inputFilePath) r
     }
 }
 
-isolated function testConverterDataProvider() returns [string, string][] {
-    [string, string][] filePaths = [];
+isolated function testConverterDataProvider() returns map<[string]> {
+    map<[string]> filePaths = {};
     foreach int i in 1 ... 5 {
-        filePaths.push([getCopybookPath(string `copybook-${i}`), getAsciiFilePath(string `copybook-${i}`)]);
+        filePaths[i.toString()] = [string `copybook-${i}`];
     }
     return filePaths;
 }
@@ -131,4 +131,38 @@ isolated function testDecimalWithoutFraction() returns error? {
     string copybook = check converter.toCopybook(check jsonInput.cloneWithType());
     string expectedAscii = check io:fileReadString(getAsciiFilePath("copybook-10"));
     test:assertEquals(copybook, expectedAscii);
+}
+
+@test:Config {
+    dataProvider: testEnumValidationDataProvider
+}
+isolated function testEnumValidation(string copybookName) returns error? {
+    Converter converter = check new (getCopybookPath(copybookName));
+    json jsonInput = check io:fileReadJson(getCopybookJsonPath(string `valid-${copybookName}`));
+    string validCopybook = check converter.toCopybook(check jsonInput.cloneWithType());
+    test:assertEquals(validCopybook, check io:fileReadString(getAsciiFilePath(copybookName)));
+
+    jsonInput = check io:fileReadJson(getCopybookJsonPath(string `invalid-${copybookName}`));
+    Error|string invalidCopybook = converter.toCopybook(check jsonInput.cloneWithType());
+    if invalidCopybook !is Error {
+        test:assertFail("Expected a 'copybook:Error' but found a 'string'");
+    }
+    test:assertEquals(invalidCopybook.detail(), check getErrorDetail(copybookName));
+}
+
+isolated function testEnumValidationDataProvider() returns map<[string]> {
+    map<[string]> copybookNames = {};
+    foreach int i in 11 ... 13 {
+        copybookNames[i.toString()] = [string `copybook-${i}`];
+    }
+    return copybookNames;
+}
+
+@test:Config
+isolated function testInvalidEnumSchema() returns error? {
+    Converter|Error converter = new (getCopybookPath("copybook-14"));
+    if converter !is Error {
+        test:assertFail("Expected a 'copybook:Error' but found a 'string'");
+    }
+    test:assertEquals(converter.detail(), check getErrorDetail("copybook-14"));
 }

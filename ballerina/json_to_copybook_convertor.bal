@@ -128,22 +128,23 @@ class JsonToCopybookConverter {
                 return;
             }
             self.value.push(primitiveValue);
-        } on fail error e {
-            if e is Error {
-                self.errors.push(e);
-            }
+        } on fail Error e {
+            self.errors.push(e);
         }
         _ = self.path.pop();
     }
 
-    private isolated function handlePrimitive(PrimitiveType value, DataItem dataItem) returns string|error {
+    private isolated function handlePrimitive(PrimitiveType value, DataItem dataItem) returns string|Error {
+        string primitiveValue;
         if value is string {
-            return self.handleStringValue(value, dataItem);
+            primitiveValue = check self.handleStringValue(value, dataItem);
+        } else if value is int {
+            primitiveValue = check self.handleIntValue(value, dataItem);
+        } else {
+            primitiveValue = check self.handleDecimalValue(<decimal>value, dataItem);
         }
-        if value is int {
-            return self.handleIntValue(value, dataItem);
-        }
-        return self.handleDecimalValue(<decimal>value, dataItem);
+        check self.validateEnumValue(primitiveValue, dataItem);
+        return primitiveValue;
     }
 
     private isolated function handleStringValue(string value, DataItem dataItem) returns string|Error {
@@ -157,7 +158,7 @@ class JsonToCopybookConverter {
         return value.padEnd(maxLength);
     }
 
-    private isolated function handleIntValue(int value, DataItem dataItem) returns string|error {
+    private isolated function handleIntValue(int value, DataItem dataItem) returns string|Error {
         if !dataItem.isNumeric() {
             return error Error(string `Numeric value ${value} found at ${self.getPath()}.`
                 + " Expecting a non-numeric value");
@@ -187,12 +188,17 @@ class JsonToCopybookConverter {
     }
 
     private isolated function handlePrimitiveArray(PrimitiveArrayType array, DataItem dataItem)
-    returns string|error {
+    returns string|Error {
         string[] elements = [];
         PrimitiveType[] primitiveArray = array; // This is allowed by covariance
         foreach int i in 0 ..< primitiveArray.length() {
             self.path.push(string `[${i}]`);
-            elements.push(check self.handlePrimitive(primitiveArray[i], dataItem));
+            string|Error primitiveValue = self.handlePrimitive(primitiveArray[i], dataItem);
+            if primitiveValue is Error {
+                self.errors.push(primitiveValue);
+                continue;
+            }
+            elements.push(primitiveValue);
             _ = self.path.pop();
         }
         int maxElementCount = dataItem.getElementCount();
@@ -202,7 +208,7 @@ class JsonToCopybookConverter {
         return "".'join(...elements).padEnd(computeSize(dataItem));
     }
 
-    private isolated function handleDecimalValue(decimal input, DataItem dataItem) returns string|error {
+    private isolated function handleDecimalValue(decimal input, DataItem dataItem) returns string|Error {
         // TODO: skipped decimal with V, implment seperately for decimal containing V
         // TODO: handle special case Z for fraction
         if !dataItem.isDecimal() && !dataItem.isNumeric() {
@@ -242,7 +248,7 @@ class JsonToCopybookConverter {
     }
 
     private isolated function checkDecimalLength(string wholeNumber, string fraction, decimal input,
-            DataItem dataItem) returns error? {
+            DataItem dataItem) returns Error? {
         // A deducted of 1 made from readLength for decimal seperator "."
         int expectedWholeNumberLength = dataItem.getReadLength() - dataItem.getFloatingPointLength() - 1;
         // If PIC has + or -, then remove the space allocated for the sign
@@ -254,12 +260,43 @@ class JsonToCopybookConverter {
                 + string `${expectedWholeNumberLength} at ${self.getPath()}`);
         } else if fraction.length() > dataItem.getFloatingPointLength() {
             string exeedingFractionDigits = fraction.substring(dataItem.getFloatingPointLength());
-            if check int:fromString(exeedingFractionDigits) > 0 {
+            int|error exceedingValue = int:fromString(exeedingFractionDigits);
+            if exceedingValue is error {
+                return error Error(string `Unable to coerce the provided decimal fraction '${exeedingFractionDigits}': `
+                    + exceedingValue.message());
+            }
+            if exceedingValue > 0 {
                 return error Error(string `Value '${input}' exceeds the maximum number of fraction digits `
                     + string `${dataItem.getFloatingPointLength()} at ${self.getPath()}`);
             }
         }
         return;
+    }
+
+    private isolated function validateEnumValue(string value, DataItem dataItem) returns Error? {
+        string[]? possibleEnumValues = dataItem.getPossibleEnumValues();
+        if possibleEnumValues is () {
+            return;
+        }
+        anydata providedValue = value;
+        anydata[] possibleValues = possibleEnumValues;
+        do {
+            if dataItem.isDecimal() {
+                providedValue = check decimal:fromString(value);
+                possibleValues = possibleEnumValues.'map(possibleValue => check decimal:fromString(possibleValue));
+            } else if dataItem.isNumeric() {
+                providedValue = check int:fromString(value);
+                possibleValues = possibleEnumValues.'map(possibleValue => check int:fromString(possibleValue));
+            }
+        } on fail error e {
+            return error Error(string `Failed to validate enum value '${value}': ${e.message()}`, e.cause());
+        }
+        if possibleValues.indexOf(providedValue) is int {
+            return;
+        }
+        string[] formattedEnumValues = possibleEnumValues.'map(posibleValue => string `'${posibleValue.toString()}'`);
+        return error Error(string `Value '${value}' is invalid for field '${dataItem.getName()}'. `
+            + string `Allowed values are: ${string:'join(", ", ...formattedEnumValues)}.`);
     }
 
     private isolated function getPath() returns string {

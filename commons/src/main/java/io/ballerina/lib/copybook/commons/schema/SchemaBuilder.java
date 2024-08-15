@@ -28,6 +28,8 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import static io.ballerina.lib.copybook.commons.generated.CopybookParser.BooleanLiteralContext;
 import static io.ballerina.lib.copybook.commons.generated.CopybookParser.CicsDfhRespLiteralContext;
@@ -75,6 +77,8 @@ class SchemaBuilder implements CopybookVisitor<CopybookNode> {
     private GroupItem possibleParent;
     private final Set<String> redefinedItemNames = new HashSet<>();
     private final List<String> errors = new ArrayList<>();
+    private DataItem possibleEnum;
+    private int rootLevel = -1;
 
     Schema getSchema() {
         return this.schema;
@@ -105,6 +109,7 @@ class SchemaBuilder implements CopybookVisitor<CopybookNode> {
     public CopybookNode visitDataDescription(DataDescriptionContext ctx) {
         for (int i = 0; i < ctx.getChildCount(); i++) {
             CopybookNode copybookNode = visitDataDescriptionEntry(ctx.dataDescriptionEntry(i));
+            setRootLevel(copybookNode);
             if (copybookNode instanceof GroupItem groupItem) {
                 this.possibleParent = groupItem;
             }
@@ -115,8 +120,14 @@ class SchemaBuilder implements CopybookVisitor<CopybookNode> {
         return null;
     }
 
+    private void setRootLevel(CopybookNode copybookNode) {
+        if (copybookNode != null && (this.rootLevel == -1 || this.rootLevel > copybookNode.getLevel())) {
+            this.rootLevel = copybookNode.getLevel();
+        }
+    }
+
     private boolean isRootLevelNode(CopybookNode copybookNode) {
-        return copybookNode != null && copybookNode.getLevel() == 1;
+        return copybookNode != null && copybookNode.getLevel() == this.rootLevel;
     }
 
     @Override
@@ -124,7 +135,10 @@ class SchemaBuilder implements CopybookVisitor<CopybookNode> {
         if (ctx.dataDescriptionEntryFormat1() != null) {
             return visitDataDescriptionEntryFormat1(ctx.dataDescriptionEntryFormat1());
         }
-        // skipping level 66 and 88
+        if (ctx.dataDescriptionEntryFormat3() != null) {
+            return visitDataDescriptionEntryFormat3(ctx.dataDescriptionEntryFormat3());
+        }
+        // skipping level 66
         return null;
     }
 
@@ -151,10 +165,12 @@ class SchemaBuilder implements CopybookVisitor<CopybookNode> {
             return new GroupItem(level, name, occurs, redefinedItemName, getParent(level));
         }
         PictureStringContext pictureType = pictureClause.pictureString();
-        validatePicture(pictureType);
-        return new DataItem(level, name, Utils.getPictureString(pictureType), Utils.isNumeric(pictureType),
-                            Utils.getReadLength(pictureType), occurs, Utils.getFloatingPointLength(pictureType),
-                            redefinedItemName, getParent(level));
+                validatePicture(pictureType);
+        DataItem dataItem = new DataItem(level, name, Utils.getPictureString(pictureType), Utils.isNumeric(pictureType),
+                Utils.getReadLength(pictureType), occurs, Utils.getFloatingPointLength(pictureType), redefinedItemName,
+                getParent(level));
+        this.possibleEnum = dataItem;
+        return dataItem;
     }
 
     private void validatePicture(PictureStringContext pictureType) {
@@ -164,10 +180,6 @@ class SchemaBuilder implements CopybookVisitor<CopybookNode> {
         }
         String errorMsg = "Unsupported picture string '" + pictureString + "' found in copybook schema";
         this.addError(pictureType.start.getLine(), pictureType.start.getCharPositionInLine(), errorMsg);
-    }
-
-    private void addError(int line, int charPositionInLine, String msg) {
-        this.errors.add("Error at line " + line + ", column " + charPositionInLine + ": " + msg);
     }
 
     @Override
@@ -190,7 +202,29 @@ class SchemaBuilder implements CopybookVisitor<CopybookNode> {
 
     @Override
     public CopybookNode visitDataDescriptionEntryFormat3(DataDescriptionEntryFormat3Context ctx) {
+        DataValueClauseContext valueClause = ctx.dataValueClause();
+        if (valueClause.VALUE() != null) {
+            var dataValueIntervalContext = valueClause.dataValueInterval(0);
+            var literal = dataValueIntervalContext.dataValueIntervalFrom().literal();
+            if (literal != null) {
+                // Remove quotes from value if available (.ie 'N' -> N, "N" -> N)
+                Matcher matcher = Pattern.compile("^['\"](?<stringValue>.*)['\"]$").matcher(literal.getText());
+                String value =  matcher.find() ? matcher.group("stringValue") : literal.getText();
+                if (value.length() > this.possibleEnum.getReadLength()) {
+                    String errorMsg = "Invalid enum value '" + value + "' found in copybook schema. "
+                            + "The value's length exceeds the defined length for enum '"
+                            + this.possibleEnum.getName() + ".";
+                    this.addError(literal.start.getLine(), literal.start.getCharPositionInLine(), errorMsg);
+                    return null;
+                }
+                this.possibleEnum.addEnumValues(value);
+            }
+        }
         return null;
+    }
+
+    private void addError(int line, int charPositionInLine, String msg) {
+        this.errors.add("Error at line " + line + ", column " + charPositionInLine + ": " + msg);
     }
 
     @Override
