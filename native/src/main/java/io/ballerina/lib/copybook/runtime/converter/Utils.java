@@ -189,6 +189,15 @@ public final class Utils {
         return null;
     }
 
+    public static Object getDefaulValue(BObject bObject) {
+        DataItem dataItem = (DataItem) bObject.getNativeData(NATIVE_VALUE);
+        String defaultValue = dataItem.getDefaultValue();
+        if (defaultValue == null) {
+            return defaultValue;
+        }
+        return StringUtils.fromString(defaultValue);
+    }
+
     public static BArray getDataDescriptions(BObject bObject) {
         Schema schema = (Schema) bObject.getNativeData(NATIVE_VALUE);
         List<BObject> children = new ArrayList<>();

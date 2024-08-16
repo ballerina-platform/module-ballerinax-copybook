@@ -39,11 +39,11 @@ class DefaultValueCreator {
         if dataItem.getRedefinedItemName() is string {
             return;
         }
-        string dataItemDefaultValue;
-        if dataItem.isNumeric() && !dataItem.isDecimal() {
-            dataItemDefaultValue = "".padZero(dataItem.getReadLength());
+        string dataItemDefaultValue = dataItem.getDefaulValue() ?: "";
+        if (dataItem.isNumeric() && !dataItem.isDecimal()) ||  (dataItem.isDecimal() && dataItemDefaultValue != "") {
+            dataItemDefaultValue = dataItemDefaultValue.padZero(dataItem.getReadLength());
         } else {
-            dataItemDefaultValue = "".padEnd(dataItem.getReadLength());
+            dataItemDefaultValue = dataItemDefaultValue.padEnd(dataItem.getReadLength());
         }
         self.defaultValueFragments.push(self.generateRepeatedString(dataItemDefaultValue, dataItem.getElementCount()));
     }

@@ -173,3 +173,10 @@ isolated function testIntegerPicDefaulValues() returns error? {
     string validCopybook = check converter.toCopybook({});
     test:assertEquals(validCopybook, check io:fileReadString(getAsciiFilePath("copybook-15")));
 }
+
+@test:Config
+isolated function testValueCaluseWithDefaulValues() returns error? {
+    Converter converter = check new (getCopybookPath("copybook-16"));
+    string validCopybook = check converter.toCopybook({});
+    test:assertEquals(validCopybook, check io:fileReadString(getAsciiFilePath("copybook-16")));
+}
