@@ -162,7 +162,7 @@ isolated function testEnumValidationDataProvider() returns map<[string]> {
 isolated function testInvalidEnumSchema() returns error? {
     Converter|Error converter = new (getCopybookPath("copybook-14"));
     if converter !is Error {
-        test:assertFail("Expected a 'copybook:Error' but found a 'string'");
+        test:assertFail("Expected a 'copybook:Error'");
     }
     test:assertEquals(converter.detail(), check getErrorDetail("copybook-14"));
 }
@@ -175,8 +175,17 @@ isolated function testIntegerPicDefaulValues() returns error? {
 }
 
 @test:Config
-isolated function testValueCaluseWithDefaulValues() returns error? {
+isolated function testValueClauseWithDefaulValues() returns error? {
     Converter converter = check new (getCopybookPath("copybook-16"));
     string validCopybook = check converter.toCopybook({});
     test:assertEquals(validCopybook, check io:fileReadString(getAsciiFilePath("copybook-16")));
+}
+
+@test:Config
+isolated function testUnsupportedValueClauses() returns error? {
+    Converter|Error converter = new (getCopybookPath("copybook-17"));
+    if converter !is Error {
+        test:assertFail("Expected a 'copybook:Error'");
+    }
+    test:assertEquals(converter.detail(), check getErrorDetail("copybook-17"));
 }

@@ -1,0 +1,7 @@
+{
+    "parser-errors": [
+        "Error at line 2, column 33: Copybook statement 'HIGH-VALUE' is not supported.",
+        "Error at line 3, column 34: Hexadecimal value 'X'08'' is not supported as a default value.",
+        "Error at line 4, column 34: Null terminated value 'Z''' is not supported as a default value."
+    ]
+}
