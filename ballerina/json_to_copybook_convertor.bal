@@ -291,10 +291,10 @@ class JsonToCopybookConverter {
         do {
             if dataItem.isDecimal() {
                 providedValue = check decimal:fromString(value);
-                possibleValues = possibleEnumValues.'map(possibleValue => check decimal:fromString(possibleValue));
+                possibleValues = check toDecimalArray(possibleEnumValues);
             } else if dataItem.isNumeric() {
                 providedValue = check int:fromString(value);
-                possibleValues = possibleEnumValues.'map(possibleValue => check int:fromString(possibleValue));
+                possibleValues = check toIntArray(possibleEnumValues);
             }
         } on fail error e {
             return error Error(string `Failed to validate enum value '${value}': ${e.message()}`, e.cause());
