@@ -207,10 +207,9 @@ isolated function createError(error err) returns Error {
 }
 
 // Introduced as a workaround for https://github.com/wso2-enterprise/internal-support-ballerina/issues/759
-isolated function toDecimalArray(string[] possibleEnumValues) returns decimal[]|error {
-    return possibleEnumValues.'map(possibleValue => check decimal:fromString(possibleValue));
-}
+isolated function toDecimalArray(string[] possibleEnumValues) returns decimal[]|error =>
+    possibleEnumValues.'map(possibleValue => check decimal:fromString(possibleValue));
 
-isolated function toIntArray(string[] possibleEnumValues) returns int[]|error {
-    return possibleEnumValues.'map(possibleValue => check int:fromString(possibleValue));
-}
+
+isolated function toIntArray(string[] possibleEnumValues) returns int[]|error =>
+    possibleEnumValues.'map(possibleValue => check int:fromString(possibleValue));
