@@ -189,3 +189,11 @@ isolated function testUnsupportedValueClauses() returns error? {
     }
     test:assertEquals(converter.detail(), check getErrorDetail("copybook-17"));
 }
+
+@test:Config
+isolated function testAsciiEbcdicConvertion() returns error? {
+    byte[] ascii = check io:fileReadBytes(getAsciiFilePath("copybook-1"));
+    byte[] ebcdic = toEbcdicBytes(ascii);
+    check io:fileWriteBytes(getEbcdicFilePath("copybook-1"), ebcdic);
+    test:assertEquals(ascii, toAsciiBytes(ebcdic));
+}
