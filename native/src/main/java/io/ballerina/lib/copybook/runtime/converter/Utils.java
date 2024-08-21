@@ -189,7 +189,7 @@ public final class Utils {
         return null;
     }
 
-    public static Object getDefaulValue(BObject bObject) {
+    public static Object getDefaultValue(BObject bObject) {
         DataItem dataItem = (DataItem) bObject.getNativeData(NATIVE_VALUE);
         String defaultValue = dataItem.getDefaultValue();
         if (defaultValue == null) {

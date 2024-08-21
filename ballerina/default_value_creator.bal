@@ -39,7 +39,7 @@ class DefaultValueCreator {
         if dataItem.getRedefinedItemName() is string {
             return;
         }
-        string dataItemDefaultValue = dataItem.getDefaulValue() ?: "";
+        string dataItemDefaultValue = dataItem.getDefaultValue() ?: "";
         if (dataItem.isNumeric() && !dataItem.isDecimal()) ||  (dataItem.isDecimal() && dataItemDefaultValue != "") {
             dataItemDefaultValue = dataItemDefaultValue.padZero(dataItem.getReadLength());
         } else {

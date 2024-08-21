@@ -83,6 +83,7 @@ class SchemaBuilder implements CopybookVisitor<CopybookNode> {
     private int rootLevel = -1;
     private static final String SPACE = " ";
     private static final String ZERO = "0";
+
     Schema getSchema() {
         return this.schema;
     }
@@ -168,7 +169,7 @@ class SchemaBuilder implements CopybookVisitor<CopybookNode> {
             return new GroupItem(level, name, occurs, redefinedItemName, getParent(level));
         }
         PictureStringContext pictureType = pictureClause.pictureString();
-                validatePicture(pictureType);
+        validatePicture(pictureType);
         int readLength = Utils.getReadLength(pictureType);
         var valueClause = ctx.dataDescriptionEntryClauses().dataValueClause(0);
         String defaultValue = this.getDataValue(valueClause, readLength);
