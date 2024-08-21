@@ -17,7 +17,7 @@
 class JsonToCopybookConverter {
     *Visitor;
 
-    private final string[] value = [];
+    private final byte[] value = [];
     private final Error[] errors = [];
     private final string[] path = [];
     private final map<Node> redefinedItems;
@@ -52,7 +52,7 @@ class JsonToCopybookConverter {
         if data.hasKey(copybookRootRecord.getName()) {
             copybookRootRecord.accept(self, data.get(copybookRootRecord.getName()));
         } else {
-            self.value.push(self.getDefaultValue(copybookRootRecord));
+            self.value.push(...self.getDefaultValue(copybookRootRecord));
         }
     }
 
@@ -76,7 +76,7 @@ class JsonToCopybookConverter {
             int elementSize = computeSize(groupItem, false);
             int remainingElements = (groupItem.getElementCount() - data.length());
             int paddLength = remainingElements * elementSize;
-            self.value.push("".padEnd(paddLength));
+            self.value.push(..."".padEnd(paddLength).toBytes());
         } else {
             self.errors.push(error Error(string `Found an invalid value '${data is () ? "null" : data.toString()}'`
                 + string `at ${self.getPath()}. A '${groupItem.getElementCount() < 0 ? "map<json>" : "map<json>[]"}'`
@@ -95,7 +95,7 @@ class JsonToCopybookConverter {
         if !value.hasKey(child.getName()) {
             redefiningItemNameWithValue = self.findRedefiningItemNameWithValue(value, redefiningItems);
             if redefiningItemNameWithValue is () {
-                self.value.push(self.getDefaultValue(child));
+                self.value.push(...self.getDefaultValue(child));
                 return;
             }
             self.visitAllowedRedefiningItems[redefiningItemNameWithValue] = ();
@@ -113,7 +113,7 @@ class JsonToCopybookConverter {
         }
     }
 
-    private isolated function getDefaultValue(Node node) returns string {
+    private isolated function getDefaultValue(Node node) returns byte[] {
         DefaultValueCreator defaultValueCreator = new;
         node.accept(defaultValueCreator);
         return defaultValueCreator.getDefaultValue();
@@ -135,28 +135,28 @@ class JsonToCopybookConverter {
         }
         self.path.push(dataItem.getName());
         do {
-            string? primitiveValue = ();
+            byte[] primitiveValue = [];
             if dataItem.getElementCount() < 0 && data is PrimitiveType {
                 primitiveValue = check self.handlePrimitive(data, dataItem);
             } else if dataItem.getElementCount() > 0 && data is PrimitiveArrayType {
                 primitiveValue = check self.handlePrimitiveArray(data, dataItem);
             }
-            if primitiveValue is () {
+            if primitiveValue.length() == 0 {
                 check error Error(string `Found an invalid value '${data.toString()}' at ${self.getPath()}.` +
                     string `A ${dataItem.getElementCount() < 0 ? "primitive" : "array"} value is expected`);
                 return;
             }
-            self.value.push(primitiveValue);
+            self.value.push(...primitiveValue);
         } on fail Error e {
             self.errors.push(e);
         }
         _ = self.path.pop();
     }
 
-    private isolated function handlePrimitive(PrimitiveType value, DataItem dataItem) returns string|Error {
-        string primitiveValue;
+    private isolated function handlePrimitive(PrimitiveType value, DataItem dataItem) returns byte[]|Error {
+        byte[] primitiveValue;
         if value is string {
-            primitiveValue = check self.handleStringValue(value, dataItem);
+            primitiveValue = (check self.handleStringValue(value, dataItem));
         } else if value is int {
             primitiveValue = check self.handleIntValue(value, dataItem);
         } else {
@@ -166,7 +166,7 @@ class JsonToCopybookConverter {
         return primitiveValue;
     }
 
-    private isolated function handleStringValue(string value, DataItem dataItem) returns string|Error {
+    private isolated function handleStringValue(string value, DataItem dataItem) returns byte[]|Error {
         int maxLength = dataItem.getReadLength();
         if dataItem.isNumeric() {
             return error Error(string `Expected a numeric value at ${self.getPath()} but found string "${value}"`);
@@ -174,10 +174,10 @@ class JsonToCopybookConverter {
         if value.length() > dataItem.getReadLength() {
             return error Error(string `Value '${value}' exceeds the max length ${maxLength} at ${self.getPath()}`);
         }
-        return value.padEnd(maxLength);
+        return value.padEnd(maxLength).toBytes();
     }
 
-    private isolated function handleIntValue(int value, DataItem dataItem) returns string|Error {
+    private isolated function handleIntValue(int value, DataItem dataItem) returns byte[]|Error {
         if !dataItem.isNumeric() {
             return error Error(string `Numeric value ${value} found at ${self.getPath()}.`
                 + " Expecting a non-numeric value");
@@ -192,27 +192,38 @@ class JsonToCopybookConverter {
         }
         if dataItem.getPicture().startsWith("-") {
             // Add " " in the beginning of the string if the data has is positive
-            return value < 0 ? value.toString().padZero(maxByteSize)
-                : value.toString().padZero(maxByteSize - 1).padStart(maxByteSize);
+            return value < 0 ? value.toString().padZero(maxByteSize).toBytes()
+                : value.toString().padZero(maxByteSize - 1).padStart(maxByteSize).toBytes();
         } else if dataItem.getPicture().startsWith("+") {
             // Add "+" in the beginning of the string if the data has is positive
-            return value < 0 ? value.toString().padZero(maxByteSize)
-                : "+" + value.toString().padZero(maxByteSize - 1).padStart(maxByteSize - 1);
+            return value < 0 ? value.toString().padZero(maxByteSize).toBytes()
+                : ("+" + value.toString().padZero(maxByteSize - 1).padStart(maxByteSize - 1)).toBytes();
         }
         // handle S9(9)
-        if dataItem.isSigned() && value < 0 {
-            return value.toString().padZero(maxByteSize + 1); // +1 for sign byte
+        if dataItem.isBinary() {
+            return check self.handleBinaryValue(value, dataItem);
         }
-        return value.toString().padZero(maxByteSize);
+        if dataItem.isSigned() && value < 0 {
+            return value.toString().padZero(maxByteSize + 1).toBytes(); // +1 for sign byte
+        }
+        return value.toString().padZero(maxByteSize).toBytes();
+    }
+
+    private isolated function handleBinaryValue(int value, DataItem dataItem) returns byte[]|Error {
+        do {
+            return check getEncodedCopybookBinaryValue(value, dataItem.getPackLength());
+        } on fail error err {
+            return error Error(string `Failed to encode the value ${value} to binary: ${err.message()}`);
+        }
     }
 
     private isolated function handlePrimitiveArray(PrimitiveArrayType array, DataItem dataItem)
-    returns string|Error {
-        string[] elements = [];
+    returns byte[]|Error {
+        byte[][] elements = [];
         PrimitiveType[] primitiveArray = array; // This is allowed by covariance
         foreach int i in 0 ..< primitiveArray.length() {
             self.path.push(string `[${i}]`);
-            string|Error primitiveValue = self.handlePrimitive(primitiveArray[i], dataItem);
+            byte[]|Error primitiveValue = self.handlePrimitive(primitiveArray[i], dataItem);
             if primitiveValue is Error {
                 self.errors.push(primitiveValue);
                 continue;
@@ -224,10 +235,16 @@ class JsonToCopybookConverter {
         if array.length() > maxElementCount {
             return error Error(string `Number of elements exceeds the max size ${maxElementCount} at ${self.getPath()}`);
         }
-        return "".'join(...elements).padEnd(computeSize(dataItem));
+        byte[] result = [];
+        foreach byte[] item in elements {
+            result.push(...item);
+        }
+        string paddingString = "".padEnd(computeSize(dataItem) - result.length());
+        result.push(...paddingString.toBytes());
+        return result;
     }
 
-    private isolated function handleDecimalValue(decimal input, DataItem dataItem) returns string|Error {
+    private isolated function handleDecimalValue(decimal input, DataItem dataItem) returns byte[]|Error {
         // TODO: skipped decimal with V, implment seperately for decimal containing V
         // TODO: handle special case Z for fraction
         if !dataItem.isDecimal() && !dataItem.isNumeric() {
@@ -255,15 +272,15 @@ class JsonToCopybookConverter {
         string decimalString = wholeNumber + "." + fraction.padEnd(dataItem.getFloatingPointLength(), "0");
         if dataItem.getPicture().startsWith("-") && input >= 0d {
             // A deducted of 1 made from readLength for sign place holder " "
-            return " " + decimalString.padZero(dataItem.getReadLength() - 1 - supressZeroCount)
-                .padStart(dataItem.getReadLength() - 1);
+            return (" " + decimalString.padZero(dataItem.getReadLength() - 1 - supressZeroCount)
+                .padStart(dataItem.getReadLength() - 1)).toBytes();
         }
         if dataItem.getPicture().startsWith("+") && input > 0d {
             // A deducted of 1 made from readLength for sign char "+"
-            return "+" + decimalString.padZero(dataItem.getReadLength() - 1 - supressZeroCount)
-                .padStart(dataItem.getReadLength() - 1);
+            return ("+" + decimalString.padZero(dataItem.getReadLength() - 1 - supressZeroCount)
+                .padStart(dataItem.getReadLength() - 1)).toBytes();
         }
-        return decimalString.padZero(dataItem.getReadLength() - supressZeroCount).padStart(dataItem.getReadLength());
+        return decimalString.padZero(dataItem.getReadLength() - supressZeroCount).padStart(dataItem.getReadLength()).toBytes();
     }
 
     private isolated function checkDecimalLength(string wholeNumber, string fraction, decimal input,
@@ -292,41 +309,52 @@ class JsonToCopybookConverter {
         return;
     }
 
-    private isolated function validateEnumValue(string value, DataItem dataItem) returns Error? {
-        string[]? possibleEnumValues = dataItem.getPossibleEnumValues();
-        if possibleEnumValues is () {
-            return;
-        }
-        anydata providedValue = value;
-        anydata[] possibleValues = possibleEnumValues;
+    private isolated function validateEnumValue(byte[] value, DataItem dataItem) returns Error? {
+        string decodedValue = "";
         do {
+            string[]? possibleEnumValues = dataItem.getPossibleEnumValues();
+            if possibleEnumValues is () {
+                return;
+            }
+            anydata[] possibleValues = possibleEnumValues;
+            decodedValue = dataItem.isBinary() ? (check decodeBinaryValue(value)).toString() : check string:fromBytes(value);
+            anydata providedValue = decodedValue;
             if dataItem.isDecimal() {
-                providedValue = check decimal:fromString(value);
+                providedValue = check decimal:fromString(decodedValue);
                 possibleValues = check toDecimalArray(possibleEnumValues);
             } else if dataItem.isNumeric() {
-                providedValue = check int:fromString(value);
+                providedValue = check int:fromString(decodedValue);
                 possibleValues = check toIntArray(possibleEnumValues);
             }
-        } on fail error e {
-            return error Error(string `Failed to validate enum value '${value}': ${e.message()}`, e.cause());
-        }
-        if possibleValues.indexOf(providedValue) is int {
+            if possibleValues.indexOf(providedValue) !is int {
+                string[] formattedEnumValues = possibleEnumValues.'map(posibleValue => string `'${posibleValue.toString()}'`);
+                return error Error(string `Value '${decodedValue}' is invalid for field '${dataItem.getName()}'. `
+                    + string `Allowed values are: ${string:'join(", ", ...formattedEnumValues)}.`);
+            }
             return;
+        } on fail error e {
+            return error Error(string `Failed to validate enum value '${decodedValue}': ${e.message()}`, e.cause());
         }
-        string[] formattedEnumValues = possibleEnumValues.'map(posibleValue => string `'${posibleValue.toString()}'`);
-        return error Error(string `Value '${value}' is invalid for field '${dataItem.getName()}'. `
-            + string `Allowed values are: ${string:'join(", ", ...formattedEnumValues)}.`);
     }
 
     private isolated function getPath() returns string {
         return string `'${".".'join(...self.path)}'`;
     }
 
-    isolated function getValue() returns string|Error {
+    isolated function getStringValue() returns string|Error {
+        string|error stringValue = string:fromBytes(self.value);
+        if self.errors.length() > 0 || stringValue is error {
+            string[] errorMsgs = self.errors.'map(err => err.message());
+            return error Error("JSON to copybook data conversion failed.", errors = errorMsgs);
+        }
+        return stringValue;
+    }
+
+    isolated function getByteValue() returns byte[]|Error {
         if self.errors.length() > 0 {
             string[] errorMsgs = self.errors.'map(err => err.message());
             return error Error("JSON to copybook data conversion failed.", errors = errorMsgs);
         }
-        return "".'join(...self.value);
+        return self.value;
     }
 }

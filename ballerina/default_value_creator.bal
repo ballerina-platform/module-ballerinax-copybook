@@ -40,7 +40,7 @@ class DefaultValueCreator {
             return;
         }
         string dataItemDefaultValue = dataItem.getDefaultValue() ?: "";
-        if (dataItem.isNumeric() && !dataItem.isDecimal()) ||  (dataItem.isDecimal() && dataItemDefaultValue != "") {
+        if (dataItem.isNumeric() && !dataItem.isDecimal()) || (dataItem.isDecimal() && dataItemDefaultValue != "") {
             dataItemDefaultValue = dataItemDefaultValue.padZero(dataItem.getReadLength());
         } else {
             dataItemDefaultValue = dataItemDefaultValue.padEnd(dataItem.getReadLength());
@@ -59,7 +59,7 @@ class DefaultValueCreator {
         return string:'join("", ...values);
     }
 
-    isolated function getDefaultValue() returns string {
-        return string:'join("", ...self.defaultValueFragments);
+    isolated function getDefaultValue() returns byte[] {
+        return string:'join("", ...self.defaultValueFragments).toBytes();
     }
 }
