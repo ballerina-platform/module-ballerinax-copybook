@@ -68,17 +68,6 @@ isolated function testToJsonWithInvalidTargetRecordName() returns error? {
 }
 
 @test:Config
-isolated function testToJsonRequiresTargetRecordName() returns error? {
-    Converter converter = check new (getCopybookPath("copybook-7"));
-    string input = check io:fileReadString(getAsciiFilePath("copybook-7"));
-    Copybook7|Error copybook = converter.fromCopybook(input);
-    if copybook !is Error {
-        test:assertFail("Expected a 'copybook:Error'");
-    }
-    test:assertEquals(copybook.message(), "The copybook schema has multiple record definitions. The targetRecordName must not be nil");
-}
-
-@test:Config
 isolated function testfromCopybookApi() returns error? {
     Converter converter = check new (getCopybookPath("copybook-7"));
     string[] input = check io:fileReadLines(getAsciiFilePath("copybook-7"));
@@ -188,4 +177,24 @@ isolated function testUnsupportedValueClauses() returns error? {
         test:assertFail("Expected a 'copybook:Error'");
     }
     test:assertEquals(converter.detail(), check getErrorDetail("copybook-17"));
+}
+
+@test:Config
+isolated function testAsciiEbcdicConvertion() returns error? {
+    byte[] ascii = check io:fileReadBytes(getAsciiFilePath("copybook-1"));
+    byte[] ebcdic = check io:fileReadBytes(getEbcdicFilePath("copybook-1"));
+    test:assertEquals(toEbcdicBytes(ascii), ebcdic);
+    test:assertEquals(toAsciiBytes(ebcdic), ascii);
+}
+
+@test:Config
+isolated function testCopybookWithMultipleRootRecords() returns error? {
+    Converter converter = check new (getCopybookPath("copybook-18"));
+    string ascii = check io:fileReadString(getAsciiFilePath("copybook-18"));
+    json data = check io:fileReadJson(getCopybookJsonPath("copybook-18"));
+    string output = check converter.toCopybook(check data.cloneWithType());
+    test:assertEquals(ascii, output);
+
+    map<json> jsonOutput = check converter.fromCopybook(ascii);
+    test:assertEquals(jsonOutput, data);
 }

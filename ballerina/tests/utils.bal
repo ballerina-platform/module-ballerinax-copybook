@@ -24,6 +24,10 @@ isolated function getAsciiFilePath(string fileName) returns string {
     return string `tests/resources/copybook-ascii/${fileName}.txt`;
 }
 
+isolated function getEbcdicFilePath(string fileName) returns string {
+    return string `tests/resources/copybook-ebcdic/${fileName}.txt`;
+}
+
 isolated function getSchemaPath(string fileName) returns string {
     return string `tests/resources/schema/${fileName}.json`;
 }

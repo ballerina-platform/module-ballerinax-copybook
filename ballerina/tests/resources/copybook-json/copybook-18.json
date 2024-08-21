@@ -1,0 +1,16 @@
+{
+  "DFHCOMMAREA": {
+    "BROKER-MESSAGE-AREA": {
+      "MI-HDR-VERSION": "v1.0",
+      "MI-HDR-MSGID": "100",
+      "MI-HDR-LOGGINGID": "7890V100"
+    }
+  },
+  "DFHCOMMAREA-2": {
+    "BROKER-MESSAGE-AREA-2": {
+      "MI-HDR-VERSION-2": "v2.1",
+      "MI-HDR-MSGID-2": "200",
+      "MI-HDR-LOGGINGID-2": "7890V100"
+    }
+  }
+}

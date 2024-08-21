@@ -73,11 +73,7 @@ public isolated class Converter {
     private isolated function validateTargetRecordName(string? targetRecordName) returns Error? {
         lock {
             if targetRecordName is () {
-                if self.schema.getTypeDefinitions().length() == 1 {
-                    return;
-                }
-                return error Error("The copybook schema has multiple record definitions. "
-                    + "The targetRecordName must not be nil");
+                return;
             }
             foreach Node node in self.schema.getTypeDefinitions() {
                 if node.getName() == targetRecordName {

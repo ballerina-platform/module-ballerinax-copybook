@@ -10,6 +10,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 - [[#6861] Add Support to Generate Zero Values for Picture Strings of Integer Type](https://github.com/ballerina-platform/ballerina-library/issues/6861)
 - [[#6862] Add Support for Enum Value Validation](https://github.com/ballerina-platform/ballerina-library/issues/6862)
 - [[#6863] Add Support for the Value Clause](https://github.com/ballerina-platform/ballerina-library/issues/6863)
+- [[#6892] ADd Helper Functions to Convert ASCII Bytes To EBCDIC and Vice Versa](https://github.com/ballerina-platform/ballerina-library/issues/6892)
+
+### Changed
+- [[#6895] Add Support to Handle Copybook with Multiple Root Records](https://github.com/ballerina-platform/ballerina-library/issues/6895)
+
 
 ## [0.2.0] - 2023-12-01
 

@@ -30,8 +30,15 @@ class CopybookReader {
     }
 
     isolated function visitSchema(Schema schema, anydata data = ()) {
-        Node typeDef = getTypeDefinition(schema, self.targetRecordName);
-        typeDef.accept(self);
+        string? targetRecordName = self.targetRecordName;
+        if targetRecordName is string {
+            Node typeDef = getTypeDefinition(schema, targetRecordName);
+            typeDef.accept(self);
+            return;
+        }
+        foreach Node typeDef in schema.getTypeDefinitions() {
+            typeDef.accept(self);
+        }
     }
 
     isolated function visitGroupItem(GroupItem groupItem, anydata data = ()) {
