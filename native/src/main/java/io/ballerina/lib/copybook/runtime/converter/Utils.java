@@ -118,6 +118,11 @@ public final class Utils {
         return dataItem.isSinged();
     }
 
+    public static boolean isEnum(BObject bObject) {
+        DataItem dataItem = (DataItem) bObject.getNativeData(NATIVE_VALUE);
+        return dataItem.isEnum();
+    }
+
     public static BString getPicture(BObject bObject) {
         DataItem dataItem = (DataItem) bObject.getNativeData(NATIVE_VALUE);
         return StringUtils.fromString(dataItem.getPicture());
@@ -129,8 +134,8 @@ public final class Utils {
     }
 
     public static int getElementCount(BObject bObject) {
-        CopybookNode nod = (CopybookNode) bObject.getNativeData(NATIVE_VALUE);
-        return nod.getOccurringCount();
+        CopybookNode node = (CopybookNode) bObject.getNativeData(NATIVE_VALUE);
+        return node.getOccurringCount();
     }
 
     public static BString externToString(BObject bObject) {
@@ -173,6 +178,24 @@ public final class Utils {
             bMap.put(StringUtils.fromString(child.getName()), element);
         }
         return bMap;
+    }
+
+    public static Object getPossibleEnumValues(BObject bObject) {
+        DataItem dataItem = (DataItem) bObject.getNativeData(NATIVE_VALUE);
+        if (dataItem.isEnum()) {
+            List<String> values = dataItem.getPossibleEnumValues();
+            return StringUtils.fromStringArray(values.toArray(new String[0]));
+        }
+        return null;
+    }
+
+    public static Object getDefaultValue(BObject bObject) {
+        DataItem dataItem = (DataItem) bObject.getNativeData(NATIVE_VALUE);
+        String defaultValue = dataItem.getDefaultValue();
+        if (defaultValue == null) {
+            return defaultValue;
+        }
+        return StringUtils.fromString(defaultValue);
     }
 
     public static BArray getDataDescriptions(BObject bObject) {

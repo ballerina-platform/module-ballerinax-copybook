@@ -1,0 +1,7 @@
+{
+    "errors": [
+        "Value '201' is invalid for field 'STATUS-CODE'. Allowed values are: '202', '200', '404', '500'.",
+        "Value '400' is invalid for field 'STATUS-CODE'. Allowed values are: '202', '200', '404', '500'.",
+        "Value '503' is invalid for field 'STATUS-CODE'. Allowed values are: '202', '200', '404', '500'."
+    ]
+}

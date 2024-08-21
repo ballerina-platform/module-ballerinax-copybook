@@ -1,0 +1,5 @@
+01 BIO.
+   03 AGE         PIC 9(02) VALUE 25.
+   03 NAME         PIC X(10) VALUE 'SABTHAR'.
+   03 HEIGHT         PIC 9(03).99 VALUE 179.90.
+   03 FILLER        PIC X VALUE LOW-VALUE.

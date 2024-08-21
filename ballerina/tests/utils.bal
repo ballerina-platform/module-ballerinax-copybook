@@ -35,7 +35,7 @@ isolated function getCopybookJsonPath(string fileName) returns string {
 isolated function getErrorDetail(string fileName) returns json|error {
     string filePath = string `tests/resources/errors/${fileName}.json`;
     json errors = check io:fileReadJson(filePath);
-    if errors !is map<json> || !errors.hasKey(ERRORS) {
+    if errors !is map<json> || !errors.hasKey(ERRORS) && !errors.hasKey("parser-errors") {
         return error(string `Invalid error fomart in '${filePath}'`);
     }
     return errors;

@@ -51,9 +51,9 @@ class CopybookReader {
         } else {
             GroupValue groupValue = {};
             foreach var child in groupItem.getChildren() {
-                child.accept(self, groupValue);
-                self.addValue(groupItem.getName(), groupValue, data);
+                child.accept(self, groupValue); 
             }
+            self.addValue(groupItem.getName(), groupValue, data);
         }
 
         // Reset the iterator to previous text iterator

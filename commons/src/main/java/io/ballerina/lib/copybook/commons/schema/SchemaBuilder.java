@@ -19,6 +19,8 @@
 package io.ballerina.lib.copybook.commons.schema;
 
 import io.ballerina.lib.copybook.commons.generated.CopybookVisitor;
+import org.antlr.v4.runtime.ParserRuleContext;
+import org.antlr.v4.runtime.misc.Interval;
 import org.antlr.v4.runtime.tree.ErrorNode;
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.antlr.v4.runtime.tree.RuleNode;
@@ -28,6 +30,8 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import static io.ballerina.lib.copybook.commons.generated.CopybookParser.BooleanLiteralContext;
 import static io.ballerina.lib.copybook.commons.generated.CopybookParser.CicsDfhRespLiteralContext;
@@ -75,6 +79,10 @@ class SchemaBuilder implements CopybookVisitor<CopybookNode> {
     private GroupItem possibleParent;
     private final Set<String> redefinedItemNames = new HashSet<>();
     private final List<String> errors = new ArrayList<>();
+    private DataItem possibleEnum;
+    private int rootLevel = -1;
+    private static final String SPACE = " ";
+    private static final String ZERO = "0";
 
     Schema getSchema() {
         return this.schema;
@@ -105,6 +113,7 @@ class SchemaBuilder implements CopybookVisitor<CopybookNode> {
     public CopybookNode visitDataDescription(DataDescriptionContext ctx) {
         for (int i = 0; i < ctx.getChildCount(); i++) {
             CopybookNode copybookNode = visitDataDescriptionEntry(ctx.dataDescriptionEntry(i));
+            setRootLevel(copybookNode);
             if (copybookNode instanceof GroupItem groupItem) {
                 this.possibleParent = groupItem;
             }
@@ -115,8 +124,14 @@ class SchemaBuilder implements CopybookVisitor<CopybookNode> {
         return null;
     }
 
+    private void setRootLevel(CopybookNode copybookNode) {
+        if (copybookNode != null && (this.rootLevel == -1 || this.rootLevel > copybookNode.getLevel())) {
+            this.rootLevel = copybookNode.getLevel();
+        }
+    }
+
     private boolean isRootLevelNode(CopybookNode copybookNode) {
-        return copybookNode != null && copybookNode.getLevel() == 1;
+        return copybookNode != null && copybookNode.getLevel() == this.rootLevel;
     }
 
     @Override
@@ -124,7 +139,10 @@ class SchemaBuilder implements CopybookVisitor<CopybookNode> {
         if (ctx.dataDescriptionEntryFormat1() != null) {
             return visitDataDescriptionEntryFormat1(ctx.dataDescriptionEntryFormat1());
         }
-        // skipping level 66 and 88
+        if (ctx.dataDescriptionEntryFormat3() != null) {
+            return visitDataDescriptionEntryFormat3(ctx.dataDescriptionEntryFormat3());
+        }
+        // skipping level 66
         return null;
     }
 
@@ -152,9 +170,14 @@ class SchemaBuilder implements CopybookVisitor<CopybookNode> {
         }
         PictureStringContext pictureType = pictureClause.pictureString();
         validatePicture(pictureType);
-        return new DataItem(level, name, Utils.getPictureString(pictureType), Utils.isNumeric(pictureType),
-                            Utils.getReadLength(pictureType), occurs, Utils.getFloatingPointLength(pictureType),
-                            redefinedItemName, getParent(level));
+        int readLength = Utils.getReadLength(pictureType);
+        var valueClause = ctx.dataDescriptionEntryClauses().dataValueClause(0);
+        String defaultValue = this.getDataValue(valueClause, readLength);
+        DataItem dataItem = new DataItem(level, name, Utils.getPictureString(pictureType), Utils.isNumeric(pictureType),
+                readLength, occurs, Utils.getFloatingPointLength(pictureType), redefinedItemName, defaultValue,
+                getParent(level));
+        this.possibleEnum = dataItem;
+        return dataItem;
     }
 
     private void validatePicture(PictureStringContext pictureType) {
@@ -166,8 +189,94 @@ class SchemaBuilder implements CopybookVisitor<CopybookNode> {
         this.addError(pictureType.start.getLine(), pictureType.start.getCharPositionInLine(), errorMsg);
     }
 
-    private void addError(int line, int charPositionInLine, String msg) {
-        this.errors.add("Error at line " + line + ", column " + charPositionInLine + ": " + msg);
+    private String getDataValue(DataValueClauseContext ctx, int readLength) {
+        if (ctx == null) {
+            return null;
+        }
+        try {
+            DataValueIntervalContext dataValueInterval = ctx.dataValueInterval(0);
+            LiteralContext literal = dataValueInterval.dataValueIntervalFrom().literal();
+            FigurativeConstantContext figurativeConstantContext = literal.figurativeConstant();
+            if (figurativeConstantContext != null) {
+                return getDataValue(figurativeConstantContext, readLength);
+            }
+            TerminalNode nonNumericLiteral = literal.NONNUMERICLITERAL();
+            if (nonNumericLiteral != null) {
+                return getDataValue(literal, nonNumericLiteral);
+            }
+            NumericLiteralContext numericLiteral = literal.numericLiteral();
+            if (numericLiteral != null) {
+                return getDataValue(numericLiteral);
+            }
+        } catch (NullPointerException exception) {
+            addStatementNotSupportedError(ctx);
+            return null;
+        }
+        addStatementNotSupportedError(ctx);
+        return null;
+    }
+
+    private String getDataValue(FigurativeConstantContext ctx, int readLength) {
+        if (ctx == null) {
+            return null;
+        }
+        if (ctx.SPACE() != null) {
+            return SPACE;
+        }
+        if (ctx.ZERO() != null) {
+            return ZERO;
+        }
+        if (ctx.SPACES() != null) {
+            return SPACE.repeat(readLength);
+        }
+        if (ctx.ZEROES() != null || ctx.ZEROS() != null) {
+            return ZERO.repeat(readLength);
+        }
+        if (ctx.LOW_VALUE() != null) {
+            return ZERO;
+        }
+        if (ctx.LOW_VALUES() != null) {
+            return ZERO.repeat(readLength);
+        }
+        addStatementNotSupportedError(ctx);
+        return null;
+    }
+
+    private String getDataValue(LiteralContext literalContext, TerminalNode nonNumericLiteral) {
+        String defaultValue = nonNumericLiteral.getText();
+        if (Pattern.matches("^[xX].*$", defaultValue)) {
+            addError(literalContext.start.getLine(), literalContext.start.getCharPositionInLine(),
+                    "Hexadecimal value '" + defaultValue + "' is not supported as a default value.");
+            return null;
+        }
+        if (Pattern.matches("^[zZ].*$", defaultValue)) {
+            addError(literalContext.start.getLine(), literalContext.start.getCharPositionInLine(),
+                    "Null terminated value '" + defaultValue + "' is not supported as a default value.");
+            return null;
+        }
+        Matcher matcher = Pattern.compile("^['\"](?<stringValue>.*)['\"]$").matcher(defaultValue);
+        return matcher.find() ? matcher.group("stringValue") : defaultValue;
+    }
+
+    private String getDataValue(NumericLiteralContext numericLiteral) {
+        if (numericLiteral.NUMERICLITERAL() != null) {
+            String numericLiteralText = numericLiteral.NUMERICLITERAL().getText();
+            if (numericLiteralText.contains("e") || numericLiteralText.contains("E")) {
+                addError(numericLiteral.start.getLine(), numericLiteral.start.getCharPositionInLine(),
+                        "Scientific notation '" + numericLiteralText + "' is not supported as a default value.");
+            }
+        }
+        if (numericLiteral.ZERO() != null) {
+            return ZERO;
+        }
+        return numericLiteral.getText();
+    }
+
+    private void addStatementNotSupportedError(ParserRuleContext ctx) {
+        Interval statementInterval = new Interval(ctx.start.getStartIndex(), ctx.stop.getStopIndex());
+        String statement = ctx.start.getInputStream().getText(statementInterval);
+        addError(ctx.start.getLine(), ctx.start.getCharPositionInLine(),
+                "Copybook statement '" + statement + "' is not supported.");
     }
 
     @Override
@@ -190,7 +299,29 @@ class SchemaBuilder implements CopybookVisitor<CopybookNode> {
 
     @Override
     public CopybookNode visitDataDescriptionEntryFormat3(DataDescriptionEntryFormat3Context ctx) {
+        DataValueClauseContext valueClause = ctx.dataValueClause();
+        if (valueClause.VALUE() != null) {
+            var dataValueIntervalContext = valueClause.dataValueInterval(0);
+            var literal = dataValueIntervalContext.dataValueIntervalFrom().literal();
+            if (literal != null) {
+                // Remove quotes from value if available (.ie 'N' -> N, "N" -> N)
+                Matcher matcher = Pattern.compile("^['\"](?<stringValue>.*)['\"]$").matcher(literal.getText());
+                String value =  matcher.find() ? matcher.group("stringValue") : literal.getText();
+                if (value.length() > this.possibleEnum.getReadLength()) {
+                    String errorMsg = "Invalid enum value '" + value + "' found in copybook schema. "
+                            + "The value's length exceeds the defined length for enum '"
+                            + this.possibleEnum.getName() + ".";
+                    this.addError(literal.start.getLine(), literal.start.getCharPositionInLine(), errorMsg);
+                    return null;
+                }
+                this.possibleEnum.addEnumValues(value);
+            }
+        }
         return null;
+    }
+
+    private void addError(int line, int charPositionInLine, String msg) {
+        this.errors.add("Error at line " + line + ", column " + charPositionInLine + ": " + msg);
     }
 
     @Override

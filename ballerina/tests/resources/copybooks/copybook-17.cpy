@@ -1,0 +1,4 @@
+01 SAMPLE.
+   03 FIELD-1        PIC X VALUE HIGH-VALUE.
+   03 FIELD-2        PIC 99 VALUE X'08'.
+   03 FIELD-3        PIC 99 VALUE Z''.

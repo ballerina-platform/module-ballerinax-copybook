@@ -1,0 +1,5 @@
+{
+    "errors": [
+        "Value '2' is invalid for field 'REQUIRED'. Allowed values are: '1', '0'."
+    ]
+}
