@@ -25,7 +25,7 @@ isolated function getAsciiFilePath(string fileName) returns string {
 }
 
 isolated function getEbcdicFilePath(string fileName) returns string {
-    return string `tests/resources/copybook-ebcdic/${fileName}.bin`;
+    return string `tests/resources/copybook-ebcdic/${fileName}.txt`;
 }
 
 isolated function getSchemaPath(string fileName) returns string {
