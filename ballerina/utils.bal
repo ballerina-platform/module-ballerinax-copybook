@@ -124,10 +124,7 @@ isolated function externToString(Node node) returns string = @java:Method {
     'class: "io.ballerina.lib.copybook.runtime.converter.Utils"
 } external;
 
-isolated function getTypeDefinition(Schema schema, string? targetRecordName) returns Node {
-    if targetRecordName is () {
-        return schema.getTypeDefinitions()[0];
-    }
+isolated function getTypeDefinition(Schema schema, string targetRecordName) returns Node {
     foreach Node node in schema.getTypeDefinitions() {
         if targetRecordName == node.getName() {
             return node;

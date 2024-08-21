@@ -31,18 +31,29 @@ class JsonToCopybookConverter {
 
     isolated function visitSchema(Schema schema, anydata data = ()) {
         self.path.push(ROOT_JSON_PATH);
-        Node typedef = getTypeDefinition(schema, self.targetRecordName);
         if data !is map<json> {
             self.errors.push(error Error(string `Invalid value '${data.toString()}' found at ${self.getPath()}`));
             _ = self.path.pop();
             return;
         }
-        if data.hasKey(typedef.getName()) {
-            typedef.accept(self, data.get(typedef.getName()));
+        string? targetRecordName = self.targetRecordName;
+        if targetRecordName is string {
+            Node typedef = getTypeDefinition(schema, targetRecordName);
+            self.processCopybookRootRecord(schema, typedef, data);
         } else {
-            self.value.push(self.getDefaultValue(typedef));
+            foreach Node typedef in schema.getTypeDefinitions() {
+                self.processCopybookRootRecord(schema, typedef, data);
+            }
         }
         _ = self.path.pop();
+    }
+
+    isolated function processCopybookRootRecord(Schema schema, Node copybookRootRecord, map<json> data) {
+        if data.hasKey(copybookRootRecord.getName()) {
+            copybookRootRecord.accept(self, data.get(copybookRootRecord.getName()));
+        } else {
+            self.value.push(self.getDefaultValue(copybookRootRecord));
+        }
     }
 
     isolated function visitGroupItem(GroupItem groupItem, anydata data = ()) {
