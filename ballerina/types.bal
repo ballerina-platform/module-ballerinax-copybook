@@ -21,6 +21,24 @@ type Iterator object {
     public isolated function next() returns record {|string:Char value;|}?;
 };
 
+// Added as a workaround for https://github.com/ballerina-platform/ballerina-lang/issues/43301
+isolated class ByteIterator {
+
+    private final object {
+        public isolated function next() returns record {|byte value;|}?;
+    } iterator;
+
+    isolated function init(byte[] bytes) {
+        self.iterator = bytes.cloneReadOnly().iterator();
+    }
+
+    isolated function next() returns record {|byte value;|}? {
+        lock {
+            return self.iterator.next().cloneReadOnly();
+        }
+    }
+};
+
 type GroupValue record {
 
 };
@@ -34,3 +52,8 @@ type PrimitiveArrayType string[]|int[]|float[]|decimal[];
 const ROOT_JSON_PATH = "$";
 const ERRORS = "errors";
 const DATA = "data";
+
+public enum Encoding {
+    ASCII,
+    EBCDIC
+}

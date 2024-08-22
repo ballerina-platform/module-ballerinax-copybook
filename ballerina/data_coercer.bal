@@ -181,4 +181,8 @@ class DataCoercer {
     private isolated function getPath() returns string {
         return string `'${".".'join(...self.path)}'`;
     }
+
+    isolated function addErrors(Error[] errors) {
+        self.errors.push(...errors);
+    }
 }

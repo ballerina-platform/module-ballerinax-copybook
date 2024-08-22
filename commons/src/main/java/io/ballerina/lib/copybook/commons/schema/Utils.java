@@ -21,6 +21,7 @@ package io.ballerina.lib.copybook.commons.schema;
 import java.util.regex.Pattern;
 
 import static io.ballerina.lib.copybook.commons.generated.CopybookParser.DataOccursClauseContext;
+import static io.ballerina.lib.copybook.commons.generated.CopybookParser.DataUsageClauseContext;
 import static io.ballerina.lib.copybook.commons.generated.CopybookParser.PictureStringContext;
 
 public final class Utils {
@@ -54,6 +55,20 @@ public final class Utils {
 
     static boolean isArray(DataOccursClauseContext occursClause) {
         return occursClause != null;
+    }
+
+    static boolean isBinary(DataUsageClauseContext usageClause) {
+        return usageClause != null && (usageClause.BINARY() != null || usageClause.COMP() != null);
+    }
+
+    static int getBinaryPackLength(int readLength) {
+        if (readLength <= 4) {
+            return 2;
+        }
+        if (readLength <= 9) {
+            return 4;
+        }
+        return 18;
     }
 
     static int getFloatingPointLength(PictureStringContext pictureType) {

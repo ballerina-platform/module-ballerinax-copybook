@@ -1,0 +1,18 @@
+{
+    "MQCIH": {
+        "MQCIH-CID": "CIH",
+        "MQCIH-VERSION": 180,
+        "MQCIH-LENGTH": 2,
+        "MQCIH-CODING": 0,
+        "MQCIH-CODE": 546,
+        "MQCIH-FORMATID": "RQMSTR",
+        "MQCIH-FLAGSID": 0,
+        "MQCIH-RETURNIDCODE": 0,
+        "MQCIH-COMPIDCODE": 1,
+        "MQCIH-REASONID": 0,
+        "MQCIH-CONTROL": -1,
+        "MQCIH-INTERVAL": 273,
+        "MQCIH-FACILITY": "00000001",
+        "MQCIH-AUTHENTICATOR": "CLT01"
+    }
+}

@@ -1,4 +1,4 @@
-// Copyright (c) 2024 WSO2 LLC. (http://www.wso2.com) All Rights Reserved.
+// Copyright (c) 2024 WSO2 LLC. (http://www.wso2.com).
 //
 // WSO2 LLC. licenses this file to you under the Apache License,
 // Version 2.0 (the "License"); you may not use this file except
@@ -17,6 +17,7 @@
 class DefaultValueCreator {
     *Visitor;
     private string[] defaultValueFragments = [];
+    private Error[] errors = [];
 
     isolated function visitSchema(Schema schema, anydata data = ()) {
     }
@@ -40,7 +41,7 @@ class DefaultValueCreator {
             return;
         }
         string dataItemDefaultValue = dataItem.getDefaultValue() ?: "";
-        if (dataItem.isNumeric() && !dataItem.isDecimal()) ||  (dataItem.isDecimal() && dataItemDefaultValue != "") {
+        if (dataItem.isNumeric() && !dataItem.isDecimal()) || (dataItem.isDecimal() && dataItemDefaultValue != "") {
             dataItemDefaultValue = dataItemDefaultValue.padZero(dataItem.getReadLength());
         } else {
             dataItemDefaultValue = dataItemDefaultValue.padEnd(dataItem.getReadLength());
@@ -59,7 +60,11 @@ class DefaultValueCreator {
         return string:'join("", ...values);
     }
 
-    isolated function getDefaultValue() returns string {
-        return string:'join("", ...self.defaultValueFragments);
+    isolated function getDefaultValue() returns byte[] {
+        return string:'join("", ...self.defaultValueFragments).toBytes();
     }
+
+    public isolated function getErrors() returns Error[]? {
+        return self.errors.length() > 0 ? self.errors : ();
+    };
 }

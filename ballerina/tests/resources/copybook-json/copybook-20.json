@@ -1,0 +1,30 @@
+{
+    "MQCIH": {
+        "TRUCID": "C4H",
+        "ERSION": 150,
+        "TRUCLENGTH": 5,
+        "NCODING": 0,
+        "ODEDCHARSETID": 55,
+        "ORMAT": "STR",
+        "LAGS": 0,
+        "ETURNCODE": 0,
+        "OMPCODE": 1,
+        "EASON": 0,
+        "OWCONTROL": -1,
+        "ETWAITINTERVAL": 293,
+        "INKTYPE": 1,
+        "UTPUTDATALENGTH": -1,
+        "ACILITYKEEPTIME": 0,
+        "DSDESCRIPTOR": 0,
+        "ONVERSATIONALTASK": 0,
+        "ASKENDSTATUS": 0,
+        "ACILITY": "0000",
+        "UTHENTICATOR": "C1",
+        "EPLYTOFORMAT": "RQ",
+        "RANSACTIONID": "XT",
+        "URSORPOSITION": 0,
+        "RROROFFSET": 0,
+        "NPUTITEM": -8,
+        "ESERVED4": 0
+    }
+}

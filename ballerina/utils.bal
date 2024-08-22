@@ -207,6 +207,5 @@ isolated function createError(error err) returns Error {
 isolated function toDecimalArray(string[] possibleEnumValues) returns decimal[]|error =>
     possibleEnumValues.'map(possibleValue => check decimal:fromString(possibleValue));
 
-
 isolated function toIntArray(string[] possibleEnumValues) returns int[]|error =>
     possibleEnumValues.'map(possibleValue => check int:fromString(possibleValue));

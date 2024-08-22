@@ -173,9 +173,10 @@ class SchemaBuilder implements CopybookVisitor<CopybookNode> {
         int readLength = Utils.getReadLength(pictureType);
         var valueClause = ctx.dataDescriptionEntryClauses().dataValueClause(0);
         String defaultValue = this.getDataValue(valueClause, readLength);
+        boolean isBinary = Utils.isBinary(ctx.dataDescriptionEntryClauses().dataUsageClause(0));
         DataItem dataItem = new DataItem(level, name, Utils.getPictureString(pictureType), Utils.isNumeric(pictureType),
                 readLength, occurs, Utils.getFloatingPointLength(pictureType), redefinedItemName, defaultValue,
-                getParent(level));
+                getParent(level), isBinary, isBinary ? Utils.getBinaryPackLength(readLength) : 0);
         this.possibleEnum = dataItem;
         return dataItem;
     }

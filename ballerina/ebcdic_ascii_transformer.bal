@@ -548,7 +548,7 @@ final readonly & table<EbcdicToAscii> key(ebcdic) ebcdicToAscii = table [
 #
 # + ebcdic - The input byte array encoded in EBCDIC
 # + return - The output byte array encoded in ASCII
-public isolated function toAsciiBytes(byte[] ebcdic) returns byte[] {
+isolated function toAsciiBytes(byte[] ebcdic) returns byte[] {
     return ebcdic.'map(b => ebcdicToAscii.get(b).ascii);
 }
 
@@ -556,6 +556,6 @@ public isolated function toAsciiBytes(byte[] ebcdic) returns byte[] {
 #
 # + ascii - The input byte array encoded in ASCII
 # + return - The output byte array encoded in EBCDIC
-public isolated function toEbcdicBytes(byte[] ascii) returns byte[] {
+isolated function toEbcdicBytes(byte[] ascii) returns byte[] {
     return ascii.'map(b => asciiToEbcdic.get(b).ebcdic);
 }

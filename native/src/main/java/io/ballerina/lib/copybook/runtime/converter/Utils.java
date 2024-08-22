@@ -55,6 +55,7 @@ public final class Utils {
     private static final String GROUP_ITEM_TYPE_NAME = "GroupItem";
     private static final String DATA_ITEM_TYPE_NAME = "DataItem";
     private static final String ERROR_TYPE_NAME = "Error";
+    private static final String FROM_BYTES_TO_RECORD_METHOD_NAME = "fromBytesToRecord";
 
     private Utils() {
     }
@@ -121,6 +122,16 @@ public final class Utils {
     public static boolean isEnum(BObject bObject) {
         DataItem dataItem = (DataItem) bObject.getNativeData(NATIVE_VALUE);
         return dataItem.isEnum();
+    }
+
+    public static boolean isBinary(BObject bObject) {
+        DataItem dataItem = (DataItem) bObject.getNativeData(NATIVE_VALUE);
+        return dataItem.isBinary();
+    }
+
+    public static int getPackLength(BObject bObject) {
+        DataItem dataItem = (DataItem) bObject.getNativeData(NATIVE_VALUE);
+        return dataItem.getPackLength();
     }
 
     public static BString getPicture(BObject bObject) {
@@ -233,6 +244,16 @@ public final class Utils {
         Object[] paramFeed = {copybookData, true, typedesc, true, targetRecordName, true};
         env.getRuntime().invokeMethodAsyncConcurrently(converter, TO_RECORD_METHOD_NAME, null, null, callback, null,
                                                        PredefinedTypes.TYPE_NULL, paramFeed);
+        return null;
+    }
+
+    public static Object fromBytes(Environment env, BObject converter, BArray bytes, Object targetRecordName,
+                                   BString encoding, BTypedesc typedesc) {
+        Future balFuture = env.markAsync();
+        ExecutionCallback callback = new ExecutionCallback(balFuture);
+        Object[] paramFeed = {bytes, true, targetRecordName, true, encoding, true};
+        env.getRuntime().invokeMethodAsyncConcurrently(converter, FROM_BYTES_TO_RECORD_METHOD_NAME, null, null,
+                                                       callback, null, PredefinedTypes.TYPE_NULL, paramFeed);
         return null;
     }
 }

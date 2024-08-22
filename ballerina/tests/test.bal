@@ -198,3 +198,59 @@ isolated function testCopybookWithMultipleRootRecords() returns error? {
     map<json> jsonOutput = check converter.fromCopybook(ascii);
     test:assertEquals(jsonOutput, data);
 }
+
+@test:Config {
+    dataProvider: dataProviderBytes
+}
+isolated function testToByteAndFromBytes(string fileName, string targetRecord) returns error? {
+    Converter converter = check new (getCopybookPath(fileName));
+    json jsonInput = check io:fileReadJson(getCopybookJsonPath(fileName));
+    byte[] bytes = check converter.toBytes(check jsonInput.cloneWithType(), targetRecord);
+    map<json> toJson = check converter.fromBytes(bytes, targetRecord);
+    test:assertEquals(check toJson.data, jsonInput);
+}
+
+function dataProviderBytes() returns string[][] {
+    return [
+        ["copybook-19", "MQCIH"],
+        ["copybook-20", "MQCIH"]
+    ];
+}
+
+@test:Config {
+    dataProvider: testByteConverterDataProvider
+}
+isolated function testByteConverter(string copybookName) returns error? {
+    Converter converter = check new (getCopybookPath(copybookName));
+    string input = check io:fileReadString(getAsciiFilePath(copybookName));
+    map<json> jsonInput = check (check converter.toJson(input)).get(DATA).ensureType();
+    byte[] bytes = check converter.toBytes(check jsonInput.cloneWithType());
+    map<json> toJson = check converter.fromBytes(bytes);
+    test:assertEquals(check toJson.data, jsonInput);
+}
+
+isolated function testByteConverterDataProvider() returns map<[string]> {
+    map<[string]> filePaths = {};
+    foreach int i in 1 ... 5 {
+        filePaths[i.toString()] = [string `copybook-${i}`];
+    }
+    return filePaths;
+}
+
+@test:Config {
+    dataProvider: dataProviderBytesEncoding
+}
+isolated function testToByteAndFromBytesWithEncoding(string fileName, string targetRecord) returns error? {
+    Converter converter = check new (getCopybookPath(fileName));
+    json jsonInput = check io:fileReadJson(getCopybookJsonPath(fileName));
+    byte[] bytes = check converter.toBytes(check jsonInput.cloneWithType(), targetRecord, EBCDIC);
+    map<json> toJson = check converter.fromBytes(bytes, targetRecord, EBCDIC);
+    test:assertEquals(jsonInput, check toJson.data);
+}
+
+function dataProviderBytesEncoding() returns string[][] {
+    return [
+        ["copybook-19", "MQCIH"],
+        ["copybook-20", "MQCIH"]
+    ];
+}
