@@ -116,8 +116,12 @@ class JsonToCopybookConverter {
     }
 
     private isolated function getDefaultValue(Node node) returns byte[] {
-        DefaultValueCreator defaultValueCreator = new;
+        DefaultValueCreator defaultValueCreator = new(self.encoding);
         node.accept(defaultValueCreator);
+        Error[]? errors = defaultValueCreator.getErrors();
+        if errors is Error[] {
+            self.errors.push(...errors);
+        }
         return defaultValueCreator.getDefaultValue();
     }
 

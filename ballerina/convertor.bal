@@ -46,7 +46,7 @@ public isolated class Converter {
             check self.validateTargetRecordName(targetRecordName);
             CopybookReader copybookReader = new (copybookData.iterator(), self.schema, targetRecordName);
             self.schema.accept(copybookReader);
-            DataCoercer dataCoercer = new (self.schema, targetRecordName);
+            DataCoercer dataCoercer = new (self.schema);
             return dataCoercer.coerce(copybookReader.getValue()).clone();
         }
     }
@@ -76,7 +76,8 @@ public isolated class Converter {
     # if the provided schema file contains more than one copybook record type definition
     # + encoding - The encoding of the output bytes array. Default is ASCII
     # + return - The converted byte array. In case of an error, a `copybook:Error` is is returned
-    public isolated function toBytes(record {} input, string? targetRecordName = (), Encoding encoding = ASCII) returns byte[]|Error {
+    public isolated function toBytes(record {} input, string? targetRecordName = (), Encoding encoding = ASCII)
+        returns byte[]|Error {
         do {
             readonly & map<json> readonlyJson = check input.cloneWithType();
             lock {
@@ -96,7 +97,7 @@ public isolated class Converter {
     # + targetRecordName - The name of the copybook record definition in the copybook. This parameter must be a string
     # if the provided schema file contains more than one copybook record type definition
     # + encoding - The encoding of the input bytes array. Default is ASCII
-    # + t - The type of the target record type
+# + t - The type of the target record type
     # + return - A record value on success, a `copybook:Error` in case of coercion errors
     public isolated function fromBytes(byte[] bytes, string? targetRecordName = (), Encoding encoding = ASCII,
             typedesc<record {}> t = <>) returns t|Error = @java:Method {
@@ -109,7 +110,7 @@ public isolated class Converter {
             check self.validateTargetRecordName(targetRecordName);
             BytesReader copybookReader = new (bytes.clone(), self.schema, encoding, targetRecordName);
             self.schema.accept(copybookReader);
-            DataCoercer dataCoercer = new (self.schema, targetRecordName);
+            DataCoercer dataCoercer = new (self.schema);
             Error[]? readerErrors = copybookReader.getErrors();
             dataCoercer.addErrors(readerErrors?: []);
             return dataCoercer.coerce(copybookReader.getValue()).clone();

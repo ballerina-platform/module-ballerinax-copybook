@@ -16,13 +16,11 @@
 
 class DataCoercer {
     private final Schema schema;
-    private final string? targetRecordName;
     private final Error[] errors = [];
     private final string[] path = [];
 
-    isolated function init(Schema schema, string? targetRecordName) {
+    isolated function init(Schema schema) {
         self.schema = schema;
-        self.targetRecordName = targetRecordName;
     }
 
     isolated function coerce(GroupValue data) returns map<json>|Error {

@@ -16,8 +16,13 @@
 
 class DefaultValueCreator {
     *Visitor;
-    private string[] defaultValueFragments = [];
+    private byte[][] defaultValueFragments = [];
     private Error[] errors = [];
+    private final Encoding encoding;
+
+    isolated function init(Encoding encoding) {
+        self.encoding = encoding;
+    }
 
     isolated function visitSchema(Schema schema, anydata data = ()) {
     }
@@ -26,13 +31,13 @@ class DefaultValueCreator {
         if groupItem.getRedefinedItemName() is string {
             return;
         }
-        string[] defaultValues = self.defaultValueFragments;
+        byte[][] defaultValues = self.defaultValueFragments;
         self.defaultValueFragments = [];
         foreach Node node in groupItem.getChildren() {
             node.accept(self);
         }
-        string groupItemDefaultValue = string:'join("", ...self.defaultValueFragments);
-        defaultValues.push(self.generateRepeatedString(groupItemDefaultValue, groupItem.getElementCount()));
+        byte[] groupItemDefaultValue = flattenByteArrayChunks(self.defaultValueFragments);
+        defaultValues.push(self.generateRepeatedByte(groupItemDefaultValue, groupItem.getElementCount()));
         self.defaultValueFragments = defaultValues;
     }
 
@@ -46,22 +51,41 @@ class DefaultValueCreator {
         } else {
             dataItemDefaultValue = dataItemDefaultValue.padEnd(dataItem.getReadLength());
         }
-        self.defaultValueFragments.push(self.generateRepeatedString(dataItemDefaultValue, dataItem.getElementCount()));
+        byte[] defaultValue = dataItemDefaultValue.toBytes();
+        if dataItem.isBinary() {
+            defaultValue = self.handleBinaryValue(dataItemDefaultValue, dataItem);
+        } else if self.encoding == EBCDIC {
+            defaultValue = toEbcdicBytes(defaultValue);
+        }
+        defaultValue = self.generateRepeatedByte(defaultValue, dataItem.getElementCount());
+        self.defaultValueFragments.push(defaultValue);
     }
 
-    private isolated function generateRepeatedString(string value, int count) returns string {
+    private isolated function handleBinaryValue(string dataItemDefaultValue, DataItem dataItem) returns byte[] {
+        do {
+            int intValue = check int:fromString(dataItemDefaultValue);
+            return check getEncodedCopybookBinaryValue(intValue, dataItem.getPackLength(), self.encoding);
+        } on fail error e {
+            self.errors.push(
+                error Error(string `Failed to convert '${dataItemDefaultValue}' in to a binary encoded value: `
+                        + e.message()));
+            return getZeroBytesArray(dataItem.getPackLength());
+        }
+    }
+
+    private isolated function generateRepeatedByte(byte[] value, int count) returns byte[] {
         if count < 0 {
             return value;
         }
-        string[] values = [];
+        byte[][] values = [];
         foreach int i in 1 ... count {
             values.push(value);
         }
-        return string:'join("", ...values);
+        return flattenByteArrayChunks(values);
     }
 
     isolated function getDefaultValue() returns byte[] {
-        return string:'join("", ...self.defaultValueFragments).toBytes();
+        return flattenByteArrayChunks(self.defaultValueFragments);
     }
 
     public isolated function getErrors() returns Error[]? {

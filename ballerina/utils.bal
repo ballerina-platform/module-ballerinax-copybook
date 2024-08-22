@@ -209,3 +209,19 @@ isolated function toDecimalArray(string[] possibleEnumValues) returns decimal[]|
 
 isolated function toIntArray(string[] possibleEnumValues) returns int[]|error =>
     possibleEnumValues.'map(possibleValue => check int:fromString(possibleValue));
+
+isolated function flattenByteArrayChunks(byte[][] chunks) returns byte[] {
+    byte[] bytes = [];
+    foreach byte[] chunk in chunks {
+        bytes.push(...chunk);
+    }
+    return bytes;
+}
+
+isolated function getZeroBytesArray(int arraySize) returns byte[] {
+    byte[] zeros = [];
+    foreach int i in 0 ..< arraySize {
+        zeros.push(0);
+    }
+    return zeros;
+}

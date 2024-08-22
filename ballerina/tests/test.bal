@@ -13,6 +13,7 @@
 // KIND, either express or implied.  See the License for the
 // specific language governing permissions and limitations
 // under the License.
+
 import ballerina/io;
 import ballerina/test;
 
@@ -253,4 +254,13 @@ function dataProviderBytesEncoding() returns string[][] {
         ["copybook-19", "MQCIH"],
         ["copybook-20", "MQCIH"]
     ];
+}
+
+@test:Config
+isolated function testBinaryFieldsHavingDefaultValue() returns error? {
+    Converter converter = check new (getCopybookPath("copybook-20"));
+    byte[] bytes = check converter.toBytes({}, encoding = EBCDIC);
+    map<json> toJson = check converter.fromBytes(bytes, encoding = EBCDIC);
+    json expected = check io:fileReadJson(getCopybookJsonPath("default-value-copybook-20"));
+    test:assertEquals(check toJson.data, expected);
 }
