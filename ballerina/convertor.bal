@@ -81,10 +81,9 @@ public isolated class Converter {
             readonly & map<json> readonlyJson = check input.cloneWithType();
             lock {
                 check self.validateTargetRecordName(targetRecordName);
-                JsonToCopybookConverter converter = new (self.schema, targetRecordName);
+                JsonToCopybookConverter converter = new (self.schema, targetRecordName, encoding);
                 converter.visitSchema(self.schema, readonlyJson);
                 byte[] bytes = check converter.getByteValue();
-                bytes = encoding is EBCDIC ? toEbcdicBytes(bytes) : bytes;
                 return bytes.clone();
             }
         } on fail error err {
@@ -108,10 +107,11 @@ public isolated class Converter {
         returns record {}|Error {
         lock {
             check self.validateTargetRecordName(targetRecordName);
-            byte[] byteArray = encoding is EBCDIC ? toAsciiBytes(bytes.clone()) : bytes.clone();
-            BytesReader copybookReader = new (byteArray, self.schema, targetRecordName);
+            BytesReader copybookReader = new (bytes.clone(), self.schema, encoding, targetRecordName);
             self.schema.accept(copybookReader);
             DataCoercer dataCoercer = new (self.schema, targetRecordName);
+            Error[]? readerErrors = copybookReader.getErrors();
+            dataCoercer.addErrors(readerErrors?: []);
             return dataCoercer.coerce(copybookReader.getValue()).clone();
         }
     }

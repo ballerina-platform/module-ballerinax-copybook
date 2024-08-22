@@ -1,4 +1,4 @@
-// Copyright (c) 2024 WSO2 LLC. (http://www.wso2.com) All Rights Reserved.
+// Copyright (c) 2024 WSO2 LLC. (http://www.wso2.com).
 //
 // WSO2 LLC. licenses this file to you under the Apache License,
 // Version 2.0 (the "License"); you may not use this file except
@@ -22,11 +22,15 @@ class BytesReader {
     private final map<Node> redefinedItems;
     private ByteIterator copybookIterator;
     private final string? targetRecordName;
+    private final Encoding encoding;
+    private Error[] errors;
 
-    isolated function init(byte[] copybookData, Schema schema, string? targetRecordName = ()) {
+    isolated function init(byte[] copybookData, Schema schema, Encoding encoding, string? targetRecordName = ()) {
         self.copybookIterator = new (copybookData);
         self.redefinedItems = schema.getRedefinedItems();
         self.targetRecordName = targetRecordName;
+        self.encoding = encoding;
+        self.errors = [];
     }
 
     isolated function visitSchema(Schema schema, anydata data = ()) {
@@ -101,23 +105,29 @@ class BytesReader {
     }
 
     private isolated function read(DataItem dataItem) returns string {
-        byte[] bytes = [];
-        int readLength = dataItem.isBinary() ? dataItem.getPackLength() : dataItem.getReadLength();
-        foreach int i in 0 ..< readLength {
-            var data = self.copybookIterator.next();
-            if data is () {
-                break;
+        do {
+            byte[] bytes = [];
+            int readLength = dataItem.isBinary() ? dataItem.getPackLength() : dataItem.getReadLength();
+            foreach int i in 0 ..< readLength {
+                var data = self.copybookIterator.next();
+                if data is () {
+                    break;
+                }
+                bytes.push(data.value);
             }
-            bytes.push(data.value);
-        }
-        if bytes.length() == 0 {
+            if dataItem.isBinary() {
+                int intValue = check decodeBinaryValue(bytes, self.encoding);
+                return intValue.toString();
+            }
+            if self.encoding == EBCDIC {
+                bytes = toAsciiBytes(bytes);
+            }
+            return check string:fromBytes(bytes);
+        } on fail error e {
+            Error err = createError(e);
+            self.errors.push(err);
             return "";
         }
-        if dataItem.isBinary() {
-            int intValue = checkpanic decodeBinaryValue(bytes);
-            return intValue.toString();
-        }
-        return checkpanic string:fromBytes(bytes);
     }
 
     private isolated function addValue(string fieldName, FieldValue fieldValue, anydata parent) {
@@ -135,4 +145,8 @@ class BytesReader {
     isolated function getValue() returns GroupValue {
         return sanitize(self.value);
     }
+
+    public isolated function getErrors() returns Error[]? {
+        return self.errors.length() > 0 ? self.errors : ();
+    };
 }

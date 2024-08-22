@@ -22,11 +22,13 @@ class CopybookReader {
     private final map<Node> redefinedItems;
     private Iterator copybookIterator;
     private final string? targetRecordName;
+    private Error[] errors;
 
     isolated function init(Iterator copybookIterator, Schema schema, string? targetRecordName = ()) {
         self.copybookIterator = copybookIterator;
         self.redefinedItems = schema.getRedefinedItems();
         self.targetRecordName = targetRecordName;
+        self.errors = [];
     }
 
     isolated function visitSchema(Schema schema, anydata data = ()) {
@@ -134,4 +136,8 @@ class CopybookReader {
     isolated function getValue() returns GroupValue {
         return sanitize(self.value);
     }
+
+    public isolated function getErrors() returns Error[]? {
+        return self.errors.length() > 0 ? self.errors : ();
+    };
 }

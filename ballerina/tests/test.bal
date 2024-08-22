@@ -238,7 +238,6 @@ isolated function testByteConverterDataProvider() returns map<[string]> {
 }
 
 @test:Config {
-    enable: false,
     dataProvider: dataProviderBytesEncoding
 }
 isolated function testToByteAndFromBytesWithEncoding(string fileName, string targetRecord) returns error? {

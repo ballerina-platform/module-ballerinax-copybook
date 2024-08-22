@@ -23,10 +23,12 @@ class JsonToCopybookConverter {
     private final map<Node> redefinedItems;
     private final string? targetRecordName;
     private final map<()> visitAllowedRedefiningItems = {};
+    private final Encoding encoding;
 
-    isolated function init(Schema schema, string? targetRecordName) {
+    isolated function init(Schema schema, string? targetRecordName, Encoding encoding = ASCII) {
         self.redefinedItems = schema.getRedefinedItems();
         self.targetRecordName = targetRecordName;
+        self.encoding = encoding;
     }
 
     isolated function visitSchema(Schema schema, anydata data = ()) {
@@ -146,6 +148,9 @@ class JsonToCopybookConverter {
                     string `A ${dataItem.getElementCount() < 0 ? "primitive" : "array"} value is expected`);
                 return;
             }
+            if self.encoding == EBCDIC && !dataItem.isBinary() {
+                primitiveValue = toEbcdicBytes(primitiveValue);
+            }
             self.value.push(...primitiveValue);
         } on fail Error e {
             self.errors.push(e);
@@ -211,7 +216,7 @@ class JsonToCopybookConverter {
 
     private isolated function handleBinaryValue(int value, DataItem dataItem) returns byte[]|Error {
         do {
-            return check getEncodedCopybookBinaryValue(value, dataItem.getPackLength());
+            return check getEncodedCopybookBinaryValue(value, dataItem.getPackLength(), self.encoding);
         } on fail error err {
             return error Error(string `Failed to encode the value ${value} to binary: ${err.message()}`);
         }
@@ -317,7 +322,7 @@ class JsonToCopybookConverter {
                 return;
             }
             anydata[] possibleValues = possibleEnumValues;
-            decodedValue = dataItem.isBinary() ? (check decodeBinaryValue(value)).toString() : check string:fromBytes(value);
+            decodedValue = dataItem.isBinary() ? (check decodeBinaryValue(value, self.encoding)).toString() : check string:fromBytes(value);
             anydata providedValue = decodedValue;
             if dataItem.isDecimal() {
                 providedValue = check decimal:fromString(decodedValue);
@@ -357,4 +362,8 @@ class JsonToCopybookConverter {
         }
         return self.value;
     }
+
+    public isolated function getErrors() returns Error[]? {
+        return self.errors.length() > 0 ? self.errors : ();
+    };
 }
