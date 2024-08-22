@@ -97,22 +97,16 @@ public isolated class Converter {
     # + targetRecordName - The name of the copybook record definition in the copybook. This parameter must be a string
     # if the provided schema file contains more than one copybook record type definition
     # + encoding - The encoding of the input bytes array. Default is ASCII
-# + t - The type of the target record type
     # + return - A record value on success, a `copybook:Error` in case of coercion errors
-    public isolated function fromBytes(byte[] bytes, string? targetRecordName = (), Encoding encoding = ASCII,
-            typedesc<record {}> t = <>) returns t|Error = @java:Method {
-        'class: "io.ballerina.lib.copybook.runtime.converter.Utils"
-    } external;
-
-    private isolated function fromBytesToRecord(byte[] bytes, string? targetRecordName = (), Encoding encoding = ASCII)
-        returns record {}|Error {
+    public isolated function fromBytes(byte[] bytes, string? targetRecordName = (), Encoding encoding = ASCII)
+        returns map<json>|Error {
         lock {
             check self.validateTargetRecordName(targetRecordName);
             BytesReader copybookReader = new (bytes.clone(), self.schema, encoding, targetRecordName);
             self.schema.accept(copybookReader);
             DataCoercer dataCoercer = new (self.schema);
             Error[]? readerErrors = copybookReader.getErrors();
-            dataCoercer.addErrors(readerErrors?: []);
+            dataCoercer.addErrors(readerErrors ?: []);
             return dataCoercer.coerce(copybookReader.getValue()).clone();
         }
     }
