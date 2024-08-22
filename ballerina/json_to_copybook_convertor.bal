@@ -25,7 +25,7 @@ class JsonToCopybookConverter {
     private final map<()> visitAllowedRedefiningItems = {};
     private final Encoding encoding;
 
-    isolated function init(Schema schema, string? targetRecordName, Encoding encoding = ASCII) {
+    isolated function init(Schema schema, string? targetRecordName, Encoding encoding) {
         self.redefinedItems = schema.getRedefinedItems();
         self.targetRecordName = targetRecordName;
         self.encoding = encoding;
@@ -161,7 +161,7 @@ class JsonToCopybookConverter {
     private isolated function handlePrimitive(PrimitiveType value, DataItem dataItem) returns byte[]|Error {
         byte[] primitiveValue;
         if value is string {
-            primitiveValue = (check self.handleStringValue(value, dataItem));
+            primitiveValue = check self.handleStringValue(value, dataItem);
         } else if value is int {
             primitiveValue = check self.handleIntValue(value, dataItem);
         } else {
@@ -187,6 +187,9 @@ class JsonToCopybookConverter {
             return error Error(string `Numeric value ${value} found at ${self.getPath()}.`
                 + " Expecting a non-numeric value");
         }
+        if dataItem.isBinary() {
+            return check self.handleBinaryValue(value, dataItem);
+        }
         if dataItem.isDecimal() {
             return self.handleDecimalValue(<decimal>value, dataItem);
         }
@@ -204,10 +207,6 @@ class JsonToCopybookConverter {
             return value < 0 ? value.toString().padZero(maxByteSize).toBytes()
                 : ("+" + value.toString().padZero(maxByteSize - 1).padStart(maxByteSize - 1)).toBytes();
         }
-        // handle S9(9)
-        if dataItem.isBinary() {
-            return check self.handleBinaryValue(value, dataItem);
-        }
         if dataItem.isSigned() && value < 0 {
             return value.toString().padZero(maxByteSize + 1).toBytes(); // +1 for sign byte
         }
@@ -215,11 +214,11 @@ class JsonToCopybookConverter {
     }
 
     private isolated function handleBinaryValue(int value, DataItem dataItem) returns byte[]|Error {
-        do {
-            return check getEncodedCopybookBinaryValue(value, dataItem.getPackLength(), self.encoding);
-        } on fail error err {
-            return error Error(string `Failed to encode the value ${value} to binary: ${err.message()}`);
+        byte[]|error bytes = getEncodedCopybookBinaryValue(value, dataItem.getPackLength(), self.encoding);
+        if bytes is error {
+            return error Error(string `Failed to encode the value ${value} to binary: ${bytes.message()}`);
         }
+        return bytes;
     }
 
     private isolated function handlePrimitiveArray(PrimitiveArrayType array, DataItem dataItem)

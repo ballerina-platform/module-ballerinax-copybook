@@ -61,7 +61,7 @@ public isolated class Converter {
             readonly & map<json> readonlyJson = check input.cloneWithType();
             lock {
                 check self.validateTargetRecordName(targetRecordName);
-                JsonToCopybookConverter converter = new (self.schema, targetRecordName);
+                JsonToCopybookConverter converter = new (self.schema, targetRecordName, ASCII);
                 converter.visitSchema(self.schema, readonlyJson);
                 return converter.getStringValue();
             }

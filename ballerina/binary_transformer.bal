@@ -14,42 +14,30 @@
 // specific language governing permissions and limitations
 // under the License.
 
-isolated function getEncodedCopybookBinaryValue(int value, int length, Encoding encoding) returns byte[]|error {
-    if value < 0 {
-        return encodeNegativeValue(value, length, encoding);
-    }
-    return encodeCopybookBinaryValue(value, length, encoding);
+isolated function getEncodedCopybookBinaryValue(int value, int packLength, Encoding encoding) returns byte[]|error =>
+    value < 0 ? encodeNegativeValue(value, packLength, encoding) : encodeCopybookBinaryValue(value, packLength, encoding);
+
+isolated function encodeNegativeValue(int value, int packLength, Encoding encoding) returns byte[]|error {
+    string binary = decimalToBinary(value.abs());
+    int expectedNumOfBits = packLength * 8;
+    binary = check findTwosComplement(binary.padZero(expectedNumOfBits));
+    int decimalValue = binaryToDecimal(binary);
+    return encodeCopybookBinaryValue(decimalValue, packLength, encoding);
 }
 
-isolated function encodeNegativeValue(int value, int length, Encoding encoding) returns byte[]|error {
-    string binaryString = decimalToBinary(value.abs());
-    binaryString = check findTwosComplement(binaryString.padZero(32));
-    int complementValue = binaryToDecimal(binaryString);
-    return encodeCopybookBinaryValue(complementValue, length, encoding);
-}
-
-isolated function encodeCopybookBinaryValue(int value, int length, Encoding encoding) returns byte[]|error {
-    string hexString = int:toHexString(value).padZero(length * 2);
-    string[] doubles = splitAs2Chars(hexString);
+isolated function encodeCopybookBinaryValue(int value, int packLength, Encoding encoding) returns byte[]|error {
+    string hex = int:toHexString(value).padZero(packLength * 2);
+    string[] doubles = splitHexToByteChunks(hex);
     if encoding == EBCDIC {
-        int[] bytes = doubles.'map(r => check int:fromHexString(r));
-        return bytes.cloneWithType();
+        return doubles.'map(r => check int:fromHexString(r)).cloneWithType();
     }
-    int[] bytes = doubles.reverse().'map(r => check int:fromHexString(r));
-    return bytes.cloneWithType();
+    return doubles.reverse().'map(r => check int:fromHexString(r)).cloneWithType();
 }
 
 isolated function decodeBinaryValue(int[] bytes, Encoding encoding) returns int|error {
-    string[] binaryValues = [];
-    if encoding == ASCII {
-        binaryValues = bytes.reverse().'map(r => decimalToBinary(r).padStart(8, "0"));
-    } else {
-        binaryValues = bytes.'map(r => decimalToBinary(r).padStart(8, "0"));
-    }
-    string value = "";
-    foreach string name in binaryValues {
-        value += name;
-    }
+    string[] binaryValues = encoding == ASCII ? bytes.reverse().'map(r => decimalToBinary(r).padStart(8, "0")) :
+        bytes.'map(r => decimalToBinary(r).padStart(8, "0"));
+    string value = "".'join(...binaryValues);
     if value.startsWith("1") {
         value = check findTwosComplement(value);
         return -binaryToDecimal(value);
@@ -57,15 +45,16 @@ isolated function decodeBinaryValue(int[] bytes, Encoding encoding) returns int|
     return binaryToDecimal(value);
 }
 
-isolated function splitAs2Chars(string hexString) returns string[] {
-    string[] doubles = [];
+// This function map the hex string into string array where each element represent a byte
+isolated function splitHexToByteChunks(string hex) returns string[] {
+    string[] byteChunks = [];
     int i = 0;
-    while i < hexString.length() - 1 {
-        string double = hexString.substring(i, i + 2);
-        doubles.push(double);
+    while i < hex.length() - 1 {
+        string chunk = hex.substring(i, i + 2);
+        byteChunks.push(chunk);
         i += 2;
     }
-    return doubles;
+    return byteChunks;
 }
 
 isolated function decimalToBinary(int decimalValue) returns string {

@@ -64,7 +64,8 @@ public final class Utils {
     static int getBinaryPackLength(int readLength) {
         if (readLength <= 4) {
             return 2;
-        } else if (readLength <= 9) {
+        }
+        if (readLength <= 9) {
             return 4;
         }
         return 18;

@@ -209,7 +209,3 @@ isolated function toDecimalArray(string[] possibleEnumValues) returns decimal[]|
 
 isolated function toIntArray(string[] possibleEnumValues) returns int[]|error =>
     possibleEnumValues.'map(possibleValue => check int:fromString(possibleValue));
-
-isolated function fromByteToStringArray(string[] possibleEnumValues, int length) returns int[]|error {
-    return possibleEnumValues.'map(possibleValue => check int:fromString(possibleValue));
-}
