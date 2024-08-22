@@ -57,10 +57,10 @@ public isolated class Converter {
     # if the provided schema file contains more than one copybook record type definition
     # + return - The converted ASCII string. In case of an error, a `copybook:Error` is is returned
     public isolated function toCopybook(record {} input, string? targetRecordName = ()) returns string|Error {
+        check self.validateTargetRecordName(targetRecordName);
         do {
             readonly & map<json> readonlyJson = check input.cloneWithType();
             lock {
-                check self.validateTargetRecordName(targetRecordName);
                 JsonToCopybookConverter converter = new (self.schema, targetRecordName, ASCII);
                 converter.visitSchema(self.schema, readonlyJson);
                 return converter.getStringValue();
@@ -78,10 +78,10 @@ public isolated class Converter {
     # + return - The converted byte array. In case of an error, a `copybook:Error` is is returned
     public isolated function toBytes(record {} input, string? targetRecordName = (), Encoding encoding = ASCII)
         returns byte[]|Error {
+        check self.validateTargetRecordName(targetRecordName);
         do {
             readonly & map<json> readonlyJson = check input.cloneWithType();
             lock {
-                check self.validateTargetRecordName(targetRecordName);
                 JsonToCopybookConverter converter = new (self.schema, targetRecordName, encoding);
                 converter.visitSchema(self.schema, readonlyJson);
                 byte[] bytes = check converter.getByteValue();
