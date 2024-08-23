@@ -1,0 +1,26 @@
+{
+    "MQCIH": {
+        "TRUCID": "C4H",
+        "ERSION": 4,
+        "TRUCLENGTH": 190,
+        "NCODING": 0,
+        "ODEDCHARSETID": 0,
+        "LAGS": 0,
+        "ETURNCODE": 0,
+        "OMPCODE": 0,
+        "EASON": 0,
+        "OWCONTROL": 208,
+        "ETWAITINTERVAL": -6,
+        "INKTYPE": 1,
+        "UTPUTDATALENGTH": -3,
+        "ACILITYKEEPTIME": 1,
+        "DSDESCRIPTOR": 0,
+        "ONVERSATIONALTASK": 2,
+        "ASKENDSTATUS": 0,
+        "ACILITY": "00000000",
+        "URSORPOSITION": 0,
+        "RROROFFSET": 0,
+        "NPUTITEM": 0,
+        "ESERVED4": 0
+    }
+}
