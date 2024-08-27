@@ -232,3 +232,17 @@ isolated function testBinaryFieldsHavingDefaultValue() returns error? {
     json expected = check io:fileReadJson(getCopybookJsonPath("default-value-copybook-20"));
     test:assertEquals(check toJson.data, expected);
 }
+
+@test:Config
+isolated function testEbcidiValueHavingOptinalSignedInteger() returns error? {
+    // Test PIC S9(003) with data having optional minus sign
+    Converter converter = check new (getCopybookPath("copybook-6"));
+    string[] input = check io:fileReadLines(getAsciiFilePath("copybook-6"));
+    string targetRecordName = "DATA-DETAIL-REGISTRY";
+    foreach string line in input {
+        map<json> jsonData = check (check converter.fromBytes(line.toBytes(), targetRecordName)).get(DATA).ensureType();
+        byte[] ebcdic = check converter.toBytes(jsonData, targetRecordName, EBCDIC);
+        map<json> jsonFromEbcdic = check (check converter.fromBytes(ebcdic, targetRecordName, EBCDIC)).get(DATA).ensureType();
+        test:assertEquals(jsonFromEbcdic, jsonData);
+    }
+}

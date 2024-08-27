@@ -124,10 +124,10 @@ class CopybookReader {
             }
             string token = check string:fromBytes(bytes);
             // Handle optional sign in PIC S9
-            if dataItem.isSigned() && re `^(\+|-).*$`.find(token.trim()) !is () {
+            if !dataItem.isBinary() && dataItem.isSigned() && re `^(\+|-).*$`.find(token.trim()) !is () {
                 var additionalChar = self.copybookIterator.next();
                 if additionalChar !is () {
-                    bytes.push(additionalChar.value);
+                    bytes.push(self.encoding == EBCDIC ? toAsciiBytes([additionalChar.value])[0] : additionalChar.value);
                     return check string:fromBytes(bytes);
                 }
             }
