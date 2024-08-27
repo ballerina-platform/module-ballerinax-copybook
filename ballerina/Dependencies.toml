@@ -11,6 +11,7 @@ distribution-version = "2201.8.0"
 org = "ballerina"
 name = "constraint"
 version = "1.5.0"
+scope = "testOnly"
 dependencies = [
 	{org = "ballerina", name = "jballerina.java"}
 ]
