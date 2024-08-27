@@ -20,13 +20,15 @@ class CopybookReader {
     private final GroupValue value = {};
     private final map<string> redfinedValues = {};
     private final map<Node> redefinedItems;
-    private Iterator copybookIterator;
+    private ByteIterator copybookIterator;
     private final string? targetRecordName;
+    private final Encoding encoding;
     private Error[] errors;
 
-    isolated function init(Iterator copybookIterator, Schema schema, string? targetRecordName = ()) {
-        self.copybookIterator = copybookIterator;
+    isolated function init(byte[] copybookData, Schema schema, Encoding encoding, string? targetRecordName = ()) {
+        self.copybookIterator = new (copybookData);
         self.redefinedItems = schema.getRedefinedItems();
+        self.encoding = encoding;
         self.targetRecordName = targetRecordName;
         self.errors = [];
     }
@@ -44,7 +46,7 @@ class CopybookReader {
     }
 
     isolated function visitGroupItem(GroupItem groupItem, anydata data = ()) {
-        Iterator temp = self.copybookIterator;
+        ByteIterator temp = self.copybookIterator;
         self.copybookIterator = self.getIteratorForItem(groupItem);
 
         if isArray(groupItem) {
@@ -70,7 +72,7 @@ class CopybookReader {
     }
 
     isolated function visitDataItem(DataItem dataItem, anydata data = ()) {
-        Iterator temp = self.copybookIterator;
+        ByteIterator temp = self.copybookIterator;
         self.copybookIterator = self.getIteratorForItem(dataItem);
         if isArray(dataItem) {
             string[] elements = [];
@@ -86,7 +88,7 @@ class CopybookReader {
         self.copybookIterator = temp;
     }
 
-    private isolated function getIteratorForItem(DataItem|GroupItem item) returns Iterator {
+    private isolated function getIteratorForItem(DataItem|GroupItem item) returns ByteIterator {
         string? redefinedItemName = ();
         if item is GroupItem {
             redefinedItemName = item.getRedefinedItemName();
@@ -96,29 +98,45 @@ class CopybookReader {
         }
         if redefinedItemName is string {
             // Obtain the iterator from redfinedValues map if the provided item is a redefining item
-            return self.redfinedValues.get(redefinedItemName).iterator();
+            ByteIterator iterator = new (self.redfinedValues.get(redefinedItemName).toBytes());
+            return iterator;
         }
         return self.copybookIterator;
     }
 
     private isolated function read(DataItem dataItem) returns string {
-        string:Char[] chars = [];
-        foreach int i in 0 ..< dataItem.getReadLength() {
-            var data = self.copybookIterator.next();
-            if data is () {
-                break;
+        do {
+            byte[] bytes = [];
+            int readLength = dataItem.isBinary() ? dataItem.getPackLength() : dataItem.getReadLength();
+            foreach int i in 0 ..< readLength {
+                var data = self.copybookIterator.next();
+                if data is () {
+                    break;
+                }
+                bytes.push(data.value);
             }
-            chars.push(data.value);
-        }
-        string token = "".'join(...chars);
-        // Handle optional sign in PIC S9
-        if dataItem.isSigned() && re `^(\+|-).*$`.find(token.trim()) !is () {
-            var additionalChar = self.copybookIterator.next();
-            if additionalChar !is () {
-                chars.push(additionalChar.value);
+            if dataItem.isBinary() {
+                int intValue = check decodeBinaryValue(bytes, self.encoding);
+                return intValue.toString();
             }
+            if self.encoding == EBCDIC {
+                bytes = toAsciiBytes(bytes);
+            }
+            string token = check string:fromBytes(bytes);
+            // Handle optional sign in PIC S9
+            if dataItem.isSigned() && re `^(\+|-).*$`.find(token.trim()) !is () {
+                var additionalChar = self.copybookIterator.next();
+                if additionalChar !is () {
+                    bytes.push(additionalChar.value);
+                    return check string:fromBytes(bytes);
+                }
+            }
+            return token;
+        } on fail error e {
+            Error err = createError(e);
+            self.errors.push(err);
+            return "";
         }
-        return "".'join(...chars);
     }
 
     private isolated function addValue(string fieldName, FieldValue fieldValue, anydata parent) {

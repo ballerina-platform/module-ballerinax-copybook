@@ -1,0 +1,8 @@
+{
+    "Employee": {
+        "EmployeeId": null,
+        "ContractYears": null,
+        "Salary": 500000.00,
+        "Bonus": null
+    }
+}

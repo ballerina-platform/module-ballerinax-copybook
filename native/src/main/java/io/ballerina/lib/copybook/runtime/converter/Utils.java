@@ -23,9 +23,6 @@ import io.ballerina.lib.copybook.commons.schema.CopybookNode;
 import io.ballerina.lib.copybook.commons.schema.DataItem;
 import io.ballerina.lib.copybook.commons.schema.GroupItem;
 import io.ballerina.lib.copybook.commons.schema.Schema;
-import io.ballerina.runtime.api.Environment;
-import io.ballerina.runtime.api.Future;
-import io.ballerina.runtime.api.PredefinedTypes;
 import io.ballerina.runtime.api.creators.ErrorCreator;
 import io.ballerina.runtime.api.creators.TypeCreator;
 import io.ballerina.runtime.api.creators.ValueCreator;
@@ -38,7 +35,6 @@ import io.ballerina.runtime.api.values.BError;
 import io.ballerina.runtime.api.values.BMap;
 import io.ballerina.runtime.api.values.BObject;
 import io.ballerina.runtime.api.values.BString;
-import io.ballerina.runtime.api.values.BTypedesc;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -49,7 +45,6 @@ import static io.ballerina.lib.copybook.runtime.converter.ModuleUtils.getModule;
 public final class Utils {
 
     private static final String NATIVE_VALUE = "native-value";
-    private static final String TO_RECORD_METHOD_NAME = "toRecord";
     private static final String NODE_TYPE_NAME = "Node";
     private static final String SCHEMA_TYPE_NAME = "Schema";
     private static final String GROUP_ITEM_TYPE_NAME = "GroupItem";
@@ -234,15 +229,5 @@ public final class Utils {
     public static boolean hasRedefinedItems(BObject bObject, BString name) {
         Schema schema = (Schema) bObject.getNativeData(NATIVE_VALUE);
         return schema.getRedefinedItems().containsKey(name.getValue());
-    }
-
-    public static Object fromCopybook(Environment env, BObject converter, BString copybookData, Object targetRecordName,
-                                      BTypedesc typedesc) {
-        Future balFuture = env.markAsync();
-        ExecutionCallback callback = new ExecutionCallback(balFuture);
-        Object[] paramFeed = {copybookData, true, typedesc, true, targetRecordName, true};
-        env.getRuntime().invokeMethodAsyncConcurrently(converter, TO_RECORD_METHOD_NAME, null, null, callback, null,
-                                                       PredefinedTypes.TYPE_NULL, paramFeed);
-        return null;
     }
 }
