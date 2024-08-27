@@ -114,7 +114,7 @@ dependencies = [
 [[package]]
 org = "ballerinax"
 name = "copybook"
-version = "0.2.1"
+version = "1.0.0"
 dependencies = [
 	{org = "ballerina", name = "constraint"},
 	{org = "ballerina", name = "file"},
