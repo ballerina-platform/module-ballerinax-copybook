@@ -7,7 +7,6 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 ## [Unreleased]
 
 ### Added
-
 - [[#6861] Add Support to Generate Zero Values for Picture Strings of Integer Type](https://github.com/ballerina-platform/ballerina-library/issues/6861)
 - [[#6862] Add Support for Enum Value Validation](https://github.com/ballerina-platform/ballerina-library/issues/6862)
 - [[#6863] Add Support for the Value Clause](https://github.com/ballerina-platform/ballerina-library/issues/6863)
@@ -15,8 +14,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 - [[#6886] Add Support for 'BINARY' Value Encoding](https://github.com/ballerina-platform/ballerina-library/issues/6886)
 
 ### Changed
-
 - [[#6895] Add Support to Handle Copybook with Multiple Root Records](https://github.com/ballerina-platform/ballerina-library/issues/6895)
+
+### Removed
+- [[#6932] Remove 'toCopybook', 'fromCopybook' and 'toJson' API](https://github.com/ballerina-platform/ballerina-library/issues/6932)
 
 
 ## [0.2.0] - 2023-12-01
