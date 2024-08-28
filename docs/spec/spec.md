@@ -8,7 +8,7 @@ _Edition_: Swan Lake
 
 ## Introduction
 
-The Ballerina Copybook module is designed to effortlessly manage the conversion of Copybook data structures to JSON and the reverse, as well as the conversion of Copybook payload to a specified Ballerina Record.
+The Ballerina Copybook module is designed to effortlessly manage the conversion of Copybook data structures to JSON and the reverse.
 
 The Copybook library specification has evolved and may continue to evolve in the future. The released versions of the specification can be found under the relevant GitHub tag.
 
