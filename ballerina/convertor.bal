@@ -14,7 +14,6 @@
 // specific language governing permissions and limitations
 // under the License.
 
-import ballerina/constraint;
 import ballerina/file;
 import ballerina/jballerina.java;
 
@@ -34,42 +33,6 @@ public isolated class Converter {
         }
     }
 
-    # Converts the given ASCII string to a JSON value.
-    # + copybookData - The ASCII string that needs to be converted to JSON
-    # + targetRecordName - The name of the copybook record definition in the copybook. This parameter must be a string
-    # if the provided schema file contains more than one copybook record type definition
-    # + return - A JSON value in the following formats: `{data: converted-json-value}`
-    # or `{data: partial-converted-json-value, errors: [list of coercion errors]}`. In case of an error, a 
-    # `copybook:Error` is returned
-    public isolated function toJson(string copybookData, string? targetRecordName = ()) returns map<json>|Error {
-        lock {
-            check self.validateTargetRecordName(targetRecordName);
-            CopybookReader copybookReader = new (copybookData.iterator(), self.schema, targetRecordName);
-            self.schema.accept(copybookReader);
-            DataCoercer dataCoercer = new (self.schema);
-            return dataCoercer.coerce(copybookReader.getValue()).clone();
-        }
-    }
-
-    # Converts the provided record or map<json> value to ASCII data.
-    # + input - The JSON value that needs to be converted as copybook data
-    # + targetRecordName - The name of the copybook record definition in the copybook. This parameter must be a string
-    # if the provided schema file contains more than one copybook record type definition
-    # + return - The converted ASCII string. In case of an error, a `copybook:Error` is is returned
-    public isolated function toCopybook(record {} input, string? targetRecordName = ()) returns string|Error {
-        check self.validateTargetRecordName(targetRecordName);
-        do {
-            readonly & map<json> readonlyJson = check input.cloneWithType();
-            lock {
-                JsonToCopybookConverter converter = new (self.schema, targetRecordName, ASCII);
-                converter.visitSchema(self.schema, readonlyJson);
-                return converter.getStringValue();
-            }
-        } on fail error err {
-            return createError(err);
-        }
-    }
-
     # Converts the provided record or map<json> value to bytes.
     # + input - The JSON value that needs to be converted as copybook data
     # + targetRecordName - The name of the copybook record definition in the copybook. This parameter must be a string
@@ -78,17 +41,16 @@ public isolated class Converter {
     # + return - The converted byte array. In case of an error, a `copybook:Error` is is returned
     public isolated function toBytes(record {} input, string? targetRecordName = (), Encoding encoding = ASCII)
         returns byte[]|Error {
+        readonly & map<json>|error readonlyJson = input.cloneWithType();
+        if readonlyJson is error {
+            return createError(readonlyJson);
+        }
         check self.validateTargetRecordName(targetRecordName);
-        do {
-            readonly & map<json> readonlyJson = check input.cloneWithType();
-            lock {
-                JsonToCopybookConverter converter = new (self.schema, targetRecordName, encoding);
-                converter.visitSchema(self.schema, readonlyJson);
-                byte[] bytes = check converter.getByteValue();
-                return bytes.clone();
-            }
-        } on fail error err {
-            return createError(err);
+        lock {
+            JsonToCopybookConverter converter = new (self.schema, targetRecordName, encoding);
+            converter.visitSchema(self.schema, readonlyJson);
+            byte[] bytes = check converter.getByteValue();
+            return bytes.clone();
         }
     }
 
@@ -102,7 +64,7 @@ public isolated class Converter {
         returns map<json>|Error {
         lock {
             check self.validateTargetRecordName(targetRecordName);
-            BytesReader copybookReader = new (bytes.clone(), self.schema, encoding, targetRecordName);
+            CopybookReader copybookReader = new (bytes.clone(), self.schema, encoding, targetRecordName);
             self.schema.accept(copybookReader);
             DataCoercer dataCoercer = new (self.schema);
             Error[]? readerErrors = copybookReader.getErrors();
@@ -122,30 +84,6 @@ public isolated class Converter {
                 }
             }
             return error Error(string `Invalid target record name '${targetRecordName}'`);
-        }
-    }
-
-    # Converts the given ASCII string to a Ballerina record.
-    # + copybookData - The ASCII string that needs to be converted to a record value
-    # + targetRecordName - The name of the copybook record definition in the copybook. This parameter must be a string
-    # if the provided schema file contains more than one copybook record type definition
-    # + t - The type of the target record type
-    # + return - A record value on success, a `copybook:Error` in case of coercion errors
-    public isolated function fromCopybook(string copybookData, string? targetRecordName = (),
-            typedesc<record {}> t = <>) returns t|Error = @java:Method {
-        'class: "io.ballerina.lib.copybook.runtime.converter.Utils"
-    } external;
-
-    private isolated function toRecord(string copybookData, typedesc<record {}> t,
-            string? targetRecordName = ()) returns record {}|Error {
-        do {
-            map<json> copybookJson = check self.toJson(copybookData, targetRecordName);
-            if copybookJson.hasKey(ERRORS) {
-                return error Error("Data coercion failed.", errors = copybookJson.get(ERRORS));
-            }
-            return check constraint:validate(copybookJson.get(DATA), t);
-        } on fail error err {
-            return createError(err);
         }
     }
 }

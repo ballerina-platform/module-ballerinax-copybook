@@ -43,16 +43,6 @@ function testConvertToAscii() returns error? {
 }
 
 @test:Config
-function testGetEmployeeSalary() returns error? {
-    http:Request req = new;
-    string payload = check io:fileReadString("tests/resources/copybook.txt");
-    req.setTextPayload(payload);
-    http:Response res = check testClient->post("/getEmployeeSalary", req);
-    test:assertEquals(res.statusCode, 201, "Status code should be 201");
-    test:assertEquals(res.getTextPayload(), "1500.00");
-}
-
-@test:Config
 function testValidateJsonData() returns error? {
     http:Request req = new;
     json payload = check io:fileReadJson("tests/resources/invalid_payload.json");

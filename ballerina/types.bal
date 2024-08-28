@@ -18,15 +18,12 @@
 public type Error distinct error;
 
 type Iterator object {
-    public isolated function next() returns record {|string:Char value;|}?;
+    public isolated function next() returns record {|byte value;|}?;
 };
 
 // Added as a workaround for https://github.com/ballerina-platform/ballerina-lang/issues/43301
 isolated class ByteIterator {
-
-    private final object {
-        public isolated function next() returns record {|byte value;|}?;
-    } iterator;
+    private final Iterator iterator;
 
     isolated function init(byte[] bytes) {
         self.iterator = bytes.cloneReadOnly().iterator();
@@ -53,7 +50,10 @@ const ROOT_JSON_PATH = "$";
 const ERRORS = "errors";
 const DATA = "data";
 
+# Represents the encoding types used for the input or output byte arrays.
 public enum Encoding {
+    # Represents the ASCII encoding
     ASCII,
+    # Represents the EBCDIC encoding
     EBCDIC
 }

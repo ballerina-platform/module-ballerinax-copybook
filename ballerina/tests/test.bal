@@ -32,9 +32,9 @@ isolated function testConverter(string copybookName) returns error? {
     Converter converter = check new (getCopybookPath(copybookName));
     string[] input = check io:fileReadLines(getAsciiFilePath(copybookName));
     foreach string line in input {
-        map<json> jsonData = check (check converter.toJson(line)).get(DATA).ensureType();
-        string output = check converter.toCopybook(jsonData);
-        test:assertEquals(output, line);
+        map<json> jsonData = check (check converter.fromBytes(line.toBytes())).get(DATA).ensureType();
+        byte[] output = check converter.toBytes(jsonData);
+        test:assertEquals(string:fromBytes(output), line);
     }
 }
 
@@ -51,17 +51,17 @@ isolated function testConverterWithTargetRecordName() returns error? {
     Converter converter = check new (getCopybookPath("copybook-6"));
     string[] input = check io:fileReadLines(getAsciiFilePath("copybook-6"));
     foreach string line in input {
-        map<json> jsonData = check (check converter.toJson(line, "DATA-DETAIL-REGISTRY")).get(DATA).ensureType();
-        string output = check converter.toCopybook(jsonData, "DATA-DETAIL-REGISTRY");
-        test:assertEquals(output, line);
+        map<json> jsonData = check (check converter.fromBytes(line.toBytes(), "DATA-DETAIL-REGISTRY")).get(DATA).ensureType();
+        byte[] output = check converter.toBytes(jsonData, "DATA-DETAIL-REGISTRY");
+        test:assertEquals(string:fromBytes(output), line);
     }
 }
 
 @test:Config
-isolated function testToJsonWithInvalidTargetRecordName() returns error? {
+isolated function testConverterWithInvalidTargetRecordName() returns error? {
     Converter converter = check new (getCopybookPath("copybook-7"));
     string input = check io:fileReadString(getAsciiFilePath("copybook-7"));
-    Copybook7|Error copybook = converter.fromCopybook(input, "InvalidName");
+    map<json>|Error copybook = converter.fromBytes(input.toBytes(), "InvalidName");
     if copybook !is Error {
         test:assertFail("Expected a 'copybook:Error'");
     }
@@ -69,45 +69,33 @@ isolated function testToJsonWithInvalidTargetRecordName() returns error? {
 }
 
 @test:Config
-isolated function testfromCopybookApi() returns error? {
-    Converter converter = check new (getCopybookPath("copybook-7"));
-    string[] input = check io:fileReadLines(getAsciiFilePath("copybook-7"));
-    foreach string line in input {
-        Copybook7 copybook = check converter.fromCopybook(line, "Record2");
-        string output = check converter.toCopybook(copybook, "Record2");
-        test:assertEquals(output, line);
-    }
-}
-
-@test:Config
-isolated function testfromCopybookReturningError() returns error? {
+isolated function testConverterReturningResultWithErrors() returns error? {
     Converter converter = check new (getCopybookPath("copybook-8"));
     string input = check io:fileReadString(getAsciiFilePath("copybook-8"));
-    Copybook8|Error copybook = converter.fromCopybook(input);
-    if copybook !is Error {
-        test:assertFail("Expected a 'copybook:Error' but found a 'string'");
-    }
-    json expectedErrorDetail = check getErrorDetail("copybook-8");
-    json actualErrorDetail = check copybook.detail().ensureType();
-    test:assertEquals(actualErrorDetail.toJson(), expectedErrorDetail);
+    map<json> copybook = check converter.fromBytes(input.toBytes());
+    json data = check trap copybook.remove("data");
+    json expectedData = check io:fileReadJson(getCopybookJsonPath("copybook-8"));
+    test:assertEquals(data, expectedData);
+    json expectedErrors = check getErrorDetail("copybook-8");
+    test:assertEquals(copybook, expectedErrors);
 }
 
 @test:Config
-isolated function testToCopybookWithoutRedefinedItems() returns error? {
+isolated function testConverterWithoutRedefinedItems() returns error? {
     Converter converter = check new (getCopybookPath("copybook-1"));
     json jsonInput = check io:fileReadJson(getCopybookJsonPath("copybook-1"));
-    string asciiData = check converter.toCopybook(check jsonInput.cloneWithType());
+    byte[] output = check converter.toBytes(check jsonInput.cloneWithType());
     string expectedAscii = check io:fileReadString(getAsciiFilePath("copybook-1"));
-    test:assertEquals(asciiData, expectedAscii);
+    test:assertEquals(string:fromBytes(output), expectedAscii);
 }
 
 @test:Config
-isolated function testToCopybookReturningError() returns error? {
+isolated function testToBytesReturningError() returns error? {
     Converter converter = check new (getCopybookPath("copybook-9"));
     json jsonInput = check io:fileReadJson(getCopybookJsonPath("copybook-9"));
-    string|Error copybook = converter.toCopybook(check jsonInput.cloneWithType());
+    byte[]|Error copybook = converter.toBytes(check jsonInput.cloneWithType());
     if copybook !is Error {
-        test:assertFail("Expected a 'copybook:Error' but found a 'string'");
+        test:assertFail("Expected a 'copybook:Error' but found 'byte[]'");
     }
     json expectedErrorDetail = check getErrorDetail("copybook-9");
     json actualErrorDetail = check copybook.detail().ensureType();
@@ -118,9 +106,9 @@ isolated function testToCopybookReturningError() returns error? {
 isolated function testDecimalWithoutFraction() returns error? {
     Converter converter = check new (getCopybookPath("copybook-10"));
     json jsonInput = check io:fileReadJson(getCopybookJsonPath("copybook-10"));
-    string copybook = check converter.toCopybook(check jsonInput.cloneWithType());
+    byte[] output = check converter.toBytes(check jsonInput.cloneWithType());
     string expectedAscii = check io:fileReadString(getAsciiFilePath("copybook-10"));
-    test:assertEquals(copybook, expectedAscii);
+    test:assertEquals(string:fromBytes(output), expectedAscii);
 }
 
 @test:Config {
@@ -129,13 +117,13 @@ isolated function testDecimalWithoutFraction() returns error? {
 isolated function testEnumValidation(string copybookName) returns error? {
     Converter converter = check new (getCopybookPath(copybookName));
     json jsonInput = check io:fileReadJson(getCopybookJsonPath(string `valid-${copybookName}`));
-    string validCopybook = check converter.toCopybook(check jsonInput.cloneWithType());
-    test:assertEquals(validCopybook, check io:fileReadString(getAsciiFilePath(copybookName)));
+    byte[] validCopybook = check converter.toBytes(check jsonInput.cloneWithType());
+    test:assertEquals(string:fromBytes(validCopybook), check io:fileReadString(getAsciiFilePath(copybookName)));
 
     jsonInput = check io:fileReadJson(getCopybookJsonPath(string `invalid-${copybookName}`));
-    Error|string invalidCopybook = converter.toCopybook(check jsonInput.cloneWithType());
+    byte[]|Error invalidCopybook = converter.toBytes(check jsonInput.cloneWithType());
     if invalidCopybook !is Error {
-        test:assertFail("Expected a 'copybook:Error' but found a 'string'");
+        test:assertFail("Expected a 'copybook:Error' but found 'byte[]'");
     }
     test:assertEquals(invalidCopybook.detail(), check getErrorDetail(copybookName));
 }
@@ -160,15 +148,15 @@ isolated function testInvalidEnumSchema() returns error? {
 @test:Config
 isolated function testIntegerPicDefaulValues() returns error? {
     Converter converter = check new (getCopybookPath("copybook-15"));
-    string validCopybook = check converter.toCopybook({});
-    test:assertEquals(validCopybook, check io:fileReadString(getAsciiFilePath("copybook-15")));
+    byte[] output = check converter.toBytes({});
+    test:assertEquals(string:fromBytes(output), check io:fileReadString(getAsciiFilePath("copybook-15")));
 }
 
 @test:Config
 isolated function testValueClauseWithDefaulValues() returns error? {
     Converter converter = check new (getCopybookPath("copybook-16"));
-    string validCopybook = check converter.toCopybook({});
-    test:assertEquals(validCopybook, check io:fileReadString(getAsciiFilePath("copybook-16")));
+    byte[] output = check converter.toBytes({});
+    test:assertEquals(string:fromBytes(output), check io:fileReadString(getAsciiFilePath("copybook-16")));
 }
 
 @test:Config
@@ -193,17 +181,17 @@ isolated function testCopybookWithMultipleRootRecords() returns error? {
     Converter converter = check new (getCopybookPath("copybook-18"));
     string ascii = check io:fileReadString(getAsciiFilePath("copybook-18"));
     json data = check io:fileReadJson(getCopybookJsonPath("copybook-18"));
-    string output = check converter.toCopybook(check data.cloneWithType());
-    test:assertEquals(ascii, output);
+    byte[] output = check converter.toBytes(check data.cloneWithType());
+    test:assertEquals(string:fromBytes(output), ascii);
 
-    map<json> jsonOutput = check converter.fromCopybook(ascii);
-    test:assertEquals(jsonOutput, data);
+    map<json> jsonOutput = check converter.fromBytes(ascii.toBytes());
+    test:assertEquals(check jsonOutput.data, data);
 }
 
 @test:Config {
-    dataProvider: dataProviderBytes
+    dataProvider: testCopybookWithBinaryUsageDataProvider
 }
-isolated function testToByteAndFromBytes(string fileName, string targetRecord) returns error? {
+isolated function testCopybookWithBinaryUsage(string fileName, string targetRecord) returns error? {
     Converter converter = check new (getCopybookPath(fileName));
     json jsonInput = check io:fileReadJson(getCopybookJsonPath(fileName));
     byte[] bytes = check converter.toBytes(check jsonInput.cloneWithType(), targetRecord);
@@ -211,7 +199,7 @@ isolated function testToByteAndFromBytes(string fileName, string targetRecord) r
     test:assertEquals(check toJson.data, jsonInput);
 }
 
-function dataProviderBytes() returns string[][] {
+function testCopybookWithBinaryUsageDataProvider() returns string[][] {
     return [
         ["copybook-19", "MQCIH"],
         ["copybook-20", "MQCIH"]
@@ -219,29 +207,9 @@ function dataProviderBytes() returns string[][] {
 }
 
 @test:Config {
-    dataProvider: testByteConverterDataProvider
-}
-isolated function testByteConverter(string copybookName) returns error? {
-    Converter converter = check new (getCopybookPath(copybookName));
-    string input = check io:fileReadString(getAsciiFilePath(copybookName));
-    map<json> jsonInput = check (check converter.toJson(input)).get(DATA).ensureType();
-    byte[] bytes = check converter.toBytes(check jsonInput.cloneWithType());
-    map<json> toJson = check converter.fromBytes(bytes);
-    test:assertEquals(check toJson.data, jsonInput);
-}
-
-isolated function testByteConverterDataProvider() returns map<[string]> {
-    map<[string]> filePaths = {};
-    foreach int i in 1 ... 5 {
-        filePaths[i.toString()] = [string `copybook-${i}`];
-    }
-    return filePaths;
-}
-
-@test:Config {
     dataProvider: dataProviderBytesEncoding
 }
-isolated function testToByteAndFromBytesWithEncoding(string fileName, string targetRecord) returns error? {
+isolated function testEbcdicEncoding(string fileName, string targetRecord) returns error? {
     Converter converter = check new (getCopybookPath(fileName));
     json jsonInput = check io:fileReadJson(getCopybookJsonPath(fileName));
     byte[] bytes = check converter.toBytes(check jsonInput.cloneWithType(), targetRecord, EBCDIC);
@@ -263,4 +231,18 @@ isolated function testBinaryFieldsHavingDefaultValue() returns error? {
     map<json> toJson = check converter.fromBytes(bytes, encoding = EBCDIC);
     json expected = check io:fileReadJson(getCopybookJsonPath("default-value-copybook-20"));
     test:assertEquals(check toJson.data, expected);
+}
+
+@test:Config
+isolated function testEbcidiValueHavingOptionalSignedInteger() returns error? {
+    // Test PIC S9(003) with data having optional minus sign
+    Converter converter = check new (getCopybookPath("copybook-6"));
+    string[] input = check io:fileReadLines(getAsciiFilePath("copybook-6"));
+    string targetRecordName = "DATA-DETAIL-REGISTRY";
+    foreach string line in input {
+        map<json> jsonData = check (check converter.fromBytes(line.toBytes(), targetRecordName)).get(DATA).ensureType();
+        byte[] ebcdic = check converter.toBytes(jsonData, targetRecordName, EBCDIC);
+        map<json> jsonFromEbcdic = check (check converter.fromBytes(ebcdic, targetRecordName, EBCDIC)).get(DATA).ensureType();
+        test:assertEquals(jsonFromEbcdic, jsonData);
+    }
 }

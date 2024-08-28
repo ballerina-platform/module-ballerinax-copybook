@@ -8,7 +8,7 @@ _Edition_: Swan Lake
 
 ## Introduction
 
-The Ballerina Copybook module is designed to effortlessly manage the conversion of Copybook data structures to JSON and the reverse, as well as the conversion of Copybook ASCII to a specified Ballerina Record.
+The Ballerina Copybook module is designed to effortlessly manage the conversion of Copybook data structures to JSON and the reverse.
 
 The Copybook library specification has evolved and may continue to evolve in the future. The released versions of the specification can be found under the relevant GitHub tag.
 
@@ -21,37 +21,31 @@ The conforming implementation of the specification is released and included in t
 1. [Overview](#1-overview)
 2. [Initialize the Copybook Converter](#2-initialize-the-copybook-converter)
     * 2.1 [The `init` Method](#21-the-init-method)
-3. [Convert Copybook ASCII to JSON](#3-convert-copybook-ascii-to-json)
-    * 3.1 [The `toJson` API](#31-the-tojson-api)
+3. [Convert Copybook Payload to JSON](#3-convert-copybook-payload-to-json)
+    * 3.1 [The `fromBytes` API](#31-the-frombytes-api)
         * 3.1.1 [API Parameters](#311-api-parameters)
-            * 3.1.1.1 [The `copybookData` Parameter](#3111-the-copybookdata-parameter)
+            * 3.1.1.1 [The `bytes` Parameter](#3111-the-bytes-parameter))
             * 3.1.1.2 [The `targetRecordName` Parameter](#3112-the-targetrecordname-parameter)
+            * 3.1.1.3 [The `encoding` Parameter](#3113-the-encoding-parameter)
         * 3.1.2 [Return Type](#312-return-type)
-4. [Convert JSON to Copybook ASCII](#4-convert-json-to-copybook-ascii)
-    * 4.1 [The `toCopybook` API](#41-the-tocopybook-api)
+4. [Convert JSON to Copybook Payload](#4-convert-json-to-copybook-payload)
+    * 4.1 [The `toBytes` API](#41-the-tobytes-api)
         * 4.1.1 [API Parameters](#411-api-parameters)
             * 4.1.1.1 [The `input` Parameter](#4111-the-input-parameter)
             * 4.1.1.2 [The `targetRecordName` Parameter](#4112-the-targetrecordname-parameter)
+            * 4.1.1.3 [The `encoding` Parameter](#4113-the-encoding-parameter)
         * 4.1.2 [Return Type](#412-return-type)
-5. [Convert Copybook ASCII to Ballerina Record](#5-convert-copybook-ascii-to-ballerina-record)
-    * 5.1 [The `fromCopybook` API](#51-the-fromcopybook-api)
-        * 5.1.1 [API PArameters](#511-api-parameters)
-            * 5.1.1.1 [The `copybo0kData` Parameter](#5111-the-copybookdata-parameter)
-            * 5.1.1.2 [The `targetRecordName` Parameter](#5112-the-targetrecordname-parameter)
-            * 5.1.1.3 [The `t(targetRecordType)` Parameter](#5113-the-ttargetrecordtype-parameter)
-        * 5.1.2 [Return Type](#512-return-type)
-6. [The `copybook:Error` Type](#6-the-copybookerror-type)
-7. [Supported Copybook Types](#7-supported-copybook-types)
+5. [The `copybook:Error` Type](#5-the-copybookerror-type)
+6. [Supported Copybook Types](#6-supported-copybook-types)
 
 ## 1. Overview
 
-This specification elaborates on converting Copybook ASCII to JSON and vice versa, as well as converting Copybook ASCII to a specific Ballerina record.
+This specification elaborates on converting Copybook payload to JSON and vice versa.
 
-The Copybook module provides three major functionalities that simplify the copybook value handling.
+The Copybook module provides two major functionalities that simplify the copybook value handling.
 
-1. Convert Copybook ASCII to JSON
-2. Convert JSON to Copybook ASCII
-3. Convert Copybook ASCII to Ballerina Record
+1. Convert Copybook payload to JSON
+2. Convert JSON to Copybook payload
 
 The module presently supports a limited set of copybook types. Future updates will expand this support to include other possible picture types to enhance the module's usability.
 
@@ -69,27 +63,31 @@ The `init` method can be used to initialize the copybook converter. This method 
 copybook:Converter converter = check new ("../resources/copybook.cpy");
 ```
 
-## 3. Convert Copybook ASCII to JSON
+## 3. Convert Copybook Payload to JSON
 
-The copybook module can be used to convert the Copybook ASCII to JSON.
+The Copybook module can be used to convert a Copybook payload to JSON.
 
-### 3.1 The `toJson` API
+### 3.1 The `fromBytes` API
 
-The `toJson` is the API designed for copybook ASCII to JSON conversion.
+The `fromBytes` API is designed for converting Copybook payloads to JSON.
 
 #### 3.1.1 API Parameters
 
-##### 3.1.1.1 The `copybookData` Parameter
+##### 3.1.1.1 The `bytes` Parameter
 
-The `copybookData` is the first parameter of `toJson` API that accepts the `string` type data. The copybook ASCII value that needs to be converted can be passed using the copybookData parameter.
+The `bytes` parameter is the first parameter of the `fromBytes` API. It accepts data of the `byte[]` type. The Copybook payload that needs to be converted should be passed using this parameter.
 
 ##### 3.1.1.2 The `targetRecordName` Parameter
 
-The `targetRecordName` parameter is the name of the copybook record definition in the copybook definition. If the provided schema file contains more than one copybook record type definition, the `string` type `targetRecordName` must be provided.
+The `targetRecordName` parameter specifies the name of the Copybook record definition in the Copybook schema. If the provided schema file contains more than one Copybook root record type definition, the `targetRecordName` can be provided to convert the given [`byte[]`](#3111-the-bytes-parameter) payload against a specific root record. Otherwise, the [`byte[]`](#3111-the-bytes-parameter) payload will be parsed against all records in the Copybook sequentially.
+
+##### 3.1.1.3 The `encoding` Parameter
+
+The `encoding` parameter is the final parameter of the `fromBytes` API. It accepts either `copybook:ASCII` or `copybook:EBCDIC` as its value, specifying the encoding of the [`byte[]`](#3111-the-bytes-parameter) payload. If no value is provided for the encoding parameter, the [`byte[]`](#3111-the-bytes-parameter) payload will be considered as `copybook:ASCII` encoded by default.
 
 #### 3.1.2 Return Type
 
-The function returns a `JSON` or `copybook:Error` value based on the conversion.
+The function returns a `map<json>` or `copybook:Error` value based on the conversion.
 
 * When there are no conversion errors, It returns a JSON with `data` field.
 
@@ -113,74 +111,46 @@ The function returns a `JSON` or `copybook:Error` value based on the conversion.
 ###### Example: Convert to JSON
 
 ```ballerina
-json jsonValue = check converter.toJson("0001Maharoof 01500.00A+");
+map<json> jsonValue = check converter.fromBytes("0001Maharoof 01500.00A+".toBytes());
 ```
 
-## 4. Convert JSON to Copybook ASCII
+## 4. Convert JSON to Copybook Payload
 
-This section describes the details of JSON to copybook ASCII conversion.
+This section describes the details of JSON to copybook payload conversion.
 
-### 4.1 The `toCopybook` API
+### 4.1 The `toBytes` API
 
-The `toCopybook` API can be used to convert the given JSON or Record data into copybook ASCII data.
+The `toBytes` API is used to convert the given JSON or Record data into a Copybook payload.
 
 #### 4.1.1 API Parameters
 
 ##### 4.1.1.1 The `input` Parameter
 
-The `input` parameter accepts a JSON or Ballerina record value that is needed to be converted to copybook ASCII.
+The `input` parameter accepts either a `map<json>` or a Ballerina record value that needs to be converted into a Copybook payload.
 
 ##### 4.1.1.2 The `targetRecordName` Parameter
 
-The `targetRecordName` parameter is the name of the copybook record definition in the copybook definition. If the provided definition file contains more than one copybook record type definition, `targetRecordName` must be provided as a `string` value. The default value is nil.
+The `targetRecordName` parameter specifies the name of the Copybook record definition in the Copybook schema. If the provided schema file contains more than one Copybook root record type definition, the `targetRecordName` can be provided to convert the given [`input`](#4111-the-input-parameter) against a specific root record. Otherwise, the [`input`](#4111-the-input-parameter) payload will be considerd as an input to all the copybook root records.
+
+##### 4.1.1.3 The `encoding` Parameter
+
+The `encoding` parameter is the final parameter of the `toBytes` API. It accepts either `copybook:ASCII` or `copybook:EBCDIC` as its value, specifying the encoding of the [`byte[]`](#412-return-type) returned from the [`toBytes`](#41-the-tobytes-api) method. If no value is provided for the encoding parameter, the returned [`byte[]`](#412-return-type) payload will be considered as `copybook:ASCII` encoded by default.
 
 #### 4.1.2 Return Type
 
-The function returns a converted ASCII string or a `copybook:Error` based on the conversion.
+The function returns a `byte[]` that is either `copybook:ASCII` or `copybook:EBCDIC` encoded, based on the conversion. On failure, a `copybook:Error` is returned.
 
-###### Example: Convert to Copybook ASCII
-
-```ballerina
-json jsonValue = check converter.toCopybook({"EmployeeName": {"Name": "Mahroof"}});
-```
-
-## 5. Convert Copybook ASCII to Ballerina Record
-
-The copybook module provides an API to convert a given copybook ASCII to a Ballerina record type.
-
-### 5.1 The `fromCopybook` API
-
-The `fromCopybook` API facilitates the conversion of copybook ASCII into a given Ballerina record type.
-
-#### 5.1.1 API Parameters
-
-##### 5.1.1.1 The `copybookData` Parameter
-
-The `copybookData` parameter is an ASCII string that needs to be converted to a Ballerina record value.
-
-##### 5.1.1.2 The `targetRecordName` Parameter
-
-The `targetRecordName` parameter is the name of the copybook record definition in the copybook definition. If the provided copybook definition file contains more than one copybook record type definition, `targetRecordName` must be provided as a string. The default value is nil.
-
-##### 5.1.1.3 The `t(targetRecordType)` Parameter
-
-The `t(targetRecordType)` parameter accepts the type descriptor of the target record type.
-
-#### 5.1.2 Return Type
-
-The function returns a `record` value on success, or a `copybook:Error` in case of conversion errors.
-
-###### Example: Convert to Ballerina Record
+###### Example: Convert to Copybook Payload
 
 ```ballerina
-Employee employee = check converter.fromCopybook("0001Maharoof 01500.00A+");
+byte[] ebcdic = check converter.fromBytes({"EmployeeName": {"Name": "Mahroof"}}, encoding = copybook:EBCDIC);
 ```
 
-## 6. The `copybook:Error` Type
+## 5. The `copybook:Error` Type
 
 The `copybook:Error` type represents all the errors related to the Copybook module. This is a subtype of the Ballerina `error` type.
 
-## 7. Supported Copybook Types
+## 6. Supported Copybook Types
 
 | Copybook Type | Example |
 |----------|----------|
