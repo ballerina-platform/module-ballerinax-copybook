@@ -69,7 +69,7 @@ isolated function testConverterWithInvalidTargetRecordName() returns error? {
 }
 
 @test:Config
-isolated function testConverterReturingResultWithErrors() returns error? {
+isolated function testConverterReturningResultWithErrors() returns error? {
     Converter converter = check new (getCopybookPath("copybook-8"));
     string input = check io:fileReadString(getAsciiFilePath("copybook-8"));
     map<json> copybook = check converter.fromBytes(input.toBytes());
@@ -234,7 +234,7 @@ isolated function testBinaryFieldsHavingDefaultValue() returns error? {
 }
 
 @test:Config
-isolated function testEbcidiValueHavingOptinalSignedInteger() returns error? {
+isolated function testEbcidiValueHavingOptionalSignedInteger() returns error? {
     // Test PIC S9(003) with data having optional minus sign
     Converter converter = check new (getCopybookPath("copybook-6"));
     string[] input = check io:fileReadLines(getAsciiFilePath("copybook-6"));
