@@ -328,7 +328,7 @@ class JsonToCopybookConverter {
             decodedValue = dataItem.isBinary() ? (check decodeBinaryValue(value, self.encoding)).toString() : check string:fromBytes(value);
             anydata providedValue = decodedValue;
             if dataItem.isDecimal() {
-                providedValue = check decimal:fromString(decodedValue);
+                providedValue = check trap decimal:fromString(decodedValue);
                 possibleValues = check toDecimalArray(possibleEnumValues);
             } else if dataItem.isNumeric() {
                 providedValue = check int:fromString(decodedValue);
