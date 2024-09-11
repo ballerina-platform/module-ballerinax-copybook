@@ -111,7 +111,7 @@ class DataCoercer {
 
     private isolated function coerceDecimal(string data, DataItem dataItem) returns decimal? {
         string decimalString = data.trim();
-        error|decimal coercedValue = decimal:fromString(decimalString);
+        error|decimal coercedValue = trap decimal:fromString(decimalString);
         if coercedValue is error {
             self.errors.push(error Error(string `Failed to convert the value '${data}' to a 'decimal' `
                 + string `at ${self.getPath()}.`));
