@@ -6,6 +6,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ## [Unreleased]
 
+## [1.0.1] - 2024-09-11
+
 ### Fixed
 - [[#6982] Fix `fromBytes()` Panic When Invalid Value is Provided for Decimal Type](https://github.com/ballerina-platform/ballerina-library/issues/6982)
 

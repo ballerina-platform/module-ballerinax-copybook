@@ -15,14 +15,14 @@ graalvmCompatible = true
 [[platform.java17.dependency]]
 groupId = "io.ballerina.lib"
 artifactId = "copybook-native"
-version = "1.0.1-SNAPSHOT"
-path="../native/build/libs/copybook-native-1.0.1-SNAPSHOT.jar"
+version = "1.0.1"
+path="../native/build/libs/copybook-native-1.0.1.jar"
 
 [[platform.java17.dependency]]
 groupId = "io.ballerina.lib"
 artifactId = "copybook-commons"
 version = "1.0.1"
-path = "../commons/build/libs/copybook-commons-1.0.1-SNAPSHOT.jar"
+path = "../commons/build/libs/copybook-commons-1.0.1.jar"
 
 [[platform.java17.dependency]]
 groupId = "org.antlr"
