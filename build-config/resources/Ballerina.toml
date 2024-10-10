@@ -9,22 +9,22 @@ icon = "icon.png"
 license = ["Apache-2.0"]
 distribution = "2201.8.0"
 
-[platform.java17]
+[platform.java21]
 graalvmCompatible = true
 
-[[platform.java17.dependency]]
+[[platform.java21.dependency]]
 groupId = "io.ballerina.lib"
 artifactId = "copybook-native"
 version = "@project.version@"
 path="../native/build/libs/copybook-native-@project.version@.jar"
 
-[[platform.java17.dependency]]
+[[platform.java21.dependency]]
 groupId = "io.ballerina.lib"
 artifactId = "copybook-commons"
 version = "@toml.version@"
 path = "../commons/build/libs/copybook-commons-@project.version@.jar"
 
-[[platform.java17.dependency]]
+[[platform.java21.dependency]]
 groupId = "org.antlr"
 artifactId = "antlr4-runtimee"
 version = "@antlr.version@"
