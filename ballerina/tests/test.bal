@@ -246,3 +246,37 @@ isolated function testEbcidiValueHavingOptionalSignedInteger() returns error? {
         test:assertEquals(jsonFromEbcdic, jsonData);
     }
 }
+
+@test:Config
+isolated function testImpliedDecimal() returns error? {
+    Converter converter = check new (getCopybookPath("copybook-21"));
+    byte[] ascii = check io:fileReadBytes(getAsciiFilePath("copybook-21"));
+
+    json actual = check converter.fromBytes(ascii);
+    json jsonVal = check io:fileReadJson(getCopybookJsonPath("copybook-21"));
+    test:assertEquals(actual.toJsonString(), {data: jsonVal}.toJsonString());
+
+    byte[] bytes = check converter.toBytes(check jsonVal.ensureType());
+    test:assertEquals(string:fromBytes(bytes), check string:fromBytes(ascii));
+}
+
+@test:Config
+isolated function testImpliedDecimalForDefaultValue() returns error? {
+    Converter converter = check new (getCopybookPath("copybook-21"));
+    byte[] bytes = check converter.toBytes({});
+    test:assertEquals(string:fromBytes(bytes), "                                       ");
+}
+
+@test:Config
+isolated function testImpliedDecimalWithEbcidic() returns error? {
+    Converter converter = check new (getCopybookPath("copybook-21"));
+    json jsonVal = check io:fileReadJson(getCopybookJsonPath("copybook-21"));
+
+    byte[] bytes = check converter.toBytes(check jsonVal.ensureType(), encoding = EBCDIC);
+    check io:fileWriteBytes(getEbcdicFilePath("copybook-21"), bytes);
+    byte[] ebcdic = check io:fileReadBytes(getEbcdicFilePath("copybook-21"));
+    test:assertEquals(bytes, ebcdic);
+    
+    json actual = check converter.fromBytes(ebcdic, encoding = EBCDIC);
+    test:assertEquals(actual.toJsonString(), {data: jsonVal}.toJsonString());
+}

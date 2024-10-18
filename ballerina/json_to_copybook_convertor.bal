@@ -116,7 +116,7 @@ class JsonToCopybookConverter {
     }
 
     private isolated function getDefaultValue(Node node) returns byte[] {
-        DefaultValueCreator defaultValueCreator = new(self.encoding);
+        DefaultValueCreator defaultValueCreator = new (self.encoding);
         node.accept(defaultValueCreator);
         Error[]? errors = defaultValueCreator.getErrors();
         if errors is Error[] {
@@ -288,16 +288,20 @@ class JsonToCopybookConverter {
             return ("+" + decimalString.padZero(dataItem.getReadLength() - 1 - supressZeroCount)
                 .padStart(dataItem.getReadLength() - 1)).toBytes();
         }
-        return decimalString.padZero(dataItem.getReadLength() - supressZeroCount).padStart(dataItem.getReadLength()).toBytes();
+        decimalString = decimalString.padZero(dataItem.getReadLength() - supressZeroCount).padStart(dataItem.getReadLength());
+        return dataItem.hasImpliedSeperator() ? re `\.`.replace(decimalString, "").toBytes() : decimalString.toBytes();
     }
 
     private isolated function checkDecimalLength(string wholeNumber, string fraction, decimal input,
             DataItem dataItem) returns Error? {
-        // A deducted of 1 made from readLength for decimal seperator "."
-        int expectedWholeNumberLength = dataItem.getReadLength() - dataItem.getFloatingPointLength() - 1;
+        int expectedWholeNumberLength = dataItem.getReadLength() - dataItem.getFloatingPointLength();
+        if !dataItem.hasImpliedSeperator() {
+            // A deducted of 1 made from readLength for decimal seperator "."
+            expectedWholeNumberLength -= 1;
+        }
         // If PIC has + or -, then remove the space allocated for the sign
         string picture = dataItem.getPicture();
-        expectedWholeNumberLength -= (picture.startsWith("+") || picture.startsWith("-")) is true ? 1 : 0;
+        expectedWholeNumberLength -= picture.startsWith("+") || picture.startsWith("-") ? 1 : 0;
         string integerPart = wholeNumber.startsWith("-") ? wholeNumber.substring(1) : wholeNumber;
         if integerPart.length() > expectedWholeNumberLength {
             return error Error(string `Value '${input}' exceeds the maximum number of integer digits `

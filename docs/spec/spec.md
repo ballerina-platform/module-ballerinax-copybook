@@ -161,3 +161,5 @@ The `copybook:Error` type represents all the errors related to the Copybook modu
 | PIC  9(_) | PIC 9(07), PIC 9(14) |
 | PIC  -9(_).__ | PIC -9(9).99, PIC -9(2).999 |
 | PIC  Z(_)9.__ | PIC Z(9)9.99, PIC Z(2)9.999 |
+| PIC  9(_)V__  | PIC 9(2)V99, PIC 9(13)V999  |
+| PIC  S9(_)V__ | PIC S9(2)V99, PIC S9(13)V999|

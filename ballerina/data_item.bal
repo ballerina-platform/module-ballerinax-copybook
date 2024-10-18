@@ -82,4 +82,8 @@ isolated distinct class DataItem {
     isolated function toString() returns string {
         return externToString(self);
     }
+
+    isolated function hasImpliedSeperator() returns boolean {
+        return self.getPicture().includes("V");
+    }
 }

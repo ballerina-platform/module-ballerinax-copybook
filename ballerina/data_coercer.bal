@@ -111,6 +111,12 @@ class DataCoercer {
 
     private isolated function coerceDecimal(string data, DataItem dataItem) returns decimal? {
         string decimalString = data.trim();
+        if dataItem.hasImpliedSeperator() {
+            int floatingPointLength = dataItem.getFloatingPointLength();
+            int decimalIndex = decimalString.length() - floatingPointLength;
+            // Handle the implied decimal by adding the decimal separator manually to the string value.
+            decimalString = data.substring(0, decimalIndex) + "." + data.substring(decimalIndex);
+        }
         error|decimal coercedValue = trap decimal:fromString(decimalString);
         if coercedValue is error {
             self.errors.push(error Error(string `Failed to convert the value '${data}' to a 'decimal' `
@@ -152,7 +158,17 @@ class DataCoercer {
     private isolated function validateMaxByte(string value, DataItem dataItem) returns Error? {
         if dataItem.isDecimal() {
             int? seperatorIndex = value.indexOf(".");
-            int wholeNumberMaxLength = dataItem.getReadLength() - dataItem.getFloatingPointLength() - 1;
+            int wholeNumberMaxLength = dataItem.getReadLength() - dataItem.getFloatingPointLength();
+            if !dataItem.hasImpliedSeperator() {
+                // Made a reduction of 1 for the decimal separator since the floating-point length includes 
+                // the decimal separator for data item that don't have an implied decimal.
+                wholeNumberMaxLength -= 1;
+            }
+            boolean valueHasSign = value.startsWith("+") || value.startsWith("-");
+            // Handle sing remembered decimal S9(9)V9
+            if valueHasSign && dataItem.isSigned() {
+                wholeNumberMaxLength += 1;
+            }
             if (seperatorIndex is int && seperatorIndex > wholeNumberMaxLength)
                 || (seperatorIndex is () && value.length() > wholeNumberMaxLength) {
                 return error Error(string `The integral part of the decimal value` +
@@ -169,6 +185,11 @@ class DataCoercer {
             // handle pic with optional sign ex: s9(9)
             boolean valueHasSign = value.startsWith("+") || value.startsWith("-");
             maxReadBytes = dataItem.getReadLength() + (dataItem.isSigned() && valueHasSign ? 1 : 0);
+        }
+        if dataItem.hasImpliedSeperator() {
+            // An addition of 1 is made to account for the manually included decimal separator
+            // in the value for an implied decimal.
+            maxReadBytes += 1;
         }
         if value.length() > maxReadBytes {
             return error Error(string `The value '${value}' exceeds the maximum byte size of ${maxReadBytes} ` +
