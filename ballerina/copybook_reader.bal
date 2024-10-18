@@ -119,7 +119,7 @@ class CopybookReader {
                 int intValue = check decodeBinaryValue(bytes, self.encoding);
                 return intValue.toString();
             }
-            if self.encoding == EBCDIC {
+            if self.encoding == EBCDIC && dataItem.getRedefinedItemName() is () {
                 bytes = toAsciiBytes(bytes);
             }
             string token = check string:fromBytes(bytes);
