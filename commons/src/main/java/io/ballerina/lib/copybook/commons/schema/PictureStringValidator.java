@@ -55,6 +55,16 @@ class PictureStringValidator {
         return Pattern.compile("^S9\\(\\d+\\)$").matcher(pictureString).find();
     }
 
+    static boolean isImpliedDecimalWithCardinality(String pictureString) {
+        // ex: PIC 9(2)V99
+        return Pattern.compile("^9\\(\\d+\\)V9+$").matcher(pictureString).find();
+    }
+
+    static boolean isSignRememberedImpliedDecimalWithCardinality(String pictureString) {
+        // ex: PIC S9(2)V99
+        return Pattern.compile("^S9\\(\\d+\\)V9+$").matcher(pictureString).find();
+    }
+
     static boolean isDecimalWithCardinality(String pictureString) {
         // ex: PIC 9(9).333 or -9(9).333 or +9(9).333
         return Pattern.compile("^[+-]?9\\(\\d+\\)\\.9+$").matcher(pictureString).find();
@@ -69,6 +79,7 @@ class PictureStringValidator {
         return isAlphaNumeric(pictureString) || isInt(pictureString) || isDecimal(pictureString)
                 || isAlphaNumericWithCardinality(pictureString) || isIntWithCardinality(pictureString)
                 || isSignRememberedIntWithCardinality(pictureString) || isDecimalWithCardinality(pictureString)
-                || isDecimalWithSuppressedZeros(pictureString);
+                || isDecimalWithSuppressedZeros(pictureString) || isImpliedDecimalWithCardinality(pictureString)
+                || isSignRememberedImpliedDecimalWithCardinality(pictureString);
     }
 }

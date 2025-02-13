@@ -6,6 +6,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ## [Unreleased]
 
+## [1.0.2] - 2024-10-18
+
+### Added
+- [[#7275] Add Support for Implied Decimal](https://github.com/ballerina-platform/ballerina-library/issues/7275)
+
 ## [1.0.1] - 2024-09-11
 
 ### Fixed

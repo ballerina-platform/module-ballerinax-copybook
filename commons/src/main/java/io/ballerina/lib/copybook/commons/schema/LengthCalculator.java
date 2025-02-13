@@ -26,8 +26,10 @@ import static io.ballerina.lib.copybook.commons.schema.PictureStringValidator.is
 import static io.ballerina.lib.copybook.commons.schema.PictureStringValidator.isDecimal;
 import static io.ballerina.lib.copybook.commons.schema.PictureStringValidator.isDecimalWithCardinality;
 import static io.ballerina.lib.copybook.commons.schema.PictureStringValidator.isDecimalWithSuppressedZeros;
+import static io.ballerina.lib.copybook.commons.schema.PictureStringValidator.isImpliedDecimalWithCardinality;
 import static io.ballerina.lib.copybook.commons.schema.PictureStringValidator.isInt;
 import static io.ballerina.lib.copybook.commons.schema.PictureStringValidator.isIntWithCardinality;
+import static io.ballerina.lib.copybook.commons.schema.PictureStringValidator.isSignRememberedImpliedDecimalWithCardinality;
 import static io.ballerina.lib.copybook.commons.schema.PictureStringValidator.isSignRememberedIntWithCardinality;
 
 class LengthCalculator {
@@ -36,11 +38,12 @@ class LengthCalculator {
     }
 
     static int calculateFractionLength(String pictureString) {
-        if (!isDecimal(pictureString) && !isDecimalWithCardinality(pictureString) && !isDecimalWithSuppressedZeros(
-                pictureString)) {
+        if (!isDecimal(pictureString) && !isDecimalWithCardinality(pictureString)
+                && !isDecimalWithSuppressedZeros(pictureString) && !isImpliedDecimalWithCardinality(pictureString)
+                && !isSignRememberedImpliedDecimalWithCardinality(pictureString)) {
             return 0;
         }
-        Matcher matcher = Pattern.compile("^.*\\.(?<fraction>9+)$").matcher(pictureString);
+        Matcher matcher = Pattern.compile("^.*([.V])(?<fraction>9+)$").matcher(pictureString);
         if (matcher.find()) {
             return matcher.group("fraction").length();
         }
@@ -62,6 +65,11 @@ class LengthCalculator {
 
         if (isSignRememberedIntWithCardinality(pictureString)) {
             return getReadLengthSignRememberedIntWithCardinality(pictureString);
+        }
+
+        if (isImpliedDecimalWithCardinality(pictureString)
+                || isSignRememberedImpliedDecimalWithCardinality(pictureString)) {
+            return getImpliedDecimalWithCardinality(pictureString);
         }
 
         if (isDecimalWithCardinality(pictureString)) {
@@ -95,6 +103,18 @@ class LengthCalculator {
         Matcher matcher = Pattern.compile("^S9\\((?<cardinality>\\d+)\\)$").matcher(pictureString);
         if (matcher.find()) {
             return Integer.parseInt(matcher.group("cardinality"));
+        }
+        return 0;
+    }
+
+    private static int getImpliedDecimalWithCardinality(String pictureString) {
+        Matcher matcher = Pattern.compile("^S?9\\((?<cardinality>\\d+)\\)V(?<fraction>9+)$")
+                .matcher(pictureString);
+        if (matcher.find()) {
+            int integerCardinality = Integer.parseInt(matcher.group("cardinality"));
+            // This fraction doesn't includes decimal separator "."
+            int fractionLength = matcher.group("fraction").length();
+            return integerCardinality + fractionLength;
         }
         return 0;
     }
