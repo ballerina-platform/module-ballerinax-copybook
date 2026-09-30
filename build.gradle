@@ -18,7 +18,7 @@
 
 plugins {
     id 'com.github.spotbugs'
-    id 'com.github.johnrengelman.shadow'
+    id 'com.gradleup.shadow'
     id 'de.undercouch.download'
     id 'net.researchgate.release'
     id 'jacoco'
@@ -29,6 +29,11 @@ allprojects {
 
     group = project.group
     version = project.version
+
+    apply plugin: 'jacoco'
+    jacoco {
+        toolVersion = jacocoVersion
+    }
 
     repositories {
         mavenLocal()
@@ -72,10 +77,18 @@ subprojects {
 
 def moduleVersion = project.version.replace("-SNAPSHOT", "")
 
-task build {
-    dependsOn(':copybook-commons:build')
-    dependsOn(':copybook-native:build')
-    dependsOn(':copybook-ballerina:build')
+if (tasks.names.contains('build')) {
+    tasks.named('build') {
+        dependsOn(':copybook-commons:build')
+        dependsOn(':copybook-native:build')
+        dependsOn(':copybook-ballerina:build')
+    }
+} else {
+    tasks.register('build') {
+        dependsOn(':copybook-commons:build')
+        dependsOn(':copybook-native:build')
+        dependsOn(':copybook-ballerina:build')
+    }
 }
 
 release {
