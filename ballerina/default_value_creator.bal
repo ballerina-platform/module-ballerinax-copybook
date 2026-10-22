@@ -24,10 +24,12 @@ class DefaultValueCreator {
         self.encoding = encoding;
     }
 
-    isolated function visitSchema(Schema schema, anydata data = ()) {
+    isolated function visitSchema(Node visited, anydata data = ()) {
+        Schema schema = <Schema>visited;
     }
 
-    isolated function visitGroupItem(GroupItem groupItem, anydata data = ()) {
+    isolated function visitGroupItem(Node visited, anydata data = ()) {
+        GroupItem groupItem = <GroupItem>visited;
         if groupItem.getRedefinedItemName() is string {
             return;
         }
@@ -41,7 +43,8 @@ class DefaultValueCreator {
         self.defaultValueFragments = defaultValues;
     }
 
-    isolated function visitDataItem(DataItem dataItem, anydata data = ()) {
+    isolated function visitDataItem(Node visited, anydata data = ()) {
+        DataItem dataItem = <DataItem>visited;
         if dataItem.getRedefinedItemName() is string {
             return;
         }

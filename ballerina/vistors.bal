@@ -14,9 +14,11 @@
 // specific language governing permissions and limitations
 // under the License.
 
+// The visit methods take a Node (not the concrete item classes) to avoid a cyclic Node/Visitor/item type dependency
+// that fails to type check on recent Ballerina versions (2201.14).
 type Visitor distinct object {
-    isolated function visitSchema(Schema schema, anydata data = ());
-    isolated function visitGroupItem(GroupItem groupItem, anydata data = ());
-    isolated function visitDataItem(DataItem dataItem, anydata data = ());
+    isolated function visitSchema(Node visited, anydata data = ());
+    isolated function visitGroupItem(Node visited, anydata data = ());
+    isolated function visitDataItem(Node visited, anydata data = ());
     public isolated function getErrors() returns Error[]?;
 };
