@@ -1,0 +1,4 @@
+# ballerina:14 (copybook_reader.bal): flags the local variable `token`, which holds the characters decoded at runtime
+# from a copybook data item (e.g. a PIC field). It is parsed input data, not a secret assigned a fixed value.
+[rule]
+exclude = ["ballerina:14"]
