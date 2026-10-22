@@ -33,7 +33,8 @@ class CopybookReader {
         self.errors = [];
     }
 
-    isolated function visitSchema(Schema schema, anydata data = ()) {
+    isolated function visitSchema(Node visited, anydata data = ()) {
+        Schema schema = <Schema>visited;
         string? targetRecordName = self.targetRecordName;
         if targetRecordName is string {
             Node typeDef = getTypeDefinition(schema, targetRecordName);
@@ -45,7 +46,8 @@ class CopybookReader {
         }
     }
 
-    isolated function visitGroupItem(GroupItem groupItem, anydata data = ()) {
+    isolated function visitGroupItem(Node visited, anydata data = ()) {
+        GroupItem groupItem = <GroupItem>visited;
         ByteIterator temp = self.copybookIterator;
         self.copybookIterator = self.getIteratorForItem(groupItem);
 
@@ -71,7 +73,8 @@ class CopybookReader {
         self.copybookIterator = temp;
     }
 
-    isolated function visitDataItem(DataItem dataItem, anydata data = ()) {
+    isolated function visitDataItem(Node visited, anydata data = ()) {
+        DataItem dataItem = <DataItem>visited;
         ByteIterator temp = self.copybookIterator;
         self.copybookIterator = self.getIteratorForItem(dataItem);
         if isArray(dataItem) {

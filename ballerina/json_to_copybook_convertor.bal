@@ -31,7 +31,8 @@ class JsonToCopybookConverter {
         self.encoding = encoding;
     }
 
-    isolated function visitSchema(Schema schema, anydata data = ()) {
+    isolated function visitSchema(Node visited, anydata data = ()) {
+        Schema schema = <Schema>visited;
         self.path.push(ROOT_JSON_PATH);
         if data !is map<json> {
             self.errors.push(error Error(string `Invalid value '${data.toString()}' found at ${self.getPath()}`));
@@ -58,7 +59,8 @@ class JsonToCopybookConverter {
         }
     }
 
-    isolated function visitGroupItem(GroupItem groupItem, anydata data = ()) {
+    isolated function visitGroupItem(Node visited, anydata data = ()) {
+        GroupItem groupItem = <GroupItem>visited;
         if isRedefiningItem(groupItem) && !self.visitAllowedRedefiningItems.hasKey(groupItem.getName()) {
             return;
         }
@@ -135,7 +137,8 @@ class JsonToCopybookConverter {
         return;
     }
 
-    isolated function visitDataItem(DataItem dataItem, anydata data = ()) {
+    isolated function visitDataItem(Node visited, anydata data = ()) {
+        DataItem dataItem = <DataItem>visited;
         if isRedefiningItem(dataItem) && !self.visitAllowedRedefiningItems.hasKey(dataItem.getName()) {
             return;
         }
